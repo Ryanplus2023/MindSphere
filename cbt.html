@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>认知行为疗法 · 系统学习指南</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background:
+        linear-gradient(rgba(212,163,115,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,163,115,0.03) 1px, transparent 1px),
+        var(--bg);
+      background-size: 60px 60px, 60px 60px, 100% 100%;
+      color: var(--text);
+      line-height: 1.75;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, .display-font {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-weight: 700;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0;
+      width: 300px; height: 100vh;
+      background: linear-gradient(180deg, var(--bg-elevated), var(--bg));
+      border-right: 1px solid var(--border);
+      z-index: 100;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* sidebar-header layout handled by shared/styles.css */
+
+    .sidebar-header h1 {
+      font-size: 22px;
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-section { margin-bottom: 10px; }
+
+    .nav-section-title {
+      padding: 12px 32px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 10px 32px 10px 40px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      border-left: 3px solid transparent;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text);
+      background: rgba(56,189,248,0.06);
+      border-left-color: var(--accent);
+    }
+
+    /* Main */
+    .main-content {
+      margin-left: 300px;
+      min-height: 100vh;
+    }
+
+    .section {
+      display: none;
+      padding: 56px 72px;
+      max-width: 920px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 40px 0 18px;
+      color: var(--accent-light);
+      padding-left: 18px;
+      border-left: 3px solid var(--accent);
+    }
+
+    h4 {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 28px 0 12px;
+      color: var(--accent-secondary);
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+      font-size: 16.5px;
+      line-height: 1.85;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.9;
+      margin-bottom: 32px;
+      padding: 24px 28px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--accent);
+      font-weight: 400;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 28px 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg), 0 0 60px rgba(56,189,248,0.06);
+      border-color: rgba(56,189,248,0.2);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Triangle Diagram */
+    .triangle-container {
+      display: flex;
+      justify-content: center;
+      margin: 40px 0;
+      position: relative;
+    }
+
+    .triangle-diagram {
+      width: 360px;
+      height: 320px;
+      position: relative;
+    }
+
+    .tri-node {
+      position: absolute;
+      width: 140px;
+      padding: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .tri-node:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 30px rgba(56,189,248,0.1);
+      transform: scale(1.05);
+    }
+
+    .tri-node.top {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      border-color: var(--accent);
+    }
+
+    .tri-node.top:hover {
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    .tri-node.left {
+      bottom: 0;
+      left: 0;
+      border-color: var(--accent-secondary);
+    }
+
+    .tri-node.right {
+      bottom: 0;
+      right: 0;
+      border-color: var(--accent-tertiary);
+    }
+
+    .tri-node .tri-label {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .tri-node.top .tri-label { color: var(--accent); }
+    .tri-node.left .tri-label { color: var(--accent-secondary); }
+    .tri-node.right .tri-label { color: var(--accent-tertiary); }
+
+    .tri-node .tri-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .tri-arrow {
+      position: absolute;
+      font-size: 24px;
+      color: var(--text-muted);
+      opacity: 0.4;
+    }
+
+    .tri-arrow.a1 { top: 110px; left: 70px; transform: rotate(-45deg); }
+    .tri-arrow.a2 { top: 110px; right: 70px; transform: rotate(45deg); }
+    .tri-arrow.a3 { bottom: 110px; left: 50%; transform: translateX(-50%) rotate(90deg); }
+
+    /* Process Flow */
+    .process-flow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 32px 0;
+      padding: 28px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .process-step {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 18px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .process-step:hover {
+      background: rgba(56,189,248,0.06);
+      border-color: rgba(56,189,248,0.2);
+      transform: translateY(-3px);
+    }
+
+    .process-step .step-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .process-step .step-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .process-step .step-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .process-arrow {
+      color: var(--text-muted);
+      font-size: 20px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    /* Comparison */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .compare-col {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 24px;
+      border-top: 3px solid;
+    }
+
+    .compare-col.negative { border-top-color: #ef4444; }
+    .compare-col.positive { border-top-color: var(--accent-tertiary); }
+
+    .compare-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .compare-col.negative .compare-label { color: #ef4444; }
+    .compare-col.positive .compare-label { color: var(--accent-tertiary); }
+
+    .compare-col p {
+      font-size: 15.5px;
+      margin-bottom: 10px;
+      color: var(--text-secondary);
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 15px;
+    }
+
+    .data-table th {
+      background: var(--bg-hover);
+      color: var(--accent-light);
+      padding: 14px 18px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(56,189,248,0.03);
+      color: var(--text);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 12px 0 12px 28px;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    li::marker {
+      color: var(--accent);
+    }
+
+    /* Tags */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .tag {
+      font-size: 14px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+
+    .tag:hover {
+      background: rgba(56,189,248,0.1);
+      border-color: rgba(56,189,248,0.3);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    /* Quote / Insight Box */
+    .insight-box {
+      background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(167,139,250,0.05));
+      border: 1px solid rgba(56,189,248,0.15);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .insight-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      opacity: 0.6;
+    }
+
+    .insight-box p {
+      margin: 0;
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.9;
+    }
+
+    .insight-box .source {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Scenario Practice */
+    .scenario-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .scenario-card:hover {
+      border-color: rgba(167,139,250,0.2);
+    }
+
+    .scenario-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scenario-context {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .scenario-options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      color: var(--text-secondary);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-size: 14px;
+      line-height: 1.6;
+      font-family: inherit;
+    }
+
+    .option-btn:hover {
+      background: rgba(56,189,248,0.06);
+      border-color: rgba(56,189,248,0.25);
+      color: var(--text);
+    }
+
+    .option-btn.revealed.correct {
+      background: rgba(52,211,153,0.1);
+      border-color: var(--accent-tertiary);
+      color: var(--text);
+    }
+
+    .option-btn.revealed.incorrect {
+      background: rgba(239,68,68,0.08);
+      border-color: rgba(239,68,68,0.3);
+      opacity: 0.6;
+    }
+
+    .option-btn .label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .option-btn.revealed.correct .label { color: var(--accent-tertiary); }
+    .option-btn.revealed.incorrect .label { color: #ef4444; }
+
+    .explanation {
+      display: none;
+      margin-top: 16px;
+      padding: 20px;
+      background: rgba(52,211,153,0.05);
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-tertiary);
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .explanation.show { display: block; animation: slideUp 0.4s ease; }
+
+    /* Mobile */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .section { padding: 80px 28px 48px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .process-flow { flex-direction: column; }
+      .process-arrow { transform: rotate(90deg); }
+      .triangle-diagram { transform: scale(0.85); }
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .breadcrumb span {
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .breadcrumb span:hover {
+      text-decoration: underline;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+  :root {
+    --accent: #d4a373; --accent-light: #e9c46a;
+    --accent-secondary: #5f8a7c; --accent-tertiary: #7c8fa3;
+  }
+  </style>
+  
+</head>
+<body>
+
+
+
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">M</span>
+    心界 MindSphere
+  </a>
+  <div class="nav-links">
+    <a href="mbti.html">MBTI人格类型</a>
+    <a href="nvc.html">非暴力沟通</a>
+    <a href="cbt.html" class="active">认知疗法</a>
+    <a href="first_principles.html">第一性原理</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-scroll">
+    <div class="nav-section">
+      <div class="nav-section-title">理论基础</div>
+      <a class="nav-link active" onclick="showSection('overview', this)">体系概览</a>
+      <a class="nav-link" onclick="showSection('triangle', this)">认知三角</a>
+      <a class="nav-link" onclick="showSection('automatic', this)">自动思维</a>
+      <a class="nav-link" onclick="showSection('core-beliefs', this)">核心信念</a>
+      <a class="nav-link" onclick="showSection('distortions', this)">认知扭曲</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">核心技术</div>
+      <a class="nav-link" onclick="showSection('restructuring', this)">认知重构</a>
+      <a class="nav-link" onclick="showSection('behavioral', this)">行为技术</a>
+      <a class="nav-link" onclick="showSection('regulation', this)">情绪调节</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">工具与练习</div>
+      <a class="nav-link" onclick="showSection('toolbox', this)">工具箱</a>
+      <a class="nav-link" onclick="showSection('practice', this)">场景练习</a>
+    </div>
+  </div>
+  <div class="sidebar-header">
+    <h1>认知行为疗法</h1>
+    <p>想法 · 情绪 · 行为 · 重构</p>
+  </div>
+</aside>
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<main class="main-content">
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview" class="section active">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('overview', this)">体系概览</span></div>
+  <h2>认知行为疗法</h2>
+  <div class="lead">
+    认知行为疗法（Cognitive Behavioral Therapy, CBT）是当今研究证据最充分、应用最广泛的心理治疗方法之一。它的核心命题是：不是事件本身决定了我们的情绪反应，而是我们对事件的<strong>解释和信念</strong>决定了情绪与行为。
+  </div>
+
+  <div class="insight-box">
+    <p>"人不是被事情本身所困扰，而是被其对事情的看法所困扰。"</p>
+    <div class="source">—— 爱比克泰德（CBT 的哲学源头之一）</div>
+  </div>
+
+  <h3>CBT 完整理论架构</h3>
+  <div class="card-grid">
+    <div class="card" onclick="showSection('triangle', document.querySelector('[onclick*=triangle]'))">
+      <div class="card-icon" style="color: var(--accent);">🔺</div>
+      <div class="card-title">认知三角</div>
+      <div class="card-desc">想法、情绪、行为三者互相影响的动态模型，是 CBT 干预的入口。</div>
+    </div>
+    <div class="card" onclick="showSection('automatic', document.querySelector('[onclick*=automatic]'))">
+      <div class="card-icon" style="color: var(--accent-secondary);">⚡</div>
+      <div class="card-title">自动思维</div>
+      <div class="card-desc">情境下快速闪现的内心独白，是情绪反应的直接触发器。</div>
+    </div>
+    <div class="card" onclick="showSection('core-beliefs', document.querySelector('[onclick*=core-beliefs]'))">
+      <div class="card-icon" style="color: var(--accent-tertiary);">🪨</div>
+      <div class="card-title">核心信念</div>
+      <div class="card-desc">关于自我、他人、世界的深层概括化结论，是认知系统的根基。</div>
+    </div>
+    <div class="card" onclick="showSection('distortions', document.querySelector('[onclick*=distortions]'))">
+      <div class="card-icon" style="color: #f87171;">🌀</div>
+      <div class="card-title">认知扭曲</div>
+      <div class="card-desc">系统性的思维错误模式，像变形眼镜一样扭曲现实解读。</div>
+    </div>
+    <div class="card" onclick="showSection('restructuring', document.querySelector('[onclick*=restructuring]'))">
+      <div class="card-icon" style="color: var(--accent);">🔧</div>
+      <div class="card-title">认知重构</div>
+      <div class="card-desc">用证据检验和苏格拉底式提问，将扭曲思维修正为更现实的替代思维。</div>
+    </div>
+    <div class="card" onclick="showSection('behavioral', document.querySelector('[onclick*=behavioral]'))">
+      <div class="card-icon" style="color: var(--accent-tertiary);">🏃</div>
+      <div class="card-title">行为技术</div>
+      <div class="card-desc">行为激活、暴露疗法、问题解决训练，用行动打破恶性循环。</div>
+    </div>
+    <div class="card" onclick="showSection('regulation', document.querySelector('[onclick*=regulation]'))">
+      <div class="card-icon" style="color: var(--accent-secondary);">🧘</div>
+      <div class="card-title">情绪调节</div>
+      <div class="card-desc">情绪觉察、忍受痛苦、正念接纳，发展与情绪健康共处的能力。</div>
+    </div>
+    <div class="card" onclick="showSection('toolbox', document.querySelector('[onclick*=toolbox]'))">
+      <div class="card-icon" style="color: var(--accent);">🧰</div>
+      <div class="card-title">工具箱</div>
+      <div class="card-desc">思维记录表、暴露阶梯、行为激活周表等可直接使用的结构化工具。</div>
+    </div>
+  </div>
+
+  <h3>核心假设</h3>
+  <ul>
+    <li><strong>认知中介：</strong>事件（A）→ 信念/解释（B）→ 情绪与行为反应（C）。改变 B，就能改变 C。</li>
+    <li><strong>思维可觉察：</strong>自动思维虽然快速且隐蔽，但可以通过训练被识别和捕捉。</li>
+    <li><strong>思维可修正：</strong>一旦识别出扭曲的自动思维，就可以用证据检验、逻辑分析和行为实验来修正它。</li>
+    <li><strong>三者互动：</strong>想法、情绪、行为互相影响。改变其中任何一个环节，都能带动整个系统的变化。</li>
+  </ul>
+
+  <h3>发展脉络</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>年代</th><th>人物</th><th>贡献</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1950s</td><td>阿尔伯特·艾利斯</td><td>创立理性情绪行为疗法（REBT），提出 ABC 理论</td></tr>
+      <tr><td>1960s</td><td>阿伦·贝克</td><td>创立认知疗法，提出"自动思维""认知三角""认知扭曲"等核心概念</td></tr>
+      <tr><td>1970s</td><td>唐纳德·梅肯鲍姆</td><td>发展认知行为矫正，强调自我指导和技能训练</td></tr>
+      <tr><td>1990s</td><td>史蒂文·海斯</td><td>发展接纳承诺疗法（ACT），作为 CBT 第三代浪潮的代表</td></tr>
+      <tr><td>2000s+</td><td>众多研究者</td><td>循证医学证实 CBT 对抑郁、焦虑、PTSD、强迫症等疗效显著</td></tr>
+    </tbody>
+  </table>
+
+  <h3>CBT 的三代浪潮</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🧠</div>
+      <div class="card-title">第一代：行为主义</div>
+      <div class="card-desc">关注可观察的行为，通过经典/操作条件反射来改变行为模式。如系统脱敏、暴露疗法。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">💭</div>
+      <div class="card-title">第二代：认知主义</div>
+      <div class="card-desc">加入认知变量。识别自动思维和核心信念，通过认知重构改变情绪反应。贝克和艾利斯的传统 CBT。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌊</div>
+      <div class="card-title">第三代：接纳与正念</div>
+      <div class="card-desc">不直接挑战想法，而是改变与想法的关系。接纳、正念、价值导向。代表：ACT、DBT、MBCT。</div>
+    </div>
+  </div>
+
+  <h3>CBT 与其他疗法的区别</h3>
+  <ul>
+    <li><strong>vs 精神分析：</strong>CBT 关注当下可觉察的思维，不深入童年潜意识冲突；疗程短、结构化、目标导向。</li>
+    <li><strong>vs 人本主义：</strong>CBT 更主动、更技术化；人本主义强调无条件积极关注，CBT 强调具体技能训练。</li>
+    <li><strong>vs 药物治疗：</strong>CBT 教授的是"技能"而非"症状抑制"；复发率通常低于单纯药物治疗。</li>
+  </ul>
+</section>
+
+<!-- ============ COGNITIVE TRIANGLE ============ -->
+<section id="triangle" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('triangle', this)">认知三角</span></div>
+  <h2>认知三角</h2>
+  <div class="lead">
+    认知三角是 CBT 最基础的可视化模型。它描述了<strong>想法（Thoughts）</strong>、<strong>情绪（Feelings）</strong>和<strong>行为（Behaviors）</strong>三者之间互相影响、互为因果的动态关系。
+  </div>
+
+  <div class="triangle-container">
+    <div class="triangle-diagram">
+      <div class="tri-node top">
+        <div class="tri-label">想法 Thoughts</div>
+        <div class="tri-desc">"我肯定搞砸了"<br>"他们不会喜欢我"</div>
+      </div>
+      <div class="tri-node left">
+        <div class="tri-label">情绪 Feelings</div>
+        <div class="tri-desc">焦虑、沮丧<br>羞耻、愤怒</div>
+      </div>
+      <div class="tri-node right">
+        <div class="tri-label">行为 Behaviors</div>
+        <div class="tri-desc">回避、拖延<br>攻击、退缩</div>
+      </div>
+      <div class="tri-arrow a1">↔</div>
+      <div class="tri-arrow a2">↔</div>
+      <div class="tri-arrow a3">↔</div>
+    </div>
+  </div>
+
+  <h3>三角的动态机制</h3>
+  <ul>
+    <li><strong>想法 → 情绪：</strong>对同一事件的解释不同，情绪反应完全不同。"他迟到了"→"他出事了"（担心）vs "他不尊重我"（愤怒）。</li>
+    <li><strong>情绪 → 行为：</strong>焦虑驱动回避，愤怒驱动攻击，抑郁驱动退缩。情绪是行为的直接燃料。</li>
+    <li><strong>行为 → 想法：</strong>回避行为强化了"这件事太可怕了"的信念；成功行动则修正了"我做不到"的预测。</li>
+    <li><strong>恶性循环：</strong>负面想法 → 负面情绪 → 回避行为 → 更多负面证据 → 更坚定的负面想法。</li>
+    <li><strong>良性循环：</strong>质疑想法 → 情绪缓解 → 尝试新行为 → 获得积极经验 → 建立更灵活的思维。</li>
+  </ul>
+
+  <h3>干预的三种入口</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon" style="color: var(--accent);">💭</div>
+      <div class="card-title">从想法入手</div>
+      <div class="card-desc">识别自动思维 → 检验证据 → 生成替代思维。最经典的 CBT 路径。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="color: var(--accent-secondary);">💚</div>
+      <div class="card-title">从情绪入手</div>
+      <div class="card-desc">情绪觉察与命名 → 情绪耐受 → 正念接纳。第三代 CBT 的常用路径。</div>
+    </div>
+    <div class="card">
+      <div class="card-icon" style="color: var(--accent-tertiary);">🏃</div>
+      <div class="card-title">从行为入手</div>
+      <div class="card-desc">行为激活 → 暴露实验 → 问题解决。用行动打破循环，再回头看想法。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AUTOMATIC THOUGHTS ============ -->
+<section id="automatic" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('automatic', this)">自动思维</span></div>
+  <h2>自动思维</h2>
+  <div class="lead">
+    自动思维（Automatic Thoughts）是我们在特定情境下快速闪现的内心独白。它们往往简短、图像化、几乎不被觉察，却对情绪有即时而强烈的影响。识别自动思维，是 CBT 干预的起点。
+  </div>
+
+  <h3>自动思维的特点</h3>
+  <ul>
+    <li><strong>自动化：</strong>像呼吸一样自然发生，不需要刻意思考。</li>
+    <li><strong>快速：</strong>通常在毫秒级产生，早于情绪反应。</li>
+    <li><strong>简短：</strong>往往只是一个词、一个画面或一个断言，而非完整的句子。</li>
+    <li><strong>可信：</strong>因为它们来得太快，我们通常不会质疑它们，而是直接"相信"。</li>
+    <li><strong>情境依赖：</strong>同样的核心信念，在不同情境下会触发不同的自动思维。</li>
+  </ul>
+
+  <h3>情境 → 自动思维 → 反应 链条</h3>
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-num">A</div>
+      <div class="step-title">激活事件</div>
+      <div class="step-sub">收到一封批评邮件</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">B</div>
+      <div class="step-title">自动思维</div>
+      <div class="step-sub">"我能力太差了"</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">C</div>
+      <div class="step-title">情绪反应</div>
+      <div class="step-sub">沮丧、羞耻</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">D</div>
+      <div class="step-title">行为反应</div>
+      <div class="step-sub">回避回复、拖延工作</div>
+    </div>
+  </div>
+
+  <h3>捕捉自动思维的技巧</h3>
+  <ul>
+    <li><strong>情绪追踪法：</strong>当情绪突然变化时（尤其是负面情绪），停下来问自己："刚才我脑中闪过了什么？"</li>
+    <li><strong>倒推法：</strong>从强烈的情绪反应倒推，问自己："要让我产生这种情绪，我必须在想什么？"</li>
+    <li><strong>意象法：</strong>有些自动思维以画面而非文字出现。注意脑中闪过的图像、记忆片段或想象中的场景。</li>
+    <li><strong>角色扮演法：</strong>想象自己回到那个情境，模拟当时的内心独白。</li>
+  </ul>
+
+  <h3>自动思维 vs 核心信念</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>维度</th><th>自动思维</th><th>核心信念</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>意识水平</td><td>通常可觉察</td><td>往往处于无意识层面</td></tr>
+      <tr><td>内容形式</td><td>具体、情境化</td><td>抽象、概括化</td></tr>
+      <tr><td>稳定性</td><td>随情境变化</td><td>跨情境稳定存在</td></tr>
+      <tr><td>例子</td><td>"这次演讲我肯定搞砸"</td><td>"我无能" / "我不值得被爱"</td></tr>
+      <tr><td>改变难度</td><td>相对容易质疑和修正</td><td>需要长期、系统的干预</td></tr>
+    </tbody>
+  </table>
+<div class="insight-box">
+  <p>"自动思维是海面上的波浪，核心信念是海底的暗流。改变波浪只能带来短暂的平静，理解并调整暗流才能带来持久的改变。"</p>
+  <div class="source">—— CBT 的深层工作逻辑</div>
+</div>
+</section>
+
+<!-- ============ CORE BELIEFS ============ -->
+<section id="core-beliefs" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('core-beliefs', this)">核心信念</span></div>
+  <h2>核心信念与图式</h2>
+  <div class="lead">
+    核心信念（Core Beliefs）是关于自我、他人和世界最深层的、概括化的结论。它们通常在童年或青少年时期形成，像一副底色滤镜，决定我们如何解读所有后续经验。CBT 的深层目标，就是从根源上修正这些扭曲的核心信念。
+  </div>
+
+  <h3>三层认知模型</h3>
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-num" style="color: var(--accent-secondary);">深层</div>
+      <div class="step-title">核心信念</div>
+      <div class="step-sub">"我无能" / "世界是危险的"</div>
+    </div>
+    <div class="process-arrow">↓</div>
+    <div class="process-step">
+      <div class="step-num" style="color: var(--accent);">中层</div>
+      <div class="step-title">中间信念</div>
+      <div class="step-sub">"我必须完美才值得被爱"</div>
+    </div>
+    <div class="process-arrow">↓</div>
+    <div class="process-step">
+      <div class="step-num" style="color: var(--accent-tertiary);">表层</div>
+      <div class="step-title">自动思维</div>
+      <div class="step-sub">"这次汇报我肯定搞砸"</div>
+    </div>
+  </div>
+
+  <h3>核心信念的分类</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-secondary);">关于自我</div>
+      <div class="card-desc">
+        <strong>无能类：</strong>"我无能" / "我什么都做不好" / "我不如别人"<br><br>
+        <strong>不可爱类：</strong>"我不值得被爱" / "如果别人了解真正的我，就不会喜欢我"<br><br>
+        <strong>无价值类：</strong>"我没有价值" / "我的存在本身就是负担"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent);">关于他人</div>
+      <div class="card-desc">
+        <strong>不可信类：</strong>"别人会伤害我" / "没有人能真正理解我"<br><br>
+        <strong>苛刻类：</strong>"别人总在评判我" / "人们的赞美都是假的"<br><br>
+        <strong>抛弃类：</strong>"我终究会被抛弃" / "亲密关系不会持久"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">关于世界</div>
+      <div class="card-desc">
+        <strong>危险类：</strong>"世界是危险的" / "坏事随时会发生"<br><br>
+        <strong>不公类：</strong>"世界不公平" / "好人没好报"<br>><br>
+        <strong>不可控类：</strong>"我无法控制生活中发生的事情" / "努力也没用"
+      </div>
+    </div>
+  </div>
+
+  <h3>中间信念：规则、态度与假设</h3>
+  <p>中间信念是核心信念与自动思维之间的桥梁。它们以"规则""态度"和"假设"的形式存在，指导着我们如何应对生活。</p>
+  <table class="data-table">
+    <thead>
+      <tr><th>类型</th><th>核心信念</th><th>中间信念</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>规则</td><td>"我无能"</td><td>"我应该把每件事都做到最好" / "我不应该犯错"</td></tr>
+      <tr><td>态度</td><td>"我不值得被爱"</td><td>"表达需求是可耻的" / "依赖他人是软弱的"</td></tr>
+      <tr><td>假设</td><td>"世界是危险的"</td><td>"如果我放松警惕，坏事就会发生" / "如果我冒险，一定会失败"</td></tr>
+    </tbody>
+  </table>
+
+  <h3>核心信念的识别方法</h3>
+  <ul>
+    <li><strong>向下箭头技术：</strong>不断追问"如果那是真的，意味着什么？"直到触及最深层的恐惧。"他没回我消息" → "他不在乎我" → "我不值得被在乎" → "我没有价值"。</li>
+    <li><strong>主题归纳：</strong>回顾多张思维记录表，寻找自动思维背后的共同主题。如果多数自动思维都围绕"被否定""不够好"，核心信念可能是"我无能"。</li>
+    <li><strong>情绪强度提示：</strong>当情绪反应远超事件实际严重性时，通常意味着核心信念被激活了。</li>
+    <li><strong>早期记忆回溯：</strong>核心信念往往与童年关键事件相关。回忆"你最早什么时候有这种感觉？"</li>
+  </ul>
+
+  <h3>核心信念的修正策略</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">连续体技术</div>
+      <div class="card-desc">将"我无能"的绝对化信念转化为 0-100 的连续谱。列出从"完全无能"到"完全有能力"的各种证据，找到自己真实的位置——通常不是极端的 0 或 100。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">核心信念记录表</div>
+      <div class="card-desc">持续记录支持新信念的证据。如果新信念是"我有能力应对大多数挑战"，每天写下 1-3 个支持这一点的经历，像存钱一样积累。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">行为实验</div>
+      <div class="card-desc">设计小实验直接检验核心信念的预测。"如果我主动求助，真的会被瞧不起吗？"用实际经验修正根深蒂固的假设。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">发展性理解</div>
+      <div class="card-desc">追溯核心信念的形成过程，理解它曾如何在童年环境中"保护"过你。对一个曾被忽视的孩子来说，"我不值得被爱"是一种对现实的适应，而非真理。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COGNITIVE DISTORTIONS ============ -->
+<section id="distortions" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('distortions', this)">认知扭曲</span></div>
+  <h2>认知扭曲</h2>
+  <div class="lead">
+    认知扭曲（Cognitive Distortions）是系统性的思维错误——它们像一副变形的眼镜，让我们习惯性地以不准确、不现实的方式解读现实。识别这些扭曲模式，是认知重构的前提。
+  </div>
+
+  <h3>十二种常见认知扭曲</h3>
+  <p>认知扭曲是大脑在处理信息时走的"思维捷径"。它们曾帮助我们在远古时代快速做出生存判断，但在现代社会中，这些捷径往往导致对现实的系统性误判。以下十二种是最常见、影响最大的扭曲模式。</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">01 · 非黑即白</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">All-or-Nothing Thinking</p>
+        用两极化的方式看待事物，没有中间地带。要么完美，要么失败。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"我减肥破了例，整个计划都毁了。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"真的只有 0% 和 100% 两种状态吗？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">02 · 过度概括</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Overgeneralization</p>
+        基于单一事件得出 broad 结论，常用"总是""从不"等绝对化词汇。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"我又被拒了，注定找不到工作。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"一次事件能代表全部吗？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">03 · 心理过滤</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Mental Filter</p>
+        只关注负面细节，过滤掉所有正面信息，像戴了一副黑色墨镜。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"项目成功了，但我出了个小错，所以是失败的。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"正面和负面的比例到底是多少？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">04 · 否定正面</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Disqualifying the Positive</p>
+        将正面经验贬为"不算数""只是运气"，从而维持负面自我形象。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"这次成功只是运气，换谁都能做到。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"如果这件事发生在朋友身上，我会也说是运气吗？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-light);">05 · 读心术</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Mind Reading</p>
+        在没有证据的情况下坚信自己知道别人在想什么，且通常假设是负面的。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"他没看我，肯定觉得我很无聊。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"我有没有直接问过对方？还有其他解释吗？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-light);">06 · 预言家</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Fortune Telling</p>
+        预测未来会发生坏事，并将其当作已经发生的现实来对待。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"我肯定会搞砸这次面试。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"我真的能预知未来吗？过去的预测准确率是多少？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-light);">07 · 灾难化</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Catastrophizing</p>
+        将小问题放大为灾难性后果，想象最坏的情况必然发生。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"如果这次失败，我一辈子就完了。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"最坏的情况发生的概率有多大？我能承受吗？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-light);">08 · 情绪推理</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Emotional Reasoning</p>
+        把情绪当作事实的证据。"我感觉到了，所以一定是真的。"<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"我觉得内疚，所以我一定做错了什么。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"情绪是信号，但不等于事实。证据在哪里？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">09 · 应该陈述</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Should Statements</p>
+        用"应该""必须"对自己或他人发号施令，忽略现实的复杂性。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"我应该把每件事都做到最好。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"谁规定的'应该'？不做到会怎样？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">10 · 贴标签</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Labeling</p>
+        用极端标签定义自己或他人，将单一行为等同于整体人格。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"我没通过考试，我是个废物。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"一次行为能定义整个人吗？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">11 · 个人化</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Personalization</p>
+        将外部事件过度归因于自己，认为与自己有关。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"同事心情不好，一定是因为我。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"这件事有多少因素与我无关？"
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">12 · 公平谬误</div>
+      <div class="card-desc">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Fallacy of Fairness</p>
+        执着于"世界应该是公平的"，并因此产生怨恨和愤怒。<br><br>
+        <strong style="color: var(--text);">常见表达：</strong>"我付出这么多，理应得到回报。"<br>
+        <strong style="color: var(--accent-tertiary);">检验反问：</strong>"公平是谁定义的？现实和期望必须一致吗？"
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <p>"认知扭曲不是'你在故意想错'，而是你的大脑在试图快速处理信息时走了一条效率优先但准确性受损的捷径。"</p>
+    <div class="source">—— 识别扭曲的关键态度：好奇而非自责</div>
+  </div>
+</section>
+
+<!-- ============ COGNITIVE RESTRUCTURING ============ -->
+<section id="restructuring" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('restructuring', this)">认知重构</span></div>
+  <h2>认知重构</h2>
+  <div class="lead">
+    认知重构（Cognitive Restructuring）是 CBT 的核心技术。它不是"用积极想法替换消极想法"的盲目乐观，而是<strong>用更现实、更灵活的思维方式替代扭曲的自动思维</strong>——让想法与证据对齐。
+  </div>
+
+  <h3>苏格拉底式提问</h3>
+  <p>通过一系列系统性的问题，引导自己检验自动思维的有效性。这些问题不带有评判性，而是像科学家检验假设一样客观。</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>问题类型</th><th>示例</th><th>目的</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>证据检验</td><td>"支持这个想法的证据是什么？反对的证据呢？"</td><td>打破选择性注意</td></tr>
+      <tr><td>替代解释</td><td>"还有没有其他方式来解释这件事？"</td><td>打破非黑即白</td></tr>
+      <tr><td>去灾难化</td><td>"如果最坏的情况发生了，我能怎么应对？"</td><td>降低威胁感</td></tr>
+      <tr><td>比例评估</td><td>"这件事在十年后的我看来会有多重要？"</td><td>缩小心理滤镜</td></tr>
+      <tr><td>实用检验</td><td>"相信这个想法对我有帮助吗？"</td><td>评估想法的功能性</td></tr>
+      <tr><td>视角转换</td><td>"如果我的朋友遇到这种情况，我会怎么对他说？"</td><td>打破双重标准</td></tr>
+      <tr><td>概率评估</td><td>"这件事发生的概率真的如我想的那么高吗？"</td><td>矫正预言家谬误</td></tr>
+    </tbody>
+  </table>
+
+  <h3>认知重构五步法</h3>
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div class="step-title">识别情境</div>
+      <div class="step-sub">发生了什么？何时何地？</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div class="step-title">捕捉自动思维</div>
+      <div class="step-sub">脑中闪过了什么？</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <div class="step-title">命名情绪</div>
+      <div class="step-sub">强度 0-100%</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <div class="step-title">检验与质疑</div>
+      <div class="step-sub">证据？替代解释？</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">5</div>
+      <div class="step-title">生成替代思维</div>
+      <div class="step-sub">重新评估情绪强度</div>
+    </div>
+  </div>
+
+  <h3>替代思维的标准</h3>
+  <ul>
+    <li><strong>基于证据：</strong>不是盲目乐观，而是与可获得的证据一致。</li>
+    <li><strong>比例适当：</strong>反应强度与事件实际重要性相匹配。</li>
+    <li><strong>功能导向：</strong>这种想法能帮助我采取有效行动吗？</li>
+    <li><strong>自我慈悲：</strong>对朋友会这样说吗？如果是，对自己也这样说。</li>
+    <li><strong>承认不确定性：</strong>"我不知道结果会怎样，但我可以应对。"</li>
+  </ul>
+
+  <h3>核心信念的深层重构</h3>
+  <p>自动思维可以通过单次思维记录来修正，但核心信念（如"我不值得被爱""我无能""世界是危险的"）需要更系统的干预：</p>
+  <ul>
+    <li><strong>发展性理解：</strong>追溯核心信念的形成过程（通常是童年经历），理解它曾如何"保护"过你。</li>
+    <li><strong>连续体技术：</strong>将"我无能"的绝对信念转化为"我在某些方面擅长，在某些方面还在学习"的连续谱。</li>
+    <li><strong>行为实验：</strong>设计小实验来直接检验核心信念的预测。"如果我主动发起一次对话，真的会被人拒绝吗？"</li>
+    <li><strong>核心信念记录表：</strong>持续记录支持新信念的证据，像存钱一样积累新的自我叙事。</li>
+  </ul>
+</section>
+
+<!-- ============ BEHAVIORAL TECHNIQUES ============ -->
+<section id="behavioral" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('behavioral', this)">行为技术</span></div>
+  <h2>行为技术</h2>
+  <div class="lead">
+    CBT 不是"想通了就行"——改变行为是打破恶性循环的关键杠杆。当行为改变后，个体获得新的经验证据，这些证据反过来修正想法和情绪。行为技术是 CBT 中"用行动说话"的部分。
+  </div>
+
+  <h3>行为激活 Activity Scheduling</h3>
+  <p>针对抑郁的核心技术。抑郁往往伴随行为退缩（社交减少、活动停止、昼夜颠倒），而退缩又强化了"我什么都做不了"的信念。</p>
+  <ul>
+    <li><strong>活动监测：</strong>记录一周内的所有活动及其带来的愉悦感（P）和掌控感（M），评分 0-10。</li>
+    <li><strong>愉悦事件安排：</strong>主动在日程中插入过去能带来愉悦感的活动，即使现在"没心情"。</li>
+    <li><strong>分级任务：</strong>将大任务分解为极小、极具体的步骤。不是"整理房间"，而是"把床上的三件衬衫叠好"。</li>
+    <li><strong>行为实验：</strong>"如果我今天出门散步 15 分钟，心情真的不会好转吗？"——用行为直接检验负面预测。</li>
+  </ul>
+
+  <h3>暴露疗法 Exposure</h3>
+  <p>针对焦虑障碍的核心技术。焦虑的维持机制是"回避"——回避暂时降低焦虑，但长期强化了"这件事太危险了"的信念。</p>
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div class="step-title">建立恐惧阶梯</div>
+      <div class="step-sub">列出所有相关情境，按焦虑程度 0-100 排序</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div class="step-title">从低到高</div>
+      <div class="step-sub">从焦虑 30-40 的情境开始</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <div class="step-title">重复暴露</div>
+      <div class="step-sub">同一情境反复面对，直到焦虑自然下降</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <div class="step-title">逐级上升</div>
+      <div class="step-sub">完成一级后再进入下一级</div>
+    </div>
+  </div>
+
+  <h3>暴露的关键原则</h3>
+  <ul>
+    <li><strong>不逃避：</strong>在焦虑峰值时坚持不逃离，让焦虑自然消退（ habituation ）。</li>
+    <li><strong>不安全感行为：</strong>识别并放弃在暴露中使用的"拐杖"（如紧握手机、不断道歉、提前准备过度）。</li>
+    <li><strong>想象暴露 vs 现场暴露：</strong>想象暴露适合 PTSD 的创伤记忆处理；现场暴露适合社交焦虑、特定恐惧。</li>
+    <li><strong>内感受暴露：</strong>针对惊恐障碍，故意引发焦虑的身体症状（如快速呼吸、转圈），打破"心悸 = 心脏病发作"的联结。</li>
+  </ul>
+
+  <h3>问题解决训练</h3>
+  <p>将模糊的焦虑转化为可操作的问题，然后系统性地生成和评估解决方案。</p>
+  <ol>
+    <li><strong>问题定义：</strong>用具体、可测量的方式描述问题。</li>
+    <li><strong>头脑风暴：</strong>不加评判地生成所有可能的解决方案。</li>
+    <li><strong>评估方案：</strong>对每个方案的优缺点、可行性进行评分。</li>
+    <li><strong>选择最佳：</strong>选择综合评分最高的方案。</li>
+    <li><strong>制定计划：</strong>确定具体步骤、时间表、所需资源。</li>
+    <li><strong>执行与评估：</strong>执行计划，评估结果，必要时调整。</li>
+  </ol>
+</section>
+
+<!-- ============ EMOTIONAL REGULATION ============ -->
+<section id="regulation" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('regulation', this)">情绪调节</span></div>
+  <h2>情绪调节</h2>
+  <div class="lead">
+    情绪调节不是"压抑情绪"或"永远保持积极"，而是发展出与情绪健康共处的能力——能够觉察、命名、理解、表达情绪，并在情绪过载时有技能让自己恢复稳定。
+  </div>
+
+  <h3>情绪觉察与命名</h3>
+  <p>研究表明，仅仅是为情绪贴上准确的标签（Affect Labeling），就能降低杏仁核的激活强度。"我很焦虑"比"我感觉很糟"更能降低生理唤醒。</p>
+  <ul>
+    <li><strong>情绪粒度：</strong>区分"愤怒"和"委屈""被侵犯""失望"的差异。粒度越高，调节能力越强。</li>
+    <li><strong>身体扫描：</strong>情绪首先表现在身体上。胸闷？手心出汗？肩膀紧绷？胃部的下坠感？身体信号往往比意识更早觉察到情绪。</li>
+    <li><strong>情绪温度计：</strong>用 0-100 的刻度量化情绪强度，帮助追踪变化趋势。</li>
+  </ul>
+
+  <h3>忍受痛苦 Distress Tolerance</h3>
+  <p>来自辩证行为疗法（DBT）的技术，被整合进第三代 CBT。核心原则是：有些痛苦无法立即消除，但我们可以学会与痛苦共处而不做出破坏性行为。</p>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">STOP 技术</div>
+      <div class="card-desc"><strong>S</strong>top 停下 → <strong>T</strong>ake a breath 深呼吸 → <strong>O</strong>bserve 观察 → <strong>P</strong>roceed 继续。在冲动和行为之间插入一个暂停。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">TIPP 技术</div>
+      <div class="card-desc"><strong>T</strong>emperature 冷水洗脸 → <strong>I</strong>ntense exercise 剧烈运动 → <strong>P</strong>aced breathing  paced 呼吸 → <strong>P</strong>rogressive relaxation 渐进放松。快速降低生理唤醒。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">分散注意力</div>
+      <div class="card-desc">用强烈的感觉刺激转移注意力：嚼冰块、洗冷水澡、闻强烈气味、听节奏强烈的音乐。不是逃避，而是给自己争取冷静的时间。</div>
+    </div>
+  </div>
+
+  <h3>正念与接纳</h3>
+  <p>第三代 CBT（ACT、MBCT、DBT）的核心贡献是：不是所有负面想法都需要被"纠正"，有时候我们需要的是改变与想法的关系。</p>
+  <ul>
+    <li><strong>认知解离 Cognitive Defusion：</strong>将想法视为"只是想法"，而非事实。"我注意到我有一个想法：'我很失败'"——而不是"我很失败"。</li>
+    <li><strong>河流上的叶子：</strong>想象自己坐在河边，想法像叶子一样顺流而下。不抓住，不推开，只是观看。</li>
+    <li><strong>白云与天空：</strong>想法是白云，心智是天空。白云来来去去，天空始终存在。</li>
+    <li><strong>接纳不是认同：</strong>接纳"我现在感到焦虑"，不等于认同"焦虑是对的"或"我什么都做不了"。接纳是停止与现实的对抗。</li>
+  </ul>
+
+  <div class="insight-box">
+    <p>"你无法阻止波浪，但你可以学会冲浪。"</p>
+    <div class="source">—— 乔·卡巴金（正念减压疗法 MBSR 创始人）</div>
+  </div>
+</section>
+
+<!-- ============ TOOLBOX ============ -->
+<section id="toolbox" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('toolbox', this)">工具箱</span></div>
+  <h2>工具箱</h2>
+  <div class="lead">
+    掌握 CBT 的关键在于持续的自我监测和结构化记录。以下三个工具是 CBT 临床实践中使用频率最高、效果最明确的自助工具。
+  </div>
+
+  <h3>思维记录表 Thought Record</h3>
+  <p>思维记录表是 CBT 的"基本功"，用于系统性地捕捉和重构自动思维。建议在前几周内每天填写 1-3 次。</p>
+  <table class="data-table">
+    <thead>
+      <tr><th>栏目</th><th>内容说明</th><th>示例</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>情境</strong></td><td>发生了什么？何时何地？</td><td>下午开会时，领导点名批评了我的方案</td></tr>
+      <tr><td><strong>自动思维</strong></td><td>脑中闪过了什么？可信度 0-100%</td><td>"我能力太差了，不适合这个岗位"（90%）</td></tr>
+      <tr><td><strong>情绪</strong></td><td>什么情绪？强度 0-100%</td><td>沮丧 80%，羞耻 70%，焦虑 60%</td></tr>
+      <tr><td><strong>认知扭曲</strong></td><td>属于哪种扭曲类型？</td><td>贴标签、过度概括、读心术</td></tr>
+      <tr><td><strong>支持证据</strong></td><td>这个想法有事实支持吗？</td><td>方案确实有一处数据错误</td></tr>
+      <tr><td><strong>反对证据</strong></td><td>有什么事实与这个想法矛盾？</td><td>过去三个月的方案都被采纳了；领导平时认可我的工作</td></tr>
+      <tr><td><strong>替代思维</strong></td><td>更平衡、更现实的解释是什么？</td><td>"这个方案有一处需要改进，不代表我能力差。我可以修正后重新提交。"</td></tr>
+      <tr><td><strong>重新评估</strong></td><td>现在情绪强度如何？替代思维可信度？</td><td>沮丧 30%，替代思维可信度 80%</td></tr>
+    </tbody>
+  </table>
+
+  <h3>暴露阶梯表 Exposure Hierarchy</h3>
+  <p>用于系统性地面对恐惧情境。将目标分解为 10-15 个阶梯，从焦虑程度最低的开始。</p>
+  <table class="data-table">
+    <thead>
+      <tr><th>层级</th><th>情境</th><th>预测焦虑</th><th>实际焦虑</th><th>完成日期</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>给陌生同事发一条工作消息</td><td>20</td><td>15</td><td>周一</td></tr>
+      <tr><td>2</td><td>在 3 人会议上发言 1 分钟</td><td>35</td><td></td><td></td></tr>
+      <tr><td>3</td><td>主动约同事吃午饭</td><td>50</td><td></td><td></td></tr>
+      <tr><td>4</td><td>在部门会议上做 5 分钟汇报</td><td>70</td><td></td><td></td></tr>
+      <tr><td>5</td><td>在全公司大会上做汇报</td><td>90</td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>行为激活周表</h3>
+  <p>记录每天的活动，并为每项活动标注愉悦感（Pleasure, 0-10）和掌控感（Mastery, 0-10）。目标是识别"高 P/M"活动的缺失，并有计划地增加它们。</p>
+
+  <h3>情绪温度计</h3>
+  <p>在一天中定时（如早中晚）评估核心情绪（焦虑/抑郁/愤怒）的强度，追踪变化趋势和治疗进展。</p>
+  <div class="tag-cloud">
+    <span class="tag">0 = 无感觉</span>
+    <span class="tag">20 = 轻微</span>
+    <span class="tag">40 = 中度</span>
+    <span class="tag">60 = 明显</span>
+    <span class="tag">80 = 强烈</span>
+    <span class="tag">100 = 无法忍受</span>
+  </div>
+</section>
+
+<!-- ============ PRACTICE ============ -->
+<section id="practice" class="section">
+  <div class="breadcrumb">认知疗法 / <span onclick="showSection('practice', this)">场景练习</span></div>
+  <h2>场景练习</h2>
+  <div class="lead">
+    以下场景模拟了日常生活中常见的认知扭曲和情绪反应。请选择最符合 CBT 原则的应对方式。
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习一：识别认知扭曲</div>
+    <div class="scenario-context">你发了一封重要邮件，对方一整天都没回复。你的脑中闪过："他肯定觉得我很蠢，不想理我。"</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "我肯定做错了什么，不然他不会不回我。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 B</div>
+        "他就是个不尊重人的人，以后不跟他合作了。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 C</div>
+        "他没回复邮件（事实），我感到焦虑（情绪）。'他觉得我蠢'是一个读心术的猜测。还有别的解释吗？他可能很忙、可能没收到、可能在等更多信息。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是情绪推理（"我感觉焦虑，所以一定是我的错"）。B 是贴标签和过度概括。C 是完整的 CBT 反应：区分事实与猜测、识别读心术、生成替代解释。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习二：认知重构</div>
+    <div class="scenario-context">你在一次面试中表现得不够理想，回家后的自动思维是："我总是把事情搞砸，我永远不会找到好工作了。"</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "别想了，下次努力就行。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 B</div>
+        "'总是搞砸'——这是真的吗？过去三个月我面试了五家，两家进入了终面。'永远不会找到'——这是预言家思维。这次不理想的原因是准备时间不足，我可以调整策略再试。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 C</div>
+        "算了，我就是这样的人，接受现实吧。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是压抑，没有处理自动思维。C 是习得性无助。B 是标准的认知重构：用证据检验"总是"的概括，识别预言家思维，生成基于事实的替代解释，并提出可行动的调整策略。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习三：行为实验</div>
+    <div class="scenario-context">你害怕在社交场合中被拒绝，因此一直回避聚会。核心信念是："如果我主动跟人说话，一定会被冷落。"</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "等我想通了再去，现在还没准备好。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 B</div>
+        "我的预测是'一定会被冷落'。设计一个实验：下周聚会中，主动跟两个不太熟的人打招呼，观察实际结果。如果有一个人的回应是正面的或中性的，就说明'一定'是错误的。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 C</div>
+        "我要逼自己去，必须克服恐惧。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是继续回避，强化了核心信念。C 是"应该陈述"，可能引发二次焦虑。B 是标准的行为实验设计：明确预测、设计可检验的行动、设定成功标准（打破"一定"的绝对化），用实际经验来修正信念。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习四：情绪调节</div>
+    <div class="scenario-context">深夜，你因焦虑无法入睡，脑中不断回放着白天的一个失误，心跳加速，肌肉紧绷。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "我必须立刻停止这些想法，不然明天就完了。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 B</div>
+        "我现在焦虑水平很高。先用 4-7-8 呼吸法降低生理唤醒：吸气 4 秒，屏息 7 秒，呼气 8 秒，重复 4 次。然后承认'我现在有焦虑的想法'，但不卷入内容，把注意力放在呼吸的体感上。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 C</div>
+        "干脆不睡了，起来把白天的事彻底想清楚。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是"应该陈述"，与焦虑对抗会加剧它。C 是行为激活的误用，在深夜过度思考会强化焦虑循环。B 是正确的情绪调节：先用生理技术（呼吸法）降低唤醒，再用正念解离（承认但不卷入），将注意力锚定在身体感受而非思维内容上。
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-top: 32px;">
+    <p>"改变思维不是一蹴而就的顿悟，而是一场持续的、温和的、对自己充满好奇的对话。"</p>
+    <div class="source">—— CBT 的学习态度：科学家对待假设，而非战士对待敌人</div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  document.querySelector('.sidebar').classList.remove('open');
+}
+
+function revealAnswer(btn, isCorrect) {
+  const card = btn.closest('.scenario-card');
+  const buttons = card.querySelectorAll('.option-btn');
+  const explanation = card.querySelector('.explanation');
+
+  buttons.forEach(b => {
+    b.classList.add('revealed');
+    if (b === btn) {
+      b.classList.add(isCorrect ? 'correct' : 'incorrect');
+    } else if (b.onclick.toString().includes('true')) {
+      b.classList.add('correct');
+    } else {
+      b.classList.add('incorrect');
+    }
+    b.onclick = null;
+    b.style.cursor = 'default';
+  });
+
+  explanation.classList.add('show');
+}
+</script>
+<script>
+const nav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme');
+const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+}
+
+if (savedTheme) {
+  applyTheme(savedTheme);
+} else if (prefersLight) {
+  applyTheme('light');
+}
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  applyTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+</script>
+
+</body>
+</html>

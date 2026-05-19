@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>非暴力沟通 · 系统学习指南</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: radial-gradient(ellipse at 15% 0%, rgba(212,163,115,0.06) 0%, transparent 55%),
+                  radial-gradient(ellipse at 85% 100%, rgba(95,138,124,0.04) 0%, transparent 50%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Typography */
+    h1, h2, h3, .display-font {
+      font-family: 'Noto Serif SC', 'Crimson Pro', 'Songti SC', serif;
+      font-weight: 700;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0;
+      width: 300px; height: 100vh;
+      background: linear-gradient(180deg, var(--bg-elevated), var(--bg));
+      border-right: 1px solid var(--border);
+      z-index: 100;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* sidebar-header layout handled by shared/styles.css */
+
+    .sidebar-header h1 {
+      font-size: 22px;
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .sidebar-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-section { margin-bottom: 10px; }
+
+    .nav-section-title {
+      padding: 12px 32px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 10px 32px 10px 40px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      border-left: 3px solid transparent;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text);
+      background: rgba(224,122,95,0.06);
+      border-left-color: var(--accent);
+    }
+
+    /* Main */
+    .main-content {
+      margin-left: 300px;
+      min-height: 100vh;
+    }
+
+    .section {
+      display: none;
+      padding: 56px 72px;
+      max-width: 920px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: 1px;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 40px 0 18px;
+      color: var(--accent-light);
+      padding-left: 18px;
+      border-left: 3px solid var(--accent);
+    }
+
+    h4 {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 28px 0 12px;
+      color: var(--accent-secondary);
+      font-family: 'Noto Serif SC', serif;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+      font-size: 16.5px;
+      line-height: 1.85;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.9;
+      margin-bottom: 32px;
+      padding: 24px 28px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--accent);
+      font-weight: 400;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+      margin: 28px 0;
+    }
+
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg), 0 0 60px rgba(224,122,95,0.06);
+      border-color: rgba(224,122,95,0.25);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-number {
+      font-family: 'Crimson Pro', serif;
+      font-size: 42px;
+      font-weight: 400;
+      line-height: 1;
+      color: var(--text-muted);
+      opacity: 0.4;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Process Flow */
+    .process-flow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 32px 0;
+      padding: 28px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .process-step {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 18px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .process-step:hover {
+      background: rgba(224,122,95,0.06);
+      border-color: rgba(224,122,95,0.2);
+      transform: translateY(-3px);
+    }
+
+    .process-step .step-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .process-step .step-title {
+      font-family: 'Noto Serif SC', serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .process-step .step-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .process-arrow {
+      color: var(--text-muted);
+      font-size: 20px;
+      font-family: 'Crimson Pro', serif;
+    }
+
+    /* Comparison / Before-After */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .compare-col {
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      padding: 24px;
+      border-top: 3px solid;
+    }
+
+    .compare-col.negative { border-top-color: #c0392b; }
+    .compare-col.positive { border-top-color: var(--accent-secondary); }
+
+    .compare-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .compare-col.negative .compare-label { color: #c0392b; }
+    .compare-col.positive .compare-label { color: var(--accent-secondary); }
+
+    .compare-col p {
+      font-size: 15.5px;
+      margin-bottom: 10px;
+      color: var(--text-secondary);
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 14px;
+    }
+
+    .data-table th {
+      background: var(--bg-hover);
+      color: var(--accent-light);
+      padding: 14px 18px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      font-family: 'Noto Serif SC', serif;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+      font-size: 15px;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(224,122,95,0.03);
+      color: var(--text);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 12px 0 12px 28px;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    li::marker {
+      color: var(--accent);
+    }
+
+    /* Tags */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .tag {
+      font-size: 14px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+
+    .tag:hover {
+      background: rgba(224,122,95,0.1);
+      border-color: rgba(224,122,95,0.3);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .tag.category-feeling { border-color: rgba(224,122,95,0.25); color: var(--accent-light); }
+    .tag.category-need { border-color: rgba(42,157,143,0.25); color: var(--accent-secondary); }
+
+    /* Quote / Insight Box */
+    .insight-box {
+      background: linear-gradient(135deg, rgba(224,122,95,0.08), rgba(42,157,143,0.05));
+      border: 1px solid rgba(224,122,95,0.15);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .insight-box::before {
+      content: '"';
+      position: absolute;
+      top: 8px; left: 16px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 64px;
+      color: var(--accent);
+      opacity: 0.15;
+      line-height: 1;
+    }
+
+    .insight-box p {
+      margin: 0;
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.9;
+    }
+
+    .insight-box .source {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Scenario Practice */
+    .scenario-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .scenario-card:hover {
+      border-color: rgba(233,196,106,0.2);
+    }
+
+    .scenario-title {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-tertiary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scenario-context {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .scenario-options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      color: var(--text-secondary);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-size: 14px;
+      line-height: 1.6;
+      font-family: inherit;
+    }
+
+    .option-btn:hover {
+      background: rgba(224,122,95,0.06);
+      border-color: rgba(224,122,95,0.25);
+      color: var(--text);
+    }
+
+    .option-btn.revealed.correct {
+      background: rgba(42,157,143,0.1);
+      border-color: var(--accent-secondary);
+      color: var(--text);
+    }
+
+    .option-btn.revealed.incorrect {
+      background: rgba(192,57,43,0.08);
+      border-color: rgba(192,57,43,0.3);
+      opacity: 0.6;
+    }
+
+    .option-btn .label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .option-btn.revealed.correct .label { color: var(--accent-secondary); }
+    .option-btn.revealed.incorrect .label { color: #c0392b; }
+
+    .explanation {
+      display: none;
+      margin-top: 16px;
+      padding: 20px;
+      background: rgba(42,157,143,0.05);
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-secondary);
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .explanation.show { display: block; animation: slideUp 0.4s ease; }
+
+    /* Mobile */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .section { padding: 80px 28px 48px; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .process-flow { flex-direction: column; }
+      .process-arrow { transform: rotate(90deg); }
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb span {
+      color: var(--accent);
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .breadcrumb span:hover {
+      color: var(--accent-light);
+    }
+    .hidden { display: none !important; }
+  </style>
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+  :root {
+    --accent: #d4a373; --accent-light: #e9c46a;
+    --accent-secondary: #5f8a7c; --accent-tertiary: #7c8fa3;
+  }
+  </style>
+  
+</head>
+<body>
+
+
+
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">M</span>
+    心界 MindSphere
+  </a>
+  <div class="nav-links">
+    <a href="mbti.html">MBTI人格类型</a>
+    <a href="nvc.html" class="active">非暴力沟通</a>
+    <a href="cbt.html">认知疗法</a>
+    <a href="first_principles.html">第一性原理</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-scroll">
+    <div class="nav-section">
+      <div class="nav-section-title">理论基础</div>
+      <a class="nav-link active" onclick="showSection('overview', this)">体系概览</a>
+      <a class="nav-link" onclick="showSection('four-elements', this)">四要素框架</a>
+      <a class="nav-link" onclick="showSection('alienation', this)">异化沟通</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">实践方法</div>
+      <a class="nav-link" onclick="showSection('observation', this)">观察与评论</a>
+      <a class="nav-link" onclick="showSection('feelings', this)">感受与想法</a>
+      <a class="nav-link" onclick="showSection('needs', this)">需要与请求</a>
+      <a class="nav-link" onclick="showSection('empathy', this)">同理倾听</a>
+      <a class="nav-link" onclick="showSection('expression', this)">诚实表达</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">工具与练习</div>
+      <a class="nav-link" onclick="showSection('toolbox', this)">词汇与清单</a>
+      <a class="nav-link" onclick="showSection('practice', this)">场景练习</a>
+    </div>
+  </div>
+  <div class="sidebar-header">
+    <h1>非暴力沟通</h1>
+    <p>观察 · 感受 · 需要 · 请求</p>
+  </div>
+</aside>
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<main class="main-content">
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview" class="section active">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('overview', this)">体系概览</span></div>
+  <h2>非暴力沟通</h2>
+  <div class="lead">
+    非暴力沟通（Nonviolent Communication，NVC）由美国心理学家马歇尔·卢森堡（Marshall Rosenberg）于1960年代发展而来。它是一套关于如何诚实表达自己、如何同理倾听他人的系统性方法论。NVC 的核心理念是：所有人的行为，都是为了满足某种深层需要。
+  </div>
+
+  <div class="insight-box">
+    <p>"语言是窗，或者是墙。它审判我们，或令我们自由。"</p>
+    <div class="source">—— 马歇尔·卢森堡</div>
+  </div>
+
+  <h3>NVC 的深层假设</h3>
+  <ul>
+    <li><strong>人本善：</strong>每个人天生乐于由衷地给予。暴力源于未被满足的需要和习得性的沟通模式，而非人性本质。</li>
+    <li><strong>共同需要：</strong>无论文化、身份、立场多么不同，人类共享同一套基本需要（安全、归属、尊重、自主、意义等）。</li>
+    <li><strong>策略冲突，非需要冲突：</strong>冲突双方的需要本身极少矛盾，矛盾的是满足需要的策略。</li>
+    <li><strong>回应的能力：</strong>一旦人们意识到彼此的需要，就总能找到满足双方的策略。</li>
+  </ul>
+
+  <h3>核心公式：四要素流程</h3>
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-icon">👁</div>
+      <div class="step-title">观察</div>
+      <div class="step-sub">Observation</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-icon">💚</div>
+      <div class="step-title">感受</div>
+      <div class="step-sub">Feeling</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-icon">🌱</div>
+      <div class="step-title">需要</div>
+      <div class="step-sub">Need</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-icon">🤝</div>
+      <div class="step-title">请求</div>
+      <div class="step-sub">Request</div>
+    </div>
+  </div>
+
+  <h3>两种应用模式</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-number">01</div>
+      <div class="card-title">诚实表达</div>
+      <div class="card-desc">当我们自己处于痛苦、不满或想要提出诉求时，用四要素清晰而不带指责地表达自己。</div>
+    </div>
+    <div class="card">
+      <div class="card-number">02</div>
+      <div class="card-title">同理倾听</div>
+      <div class="card-desc">当他人处于痛苦或对我们表达不满时，放下自己的立场和辩解，全然地倾听对方的观察、感受和需要。</div>
+    </div>
+  </div>
+
+  <h3>学习路径</h3>
+  <p>掌握 NVC 不是背诵公式，而是培养一种新的意识倾向——在任何沟通中，先暂停评判，转向对人的需要的关注。建议按以下路径学习：</p>
+  <ol>
+    <li>先理解<strong>四要素</strong>各自的含义和边界（尤其是"观察"与"评论"的区分）</li>
+    <li>识别生活中常见的<strong>异化沟通方式</strong>，意识到自己何时在使用它们</li>
+    <li>扩充<strong>感受词汇</strong>和<strong>需要清单</strong>，提升自我觉察的精度</li>
+    <li>通过<strong>场景练习</strong>，将 NVC 从知识转化为肌肉记忆</li>
+    <li>在生活中践行<strong>诚实表达</strong>和<strong>同理倾听</strong>，接受过程中的笨拙与反复</li>
+  </ol>
+</section>
+
+<!-- ============ FOUR ELEMENTS ============ -->
+<section id="four-elements" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('four-elements', this)">四要素框架</span></div>
+  <h2>四要素框架</h2>
+  <div class="lead">
+    NVC 的所有表达和倾听都围绕四个要素展开。这不是一个机械的填词游戏，而是一个由内而外的意识转换过程——从"评判与指责"转向"觉察与连接"。
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-number" style="color: var(--accent);">01</div>
+      <div class="card-title">观察 Observation</div>
+      <div class="card-desc">只陈述事实，不夹杂任何评价。如摄像机般记录"发生了什么"，而非"我觉得这意味着什么"。</div>
+    </div>
+    <div class="card">
+      <div class="card-number" style="color: var(--accent-light);">02</div>
+      <div class="card-title">感受 Feeling</div>
+      <div class="card-desc">表达此刻的情绪状态（如伤心、焦虑、宽慰），而非对他人的评判（如"我觉得被背叛了"）。</div>
+    </div>
+    <div class="card">
+      <div class="card-number" style="color: var(--accent-secondary);">03</div>
+      <div class="card-title">需要 Need</div>
+      <div class="card-desc">识别感受背后的深层需要。所有负面感受都指向某种未被满足的需要（安全、尊重、自主等）。</div>
+    </div>
+    <div class="card">
+      <div class="card-number" style="color: var(--accent-tertiary);">04</div>
+      <div class="card-title">请求 Request</div>
+      <div class="card-desc">提出具体、正向、可立即执行的行动请求，而非抽象的要求或命令。</div>
+    </div>
+  </div>
+
+  <h3>完整句式模板</h3>
+  <div class="insight-box">
+    <p>"当我看到/听到……（观察），我感到……（感受），因为我需要/看重……（需要），你是否愿意……（请求）？"</p>
+  </div>
+
+  <h3>关键原则</h3>
+  <ul>
+    <li><strong>四要素不是必须说全：</strong>有时候只说"我现在有点难过，因为我需要被理解"就已经足够。</li>
+    <li><strong>顺序可以调整：</strong>真实沟通中，可以穿插、重复、回溯某个要素。重要的是意识完整，而非句式完整。</li>
+    <li><strong>意图比措辞更重要：</strong>如果内心充满指责，即便套用了 NVC 句式，对方感受到的仍然是评判。</li>
+    <li><strong>对自己也适用：</strong>NVC 首先是自我对话的工具。用四要素觉察自己的内在状态，是向他人表达的前提。</li>
+  </ul>
+
+  <h3>常见误区</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>误区</th><th>问题</th><th>修正</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>把 NVC 当"话术"</td><td>机械套用句式，内心仍充满评判</td><td>先处理自己的意图，再组织语言</td></tr>
+      <tr><td>四要素必须一次说完</td><td>冗长、生硬，像在做报告</td><td>自然、简短，必要时只用一个要素</td></tr>
+      <tr><td>隐藏请求作为要求</td><td>"我希望你能……"后面不接受"不"</td><td>真正的请求允许被拒绝</td></tr>
+      <tr><td>跳过感受直达需要</td><td>"我需要你准时"——这不是需要，是策略</td><td>需要是抽象普遍的（如尊重、可靠）</td></tr>
+      <tr><td>用"我觉得"代替感受</td><td>"我觉得你不重视我"——这是想法/评判</td><td>"我感到失落"——这才是感受</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ OBSERVATION ============ -->
+<section id="observation" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('observation', this)">观察</span></div>
+  <h2>观察与评论</h2>
+  <div class="lead">
+    观察是非暴力沟通的第一步，也是最容易被混淆的一步。我们习惯于将观察与评论混为一谈——"你总是迟到"不是观察，而是评论。这种混淆会立即触发对方的防御心理。
+  </div>
+
+  <h3>核心区分</h3>
+  <div class="compare-grid">
+    <div class="compare-col negative">
+      <div class="compare-label">评论（诱发防御）</div>
+      <p>"你从来不听我说话。"</p>
+      <p>"你太自私了。"</p>
+      <p>"他能力不行。"</p>
+      <p>"这个项目一团糟。"</p>
+    </div>
+    <div class="compare-col positive">
+      <div class="compare-label">观察（基于事实）</div>
+      <p>"刚才我讲话时，你看了三次手机。"</p>
+      <p>"今天下午的会议，你迟到了二十分钟。"</p>
+      <p>"这个月的报告，截止日期后三天才提交。"</p>
+      <p>"过去两周，计划中的三次迭代只完成了一次。"</p>
+    </div>
+  </div>
+
+  <h3>识别评论的关键词</h3>
+  <p>以下词汇出现时，往往意味着你正在发表评论而非观察：</p>
+  <div class="tag-cloud">
+    <span class="tag">总是</span>
+    <span class="tag">从不</span>
+    <span class="tag">经常</span>
+    <span class="tag">很少</span>
+    <span class="tag">每次</span>
+    <span class="tag">一直</span>
+    <span class="tag">太……</span>
+    <span class="tag">很……</span>
+    <span class="tag">非常</span>
+    <span class="tag">自私</span>
+    <span class="tag">懒惰</span>
+    <span class="tag">不负责任</span>
+    <span class="tag">能力差</span>
+  </div>
+
+  <h3>练习：将评论转化为观察</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>原始评论</th><th>转化后的观察</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"你总是把脏盘子留在水槽里。"</td><td>"这周有三天，我早上在水槽里看到前一天的脏盘子。"</td></tr>
+      <tr><td>"他根本不关心团队。"</td><td>"昨天的站会上，当小李提出阻塞问题时，他继续看自己的电脑屏幕。"</td></tr>
+      <tr><td>"你太敏感了。"</td><td>"刚才我说完那句话后，你沉默了大约三十秒，然后离开了房间。"</td></tr>
+      <tr><td>"这个方案太烂了。"</td><td>"方案中没有包含风险评估部分，预算也比我们约定的上限高出40%。"</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <p>"不带评论的观察是人类智力的最高形式。"</p>
+    <div class="source">—— 克里希那穆提（被卢森堡多次引用）</div>
+  </div>
+</section>
+
+<!-- ============ FEELINGS ============ -->
+<section id="feelings" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('feelings', this)">感受</span></div>
+  <h2>感受与想法</h2>
+  <div class="lead">
+    感受是身体层面的情绪体验（如伤心、紧张、开心、平静）。想法是头脑对事件的解释和评判。NVC 鼓励我们清晰地表达感受，而非用"我觉得"包装想法。这是提升情绪 granularity（颗粒度）的过程。
+  </div>
+
+  <h3>核心区分</h3>
+  <div class="compare-grid">
+    <div class="compare-col negative">
+      <div class="compare-label">想法/评判（伪装的感受）</div>
+      <p>"我觉得我被忽视了。"</p>
+      <p>"我觉得你不尊重我。"</p>
+      <p>"我觉得那样做不公平。"</p>
+      <p>"我觉得自己像个失败者。"</p>
+    </div>
+    <div class="compare-col positive">
+      <div class="compare-label">真实感受</div>
+      <p>"我感到孤独和难过。"</p>
+      <p>"我感到愤怒和受伤。"</p>
+      <p>"我感到困惑和失望。"</p>
+      <p>"我感到沮丧和羞愧。"</p>
+    </div>
+  </div>
+
+  <h3>为什么区分如此重要</h3>
+  <ul>
+    <li><strong>想法往往包含指责：</strong>"我觉得被忽视"暗含"你应该关注我"，而"我感到孤独"只陈述自己的状态。</li>
+    <li><strong>感受连接需要：</strong>"难过"指向"我需要联结"，"愤怒"指向"我需要被尊重"。想法则不指向需要。</li>
+    <li><strong>感受更易引发共鸣：</strong>当一个人真诚地表达脆弱的感受时，听者更容易放下防御，产生共情。</li>
+  </ul>
+
+  <h3>感受词汇的分层</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>基础感受</th><th>轻度</th><th>中度</th><th>强烈</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong style="color: var(--accent);">悲伤</strong></td><td>失落、郁闷、孤独</td><td>伤心、难过、沮丧</td><td>悲痛、绝望、心碎</td></tr>
+      <tr><td><strong style="color: var(--accent);">愤怒</strong></td><td>烦躁、不满、别扭</td><td>生气、愤怒、恼火</td><td>暴怒、憎恨、愤慨</td></tr>
+      <tr><td><strong style="color: var(--accent-secondary);">恐惧</strong></td><td>不安、紧张、担心</td><td>焦虑、害怕、惊恐</td><td> terrified、恐慌、绝望</td></tr>
+      <tr><td><strong style="color: var(--accent-secondary);">喜悦</strong></td><td>满足、欣慰、轻松</td><td>开心、快乐、兴奋</td><td>狂喜、幸福、陶醉</td></tr>
+      <tr><td><strong style="color: var(--accent-tertiary);">羞耻</strong></td><td>尴尬、不自在、难为情</td><td>羞愧、内疚、自卑</td><td>屈辱、自我厌恶、崩溃</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <p>"如果我们直接说出自己的需要，其他人较有可能做出积极的回应。但如果我们把重点放在批评别人，对方通常会产生抗拒心理，并花费精力去辩解和反击。"</p>
+    <div class="source">—— 马歇尔·卢森堡</div>
+  </div>
+</section>
+
+<!-- ============ NEEDS ============ -->
+<section id="needs" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('needs', this)">需要</span></div>
+  <h2>需要与请求</h2>
+  <div class="lead">
+    需要是 NVC 的核心。所有负面感受都是某种深层需要未被满足的警报。NVC 区分"需要"（Need）和"满足需要的策略"（Strategy）——需要是普遍的、没有对象的，策略是具体的、有指向的。
+  </div>
+
+  <h3>需要 vs 策略</h3>
+  <div class="compare-grid">
+    <div class="compare-col positive">
+      <div class="compare-label">需要（普遍的、可共情的）</div>
+      <p>我需要<strong>安全感</strong>。</p>
+      <p>我需要<strong>被尊重</strong>。</p>
+      <p>我需要<strong>自主</strong>。</p>
+      <p>我需要<strong>理解</strong>。</p>
+      <p>我需要<strong>休息</strong>。</p>
+    </div>
+    <div class="compare-col negative">
+      <div class="compare-label">策略（具体的、可能冲突的）</div>
+      <p>"我需要你给我回电话。"</p>
+      <p>"我需要你别那样对我说话。"</p>
+      <p>"我需要你来参加聚会。"</p>
+      <p>"我需要你同意我的方案。"</p>
+      <p>"我需要你晚上十点前回家。"</p>
+    </div>
+  </div>
+
+  <h3>七大类基本需要</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-light);">自主</div>
+      <div class="card-desc">选择梦想、目标、价值观；自由制定计划来实现它们。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-light);">身心完整</div>
+      <div class="card-desc">安全、健康、空间、休息、滋养、运动、庇护。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-secondary);">玩耍</div>
+      <div class="card-desc">乐趣、欢笑、放松、创意、新奇、惊喜。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-secondary);">意义</div>
+      <div class="card-desc">目标、贡献、创造、学习、成长、成就感。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">联系</div>
+      <div class="card-desc">爱、接纳、归属、亲密、理解、支持、共情、尊重。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">诚实</div>
+      <div class="card-desc">真实、Authenticity、完整、可信赖、责任。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--text);">和平</div>
+      <div class="card-desc">和谐、秩序、稳定、正义、平衡、宁静。</div>
+    </div>
+  </div>
+
+  <h3>请求的三个标准</h3>
+  <ul>
+    <li><strong>具体：</strong>避免模糊抽象。与其说"我希望你更体贴"，不如说"我希望你在做决定前能先问我的意见"。</li>
+    <li><strong>正向表达：</strong>告诉对方"做什么"，而非"不做什么"。"别迟到"转化为"我希望你能在九点前到"。</li>
+    <li><strong>可立即执行：</strong>请求是当下的、可操作的行动，而非长期的承诺或人格改造。</li>
+  </ul>
+
+  <h3>请求 vs 要求</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>维度</th><th>请求</th><th>要求</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>对方说"不"时</td><td>你尝试理解对方的需要</td><td>你批评、指责或惩罚对方</td></tr>
+      <tr><td>你的内在状态</td><td>开放、好奇、尊重</td><td>控制、焦虑、执着</td></tr>
+      <tr><td>语言特征</td><td>"你是否愿意……"</td><td>"你应该……""你必须……"</td></tr>
+      <tr><td>结果</td><td>连接、合作、共创策略</td><td>服从或反抗，关系受损</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ ALIENATION ============ -->
+<section id="alienation" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('alienation', this)">异化沟通</span></div>
+  <h2>异化沟通方式</h2>
+  <div class="lead">
+    卢森堡指出，某些沟通方式会蒙蔽我们对他人的爱意，使人与人之间的连接断裂。他称之为"异化沟通"（Life-Alienating Communication）。识别这些模式，是实践 NVC 的第一步。
+  </div>
+
+  <h3>四种异化方式</h3>
+
+  <h4>1. 道德评判 Moralistic Judgments</h4>
+  <p>用对错、好坏、应该/不应该来评判人，而非关注彼此的需要。当他人的行为不符合我们的价值观，我们就认为对方是"错的"或"有问题的"。</p>
+  <div class="compare-grid">
+    <div class="compare-col negative">
+      <div class="compare-label">道德评判</div>
+      <p>"你太自私了。"</p>
+      <p>"他这样做很不负责任。"</p>
+      <p>"她就是个控制狂。"</p>
+    </div>
+    <div class="compare-col positive">
+      <div class="compare-label">NVC 转化</div>
+      <p>"当我看到你没有参与家务时，我感到疲惫，因为我需要合作和分担。"</p>
+      <p>"当截止日期过了三天还没收到报告，我很焦虑，因为我需要可靠和透明。"</p>
+      <p>"当我听到你替我做决定时，我感到沮丧，因为我需要自主和被尊重。"</p>
+    </div>
+  </div>
+
+  <h4>2. 进行比较 Making Comparisons</h4>
+  <p>将自己的处境、成就、孩子、伴侣与他人比较。比较会切断我们对自己和对方的慈悲，将注意力从内在需要转移到外部评判标准上。</p>
+  <div class="insight-box">
+    <p>"如果想让日子过得凄惨，就去跟别人作比较。"</p>
+    <div class="source">—— 丹·格林伯格《如何让自己活得很悲惨》</div>
+  </div>
+
+  <h4>3. 回避责任 Denial of Responsibility</h4>
+  <p>使用"不得不""你让我"等表达，将行为的原因完全归于外部压力，否认自己的选择权和内在动机。</p>
+  <div class="compare-grid">
+    <div class="compare-col negative">
+      <div class="compare-label">回避责任</div>
+      <p>"我不得不加班，因为老板要求。"</p>
+      <p>"你让我很生气。"</p>
+      <p>"我没法不担心你。"</p>
+    </div>
+    <div class="compare-col positive">
+      <div class="compare-label">承担责任</div>
+      <p>"我选择加班，因为我重视职业发展和这份工作带来的稳定。"</p>
+      <p>"当你那样说时，我感到生气，因为我需要被尊重。"</p>
+      <p>"我选择担心你，是因为我在乎你的安全。"</p>
+    </div>
+  </div>
+
+  <h4>4. 强人所难 Demands & Coercion</h4>
+  <p>用惩罚、威胁、内疚感来强迫他人按我们的意愿行事。这种方式或许能获得短期服从，但必然侵蚀信任和连接。</p>
+  <p>强人所难往往隐藏在某些"为你好"的表达背后："如果你再这样，我就不管你了""我为你付出了这么多，你就这样回报我？"</p>
+
+  <h3>自检清单</h3>
+  <ul>
+    <li>我此刻的脑中是否正在评判对方"不对"/"有问题"？</li>
+    <li>我是否在用"你总是/从不"来概括对方的行为？</li>
+    <li>我是否在说"你让我……"而不谈自己的感受和需要？</li>
+    <li>我是否在拿这个人/这件事和别人/别的事作比较？</li>
+    <li>如果对方拒绝我的"请求"，我是否会生气或惩罚？</li>
+  </ul>
+</section>
+
+<!-- ============ EMPATHY ============ -->
+<section id="empathy" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('empathy', this)">同理倾听</span></div>
+  <h2>同理倾听</h2>
+  <div class="lead">
+    同理倾听（Empathic Listening）是 NVC 中用于接收他人信息的方式。它的本质是：暂时放下自己的想法和判断，全神贯注地聆听对方的观察、感受和需要，并通过反馈来确认理解。
+  </div>
+
+  <h3>同理 vs 同情</h3>
+  <div class="compare-grid">
+    <div class="compare-col negative">
+      <div class="compare-label">同情 Sympathy</div>
+      <p>站在外部，对对方的处境表示"可怜"或"遗憾"。</p>
+      <p>"哎呀，你真惨。"</p>
+      <p>"我理解你，我上次也这样。"</p>
+      <p>暗含距离感和上位姿态，容易让对方感到被俯视。</p>
+    </div>
+    <div class="compare-col positive">
+      <div class="compare-label">同理 Empathy</div>
+      <p>进入对方的内在世界，感受对方的感受和需要。</p>
+      <p>"听起来你很沮丧，因为你付出了很多却没有被看到。"</p>
+      <p>全然在场，不代入自己的故事，只是陪伴和见证。</p>
+    </div>
+  </div>
+
+  <h3>妨碍同理心的行为</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>行为</th><th>示例</th><th>为什么无效</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>给建议</td><td>"我觉得你应该……"</td><td>对方需要的是被听见，而非解决方案</td></tr>
+      <tr><td>比惨</td><td>"你这算什么，我当初……"</td><td>将焦点从对方转移到自己身上</td></tr>
+      <tr><td>说教</td><td>"人生就是这样，你要学会坚强。"</td><td>否定了对方当下的真实感受</td></tr>
+      <tr><td>安慰</td><td>"别难过，一切都会好起来的。"</td><td>急于让对方"好起来"，而非陪伴痛苦</td></tr>
+      <tr><td>分析</td><td>"你之所以这样，是因为……"</td><td>把情感体验理性化，切断连接</td></tr>
+      <tr><td>同情</td><td>"你真可怜。"</td><td>制造距离，隐含评判</td></tr>
+      <tr><td>盘问</td><td>"当时具体发生了什么？谁先开始的？"</td><td>将对话引向事实和追责，而非感受</td></tr>
+    </tbody>
+  </table>
+
+  <h3>同理倾听的步骤</h3>
+  <ol>
+    <li><strong>暂停：</strong>放下自己想说的话、想给的评价、想提的建议。只是深呼吸，给对方空间。</li>
+    <li><strong>反馈感受：</strong>"听起来你感到……" 帮助对方听见自己的情绪。</li>
+    <li><strong>反馈需要：</strong>"……因为你需要/看重……" 连接到深层需要。</li>
+    <li><strong>确认观察：</strong>"是因为……发生了吗？" 确保你理解的事实与对方一致。</li>
+    <li><strong>静默陪伴：</strong>有时候什么都不说，只是存在，就是最深切的同理。</li>
+  </ol>
+
+  <h3>当不知道怎么回应时</h3>
+  <div class="insight-box">
+    <p>"我不知道该说什么，但我真的很想理解你。"</p>
+    <div class="source">—— 真诚的坦白，本身就是连接</div>
+  </div>
+  <p>或者，可以简单地复述对方的最后几个词："……不被重视？" 这种"鹦鹉学舌"式的回应，往往能让对方感到被听见，并自然地继续深入表达。</p>
+</section>
+
+<!-- ============ EXPRESSION ============ -->
+<section id="expression" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('expression', this)">诚实表达</span></div>
+  <h2>诚实表达</h2>
+  <div class="lead">
+    诚实表达不是"说出所有真实想法"，而是诚实于自己的感受和需要，同时尊重对方。NVC 特别处理两个困难场景：表达愤怒和表达感激。
+  </div>
+
+  <h3>充分表达愤怒的四个步骤</h3>
+  <p>愤怒是一种次生情绪（Secondary Emotion），其下通常隐藏着悲伤、恐惧、无助或挫败。NVC 不鼓励"发泄"愤怒，而是鼓励"理解"愤怒。</p>
+
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-icon">🛑</div>
+      <div class="step-title">停下来</div>
+      <div class="step-sub">深呼吸，什么都别做</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-icon">👁</div>
+      <div class="step-title">识别想法</div>
+      <div class="step-sub">是什么想法引发了愤怒？</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-icon">💚</div>
+      <div class="step-title">连接需要</div>
+      <div class="step-sub">愤怒下是什么需要没被满足？</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-icon">🗣</div>
+      <div class="step-title">表达感受和需要</div>
+      <div class="step-sub">用四要素诚实地表达</div>
+    </div>
+  </div>
+
+  <h3>感激与赞扬的区别</h3>
+  <p>赞扬（Praise）往往是一种隐形的操控——"你做得真好"暗含"我希望你继续这样做"。NVC 中的感激是纯粹的庆祝，庆祝对方的行为如何满足了我们的需要。</p>
+
+  <div class="compare-grid">
+    <div class="compare-col negative">
+      <div class="compare-label">赞扬（评判导向）</div>
+      <p>"你真是个好孩子。"</p>
+      <p>"你太厉害了。"</p>
+      <p>"没有你我怎么办。"</p>
+    </div>
+    <div class="compare-col positive">
+      <div class="compare-label">NVC 感激（需要导向）</div>
+      <p>"当你主动收拾了客厅（观察），我感到轻松和欣慰（感受），因为我需要整洁和合作（需要）。"</p>
+      <p>"你刚才在项目中的分析（观察），让我很受启发（感受），因为我看重清晰和深度（需要）。"</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TOOLBOX ============ -->
+<section id="toolbox" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('toolbox', this)">工具箱</span></div>
+  <h2>工具箱</h2>
+  <div class="lead">
+    丰富的感受词汇和需要清单是 NVC 的基础工具。语言塑造意识——当你能精确命名自己的情绪和需要时，你就已经获得了对内在世界更大的掌控力。
+  </div>
+
+  <h3>感受词汇：当需要被满足时</h3>
+  <div class="tag-cloud">
+    <span class="tag category-feeling">开心</span>
+    <span class="tag category-feeling">满足</span>
+    <span class="tag category-feeling">欣慰</span>
+    <span class="tag category-feeling">感激</span>
+    <span class="tag category-feeling">轻松</span>
+    <span class="tag category-feeling">平静</span>
+    <span class="tag category-feeling">兴奋</span>
+    <span class="tag category-feeling">希望</span>
+    <span class="tag category-feeling">自信</span>
+    <span class="tag category-feeling">自豪</span>
+    <span class="tag category-feeling">陶醉</span>
+    <span class="tag category-feeling">舒适</span>
+    <span class="tag category-feeling">温暖</span>
+    <span class="tag category-feeling">充实</span>
+    <span class="tag category-feeling">释然</span>
+    <span class="tag category-feeling">安心</span>
+    <span class="tag category-feeling">好奇</span>
+    <span class="tag category-feeling">乐观</span>
+    <span class="tag category-feeling">鼓舞</span>
+    <span class="tag category-feeling">被激励</span>
+  </div>
+
+  <h3>感受词汇：当需要未被满足时</h3>
+  <div class="tag-cloud">
+    <span class="tag category-feeling">焦虑</span>
+    <span class="tag category-feeling">担心</span>
+    <span class="tag category-feeling">害怕</span>
+    <span class="tag category-feeling">紧张</span>
+    <span class="tag category-feeling">沮丧</span>
+    <span class="tag category-feeling">失望</span>
+    <span class="tag category-feeling">难过</span>
+    <span class="tag category-feeling">悲伤</span>
+    <span class="tag category-feeling">孤独</span>
+    <span class="tag category-feeling">空虚</span>
+    <span class="tag category-feeling">愤怒</span>
+    <span class="tag category-feeling">恼火</span>
+    <span class="tag category-feeling">烦躁</span>
+    <span class="tag category-feeling">委屈</span>
+    <span class="tag category-feeling">羞愧</span>
+    <span class="tag category-feeling">尴尬</span>
+    <span class="tag category-feeling">无助</span>
+    <span class="tag category-feeling">疲惫</span>
+    <span class="tag category-feeling">困惑</span>
+    <span class="tag category-feeling">迷茫</span>
+    <span class="tag category-feeling">嫉妒</span>
+    <span class="tag category-feeling">怨恨</span>
+    <span class="tag category-feeling">内疚</span>
+    <span class="tag category-feeling">绝望</span>
+    <span class="tag category-feeling">麻木</span>
+    <span class="tag category-feeling">被忽视</span>
+  </div>
+
+  <h3>需要清单</h3>
+  <div class="tag-cloud">
+    <span class="tag category-need">安全</span>
+    <span class="tag category-need">健康</span>
+    <span class="tag category-need">休息</span>
+    <span class="tag category-need">食物</span>
+    <span class="tag category-need">住所</span>
+    <span class="tag category-need">空间</span>
+    <span class="tag category-need">秩序</span>
+    <span class="tag category-need">自主</span>
+    <span class="tag category-need">选择</span>
+    <span class="tag category-need">自由</span>
+    <span class="tag category-need">成长</span>
+    <span class="tag category-need">学习</span>
+    <span class="tag category-need">成就</span>
+    <span class="tag category-need">创造</span>
+    <span class="tag category-need">意义</span>
+    <span class="tag category-need">目的</span>
+    <span class="tag category-need">贡献</span>
+    <span class="tag category-need">爱</span>
+    <span class="tag category-need">亲密</span>
+    <span class="tag category-need">归属</span>
+    <span class="tag category-need">接纳</span>
+    <span class="tag category-need">理解</span>
+    <span class="tag category-need">尊重</span>
+    <span class="tag category-need">支持</span>
+    <span class="tag category-need">信任</span>
+    <span class="tag category-need">陪伴</span>
+    <span class="tag category-need">认可</span>
+    <span class="tag category-need">欣赏</span>
+    <span class="tag category-need">共情</span>
+    <span class="tag category-need">诚实</span>
+    <span class="tag category-need">真实</span>
+    <span class="tag category-need">责任</span>
+    <span class="tag category-need">可靠</span>
+    <span class="tag category-need">正义</span>
+    <span class="tag category-need">平等</span>
+    <span class="tag category-need">和谐</span>
+    <span class="tag category-need">和平</span>
+    <span class="tag category-need">美丽</span>
+    <span class="tag category-need">乐趣</span>
+    <span class="tag category-need">玩耍</span>
+    <span class="tag category-need">新奇</span>
+    <span class="tag category-need">刺激</span>
+  </div>
+
+  <h3>每日自检问题</h3>
+  <ul>
+    <li>今天我是否用评判代替了观察？在哪些时刻？</li>
+    <li>今天我是否清楚地说出了自己的感受，而非"我觉得"的想法？</li>
+    <li>当我感到不舒服时，我能否识别出背后的需要是什么？</li>
+    <li>我今天提出的请求是具体的、正向的、可执行的吗？</li>
+    <li>今天倾听他人时，我是否放下了给建议的冲动，只是陪伴？</li>
+    <li>今天有没有某个时刻，我可以选择"我不得不"，却用了"我选择"？</li>
+  </ul>
+</section>
+
+<!-- ============ PRACTICE ============ -->
+<section id="practice" class="section">
+  <div class="breadcrumb">非暴力沟通 / <span onclick="showSection('practice', this)">场景练习</span></div>
+  <h2>场景练习</h2>
+  <div class="lead">
+    知识只有在具体场景中反复练习，才能转化为能力。以下场景来自日常生活，请选择你认为最符合 NVC 精神的回应方式。
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">场景一：职场冲突</div>
+    <div class="scenario-context">你的同事连续三次在会议上打断你发言，你感到很不舒服。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "你怎么总是打断别人？太没礼貌了。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 B</div>
+        "我觉得你根本不想听我说话。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 C</div>
+        "刚才我发言时被打断了三次，我感到沮丧，因为我需要被尊重和完整地表达。你是否愿意让我先说完？"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是道德评判（"没礼貌"），B 是想法而非感受（"我觉得你不想听"）。C 包含了观察（三次打断）、感受（沮丧）、需要（尊重、完整表达）和请求（让我说完），是完整的 NVC 表达。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">场景二：亲密关系</div>
+    <div class="scenario-context">伴侣加班到很晚，忘了你们约好的晚餐。对方回家后说"太累了，不想说话"。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "你根本不在乎我！工作比我重要是吧？"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 B</div>
+        "当晚餐被忘记时，我感到失落和孤单，因为我需要被重视和陪伴。你现在很累，我需要一些空间，我们可以明天再聊这件事吗？"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 C</div>
+        "算了，没关系，你休息吧。"（压抑自己的感受）
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是指责和猜测（"不在乎我"）。C 是压抑真实感受，长期会导致 resentment。B 诚实表达了感受（失落、孤单）和需要（被重视、陪伴），同时尊重了对方的疲劳状态，提出了一个可协商的请求。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">场景三：家庭沟通</div>
+    <div class="scenario-context">你的孩子周末花了整整两天打游戏，作业一点没碰。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "你怎么这么不自觉？每天就知道打游戏，将来怎么办？"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 B</div>
+        "我觉得你太堕落了。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 C</div>
+        "这个周末你花了大约十六个小时在游戏上，作业还没有开始（观察）。我有些担心（感受），因为我需要确认你的学业进展是稳定的（需要）。你是否愿意今晚先花一小时规划一下作业时间？（请求）"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是道德评判+恐吓（"不自觉""将来怎么办"）。B 是评判（"堕落"）。C 用具体数据做观察，表达了自己的担心而非指责，连接到对"稳定"的需要，并提出了具体、正向、可执行的请求。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">场景四：同理倾听</div>
+    <div class="scenario-context">朋友对你说："我老板今天当着全组的面批评我，说我报告写得太差了。我 humiliated（羞辱感）。"</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "别太在意，老板可能就是心情不好。你下次写得好一点就行了。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 B</div>
+        "当众被批评，你感到 humiliated，因为你需要被尊重和被公平对待？"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 C</div>
+        "我老板上次也这样，比你这还惨。我当时直接怼回去了。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是安慰+建议，否定了对方的真实感受。C 是比惨，将焦点转移到自己身上。B 是同理倾听——反馈了对方的观察（当众被批评）、感受（humiliated）和需要（尊重、公平），帮助对方感到被理解。
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-top: 32px;">
+    <p>"请不要急着成为完美的 NVC 实践者。笨拙的真诚，胜过熟练的操控。"</p>
+    <div class="source">—— 学习 NVC 的核心态度</div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  document.querySelector('.sidebar').classList.remove('open');
+}
+
+function revealAnswer(btn, isCorrect) {
+  const card = btn.closest('.scenario-card');
+  const buttons = card.querySelectorAll('.option-btn');
+  const explanation = card.querySelector('.explanation');
+
+  buttons.forEach(b => {
+    b.classList.add('revealed');
+    if (b === btn) {
+      b.classList.add(isCorrect ? 'correct' : 'incorrect');
+    } else if (b.onclick.toString().includes('true')) {
+      b.classList.add('correct');
+    } else {
+      b.classList.add('incorrect');
+    }
+    b.onclick = null;
+    b.style.cursor = 'default';
+  });
+
+  explanation.classList.add('show');
+}
+</script>
+<script>
+const nav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme');
+const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+}
+
+if (savedTheme) {
+  applyTheme(savedTheme);
+} else if (prefersLight) {
+  applyTheme('light');
+}
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  applyTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+</script>
+
+</body>
+</html>

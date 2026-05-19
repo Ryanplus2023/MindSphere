@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MBTI 16型人格 · 系统化学习指南</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+      background: radial-gradient(ellipse at 20% 0%, rgba(212,163,115,0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 100%, rgba(95,138,124,0.04) 0%, transparent 50%),
+                  var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0;
+      width: 280px; height: 100vh;
+      background: linear-gradient(180deg, var(--bg-card), var(--bg-dark));
+      border-right: 1px solid var(--border);
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    /* sidebar-header layout handled by shared/styles.css */
+
+    .sidebar-header h1 {
+      font-size: 20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-header p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .nav-section {
+      margin-bottom: 8px;
+    }
+
+    .nav-section-title {
+      padding: 10px 24px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 10px 24px 10px 32px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text-primary);
+      background: rgba(212, 163, 115, 0.1);
+      border-left-color: var(--primary-light);
+    }
+
+    .nav-link.type-link {
+      padding-left: 44px;
+      font-size: 13px;
+    }
+
+    .type-badge {
+      display: inline-block;
+      width: 36px;
+      font-family: 'SF Mono', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      margin-right: 8px;
+      text-align: center;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .badge-analyst { background: rgba(136, 96, 255, 0.15); color: var(--analyst); }
+    .badge-diplomat { background: rgba(51, 164, 116, 0.15); color: var(--diplomat); }
+    .badge-sentinel { background: rgba(66, 152, 180, 0.15); color: var(--sentinel); }
+    .badge-explorer { background: rgba(228, 174, 58, 0.15); color: var(--explorer); }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 280px;
+      min-height: 100vh;
+    }
+
+    .section {
+      display: none;
+      padding: 48px 64px;
+      max-width: 1000px;
+      margin: 0 auto;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--text-primary), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h3 {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 36px 0 16px;
+      color: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      padding-left: 16px;
+    }
+
+    h4 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 24px 0 10px;
+      color: var(--primary-light);
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    .lead {
+      font-size: 17px;
+      color: var(--text-primary);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      padding: 20px 24px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--secondary);
+    }
+
+    /* Cards & Grids */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg), 0 0 40px rgba(212,163,115,0.06);
+      border-color: var(--primary-light);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-type {
+      font-family: 'SF Mono', monospace;
+      font-size: 22px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+
+    .card-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .card-name span {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text-muted);
+    }
+
+    /* Dimension Cards */
+    .dimension-card {
+      background: linear-gradient(135deg, var(--bg-card), rgba(212,163,115,0.05));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .dimension-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .dimension-letter {
+      font-family: 'SF Mono', monospace;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .dimension-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .dimension-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .spectrum {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 16px 0;
+      padding: 12px;
+      background: rgba(128,128,128,0.12);
+      border-radius: 8px;
+    }
+
+    .spectrum-label {
+      font-family: 'SF Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .spectrum-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-dark);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spectrum-fill {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, var(--primary-light), var(--secondary));
+      border-radius: 4px;
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+
+    .data-table th {
+      background: var(--primary-dark);
+      color: var(--accent-light);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .data-table tr:hover td {
+      background: rgba(99, 102, 241, 0.05);
+      color: var(--text-primary);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 12px 0 12px 24px;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    li::marker {
+      color: var(--accent);
+    }
+
+    /* Type Detail View */
+    .type-detail {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 40px;
+      margin-top: 20px;
+    }
+
+    .type-hero {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .type-hero-code {
+      font-family: 'SF Mono', monospace;
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .type-hero-info h3 {
+      border: none;
+      padding: 0;
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .type-hero-info .subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 16px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      text-align: center;
+      padding: 12px 20px;
+      background: var(--bg-dark);
+      border-radius: 8px;
+      min-width: 100px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Function Stack */
+    .function-stack {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .function-item {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .function-item::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .function-pos {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .function-code {
+      font-family: 'SF Mono', monospace;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .function-name {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .f-dominant::before { background: var(--accent); }
+    .f-auxiliary::before { background: var(--primary-light); }
+    .f-tertiary::before { background: var(--secondary); }
+    .f-inferior::before { background: var(--text-muted); }
+
+    /* Comparison */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 20px 0;
+    }
+
+    .compare-col {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 24px;
+      border-top: 4px solid;
+    }
+
+    /* Misc */
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(212,163,115,0.1), rgba(95,138,124,0.1));
+      border: 1px solid rgba(212,163,115,0.3);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+
+    .highlight-box strong {
+      color: var(--accent-light);
+    }
+
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .breadcrumb span {
+      color: var(--primary-light);
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .section { padding: 80px 24px 48px; }
+      .function-stack { grid-template-columns: repeat(2, 1fr); }
+      .compare-grid { grid-template-columns: 1fr; }
+      .type-hero { flex-direction: column; gap: 16px; }
+    }
+
+    .hidden { display: none !important; }
+  </style>
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+  :root {
+    --accent: #d4a373; --accent-light: #e9c46a;
+    --accent-secondary: #5f8a7c; --accent-tertiary: #7c8fa3;
+    --analyst: #8860ff; --diplomat: #33a474;
+    --sentinel: #4298b4; --explorer: #e4ae3a;
+    --primary-light: #e9c46a;
+    /* legacy mappings */
+    --bg-dark: #08080a; --bg-card: #0f0f12; --bg-card-hover: #18181c;
+    --text-primary: #f0f0ea; --primary: #d4a373; --primary-dark: #0f0f12;
+    --secondary: #e9c46a;
+  }
+  [data-theme="light"] {
+    --bg-dark: #fafaf9; --bg-card: #ffffff; --bg-card-hover: #f5f5f4;
+    --text-primary: #1a1a1a; --primary-dark: #f5f5f4;
+    --accent: #b87d3d; --accent-light: #d4a373;
+  }
+  </style>
+  
+</head>
+<body>
+
+
+
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">M</span>
+    心界 MindSphere
+  </a>
+  <div class="nav-links">
+    <a href="mbti.html" class="active">MBTI人格类型</a>
+    <a href="nvc.html">非暴力沟通</a>
+    <a href="cbt.html">认知疗法</a>
+    <a href="first_principles.html">第一性原理</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+<aside class="sidebar">
+  <div class="sidebar-scroll">
+    <div class="nav-section">
+      <div class="nav-section-title">理论基础</div>
+      <a class="nav-link active" onclick="showSection('overview', this)">体系概览</a>
+      <a class="nav-link" onclick="showSection('dimensions', this)">四大维度</a>
+      <a class="nav-link" onclick="showSection('functions', this)">认知功能栈</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">16型人格</div>
+      <a class="nav-link" onclick="showSection('all-types', this)">全部类型总览</a>
+      <a class="nav-link" onclick="showSection('analysts', this)">分析师 (NT)</a>
+      <a class="nav-link" onclick="showSection('diplomats', this)">外交官 (NF)</a>
+      <a class="nav-link" onclick="showSection('sentinels', this)">哨兵 (SJ)</a>
+      <a class="nav-link" onclick="showSection('explorers', this)">探险家 (SP)</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">深度解析</div>
+      <a class="nav-link" onclick="showSection('dynamics', this)">类型动力学</a>
+      <a class="nav-link" onclick="showSection('comparison', this)">类型对比</a>
+      <a class="nav-link" onclick="showSection('application', this)">应用场景</a>
+    </div>
+  </div>
+  <div class="sidebar-header">
+    <h1>MBTI 学习系统</h1>
+    <p>16型人格 · 认知功能 · 应用指南</p>
+  </div>
+</aside>
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<main class="main-content">
+
+<!-- ============ SECTION: OVERVIEW ============ -->
+<section id="overview" class="section active">
+  <div class="breadcrumb">MBTI 学习系统 / 体系概览</div>
+  <h2>MBTI 理论体系概览</h2>
+  <div class="lead">
+    MBTI（Myers-Briggs Type Indicator，迈尔斯-布里格斯类型指标）是基于瑞士心理学家卡尔·荣格（Carl Jung）1921年著作《心理类型》理论发展而来的人格测评工具。它将人格划分为四个二元维度，组合形成16种独特的人格类型。
+  </div>
+
+  <h3>理论发展脉络</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>阶段</th><th>人物</th><th>贡献</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1921</td><td>卡尔·荣格 (Carl Jung)</td><td>出版《心理类型》，提出8种认知功能与内外向理论</td></tr>
+      <tr><td>1940s</td><td>凯瑟琳·布里格斯 & 伊莎贝尔·迈尔斯</td><td>在荣格理论基础上增加J/P维度，开发MBTI量表</td></tr>
+      <tr><td>1962</td><td>伊莎贝尔·迈尔斯</td><td>《MBTI手册》首次出版，建立标准化测评体系</td></tr>
+      <tr><td>1980s</td><td>大卫·凯尔西 (David Keirsey)</td><td>提出四大气质分类（凯尔西气质分类法）</td></tr>
+      <tr><td>2011</td><td>Neris Analytics</td><td>发布16personalities，融合Big Five与MBTI，全球流行</td></tr>
+    </tbody>
+  </table>
+
+  <h3>核心理论架构</h3>
+  <p>MBTI的理论体系建立在三个层级之上：</p>
+
+  <h4>1. 偏好维度 (Preference Dichotomies)</h4>
+  <p>四个二元维度描述个体在能量获取、信息感知、决策方式和生活方式上的稳定偏好。注意：这并非能力差异，而是<strong>舒适度和自然倾向</strong>的差异。</p>
+
+  <h4>2. 认知功能栈 (Cognitive Function Stack)</h4>
+  <p>每种类型的背后是一套由四个认知功能组成的有序层级结构，包含：主导功能（Dominant）、辅助功能（Auxiliary）、第三功能（Tertiary）和劣势功能（Inferior）。这是MBTI体系中最深刻、最系统的部分。</p>
+
+  <h4>3. 类型动力学 (Type Dynamics)</h4>
+  <p>描述类型在不同生命周期、压力状态、成长路径下的动态表现模式。</p>
+
+  <h3>四大气质分组</h3>
+  <div class="card-grid">
+    <div class="card" style="border-color: var(--analyst);">
+      <div class="card-header">
+        <div class="card-type" style="color: var(--analyst);">NT</div>
+        <div class="card-name">分析师<span>Analysts · 理性与知识</span></div>
+      </div>
+      <div class="card-desc">以直觉(N)和思考(T)为主导，追求知识、能力和战略洞察。善于抽象思维、系统构建和长期规划。</div>
+      <div class="card-tags"><span class="tag">INTJ</span><span class="tag">INTP</span><span class="tag">ENTJ</span><span class="tag">ENTP</span></div>
+    </div>
+    <div class="card" style="border-color: var(--diplomat);">
+      <div class="card-header">
+        <div class="card-type" style="color: var(--diplomat);">NF</div>
+        <div class="card-name">外交官<span>Diplomats · 理想与联结</span></div>
+      </div>
+      <div class="card-desc">以直觉(N)和情感(F)为主导，关注人性、意义和价值观。善于共情、激励他人和追求和谐。</div>
+      <div class="card-tags"><span class="tag">INFJ</span><span class="tag">INFP</span><span class="tag">ENFJ</span><span class="tag">ENFP</span></div>
+    </div>
+    <div class="card" style="border-color: var(--sentinel);">
+      <div class="card-header">
+        <div class="card-type" style="color: var(--sentinel);">SJ</div>
+        <div class="card-name">哨兵<span>Sentinels · 秩序与责任</span></div>
+      </div>
+      <div class="card-desc">以实感(S)和判断(J)为主导，重视传统、责任和实际结果。善于组织、执行和维护稳定。</div>
+      <div class="card-tags"><span class="tag">ISTJ</span><span class="tag">ISFJ</span><span class="tag">ESTJ</span><span class="tag">ESFJ</span></div>
+    </div>
+    <div class="card" style="border-color: var(--explorer);">
+      <div class="card-header">
+        <div class="card-type" style="color: var(--explorer);">SP</div>
+        <div class="card-name">探险家<span>Explorers · 体验与技艺</span></div>
+      </div>
+      <div class="card-desc">以实感(S)和感知(P)为主导，活在当下、追求感官体验和技艺精进。善于应变、操作和即兴发挥。</div>
+      <div class="card-tags"><span class="tag">ISTP</span><span class="tag">ISFP</span><span class="tag">ESTP</span><span class="tag">ESFP</span></div>
+    </div>
+  </div>
+
+  <h3>使用须知</h3>
+  <div class="highlight-box">
+    <strong>重要提醒：</strong>MBTI描述的是偏好倾向，而非固定命运。每个人在四个维度上都有一定弹性，类型标签不应成为自我设限的借口。同时，MBTI的科学效度在学术界存在争议，更适合作为自我探索的启发工具，而非严格的科学诊断。
+  </div>
+</section>
+
+<!-- ============ SECTION: DIMENSIONS ============ -->
+<section id="dimensions" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 四大维度</div>
+  <h2>四大偏好维度深度解析</h2>
+  <div class="lead">
+    四个维度两两组合，构成人格的基础框架。每个维度代表一种光谱的两端，大多数人位于光谱的某个位置，而非绝对的极端。
+  </div>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div>
+        <div class="dimension-title">能量指向维度</div>
+        <div class="dimension-subtitle">Where you focus your attention</div>
+      </div>
+      <div class="dimension-letter">E / I</div>
+    </div>
+    <div class="spectrum">
+      <span class="spectrum-label" style="color: var(--accent);">E</span>
+      <div class="spectrum-bar"><div class="spectrum-fill" style="left: 0; width: 50%;"></div></div>
+      <span class="spectrum-label" style="color: var(--primary-light);">I</span>
+    </div>
+    <p><strong style="color: var(--accent);">Extraversion (E) 外向：</strong>能量来源于外部世界——人际互动、活动参与、对外表达。倾向于先行动再思考，喜欢广度而非深度，通过讨论理清思路。</p>
+    <p><strong style="color: var(--primary-light);">Introversion (I) 内向：</strong>能量来源于内心世界——独处反思、内在概念、深度思考。倾向于先思考再行动，喜欢深度而非广度，在表达前需要内部整理。</p>
+    <div class="compare-grid" style="margin-top: 16px;">
+      <div class="compare-col" style="border-top-color: var(--accent);">
+        <h4 style="margin-top: 0; color: var(--accent);">外向型特征</h4>
+        <ul>
+          <li>社交后感到精力充沛</li>
+          <li>喜欢快节奏、多任务</li>
+          <li>通过说和做来思考</li>
+          <li>兴趣广泛，朋友众多</li>
+          <li>先尝试，再担忧</li>
+        </ul>
+      </div>
+      <div class="compare-col" style="border-top-color: var(--primary-light);">
+        <h4 style="margin-top: 0; color: var(--primary-light);">内向型特征</h4>
+        <ul>
+          <li>独处后感到精力充沛</li>
+          <li>喜欢慢节奏、专注一件事</li>
+          <li>通过阅读和反思来思考</li>
+          <li>兴趣深入，知己少数</li>
+          <li>先准备，再行动</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div>
+        <div class="dimension-title">信息获取维度</div>
+        <div class="dimension-subtitle">How you take in information</div>
+      </div>
+      <div class="dimension-letter">S / N</div>
+    </div>
+    <div class="spectrum">
+      <span class="spectrum-label" style="color: var(--accent);">S</span>
+      <div class="spectrum-bar"><div class="spectrum-fill" style="left: 0; width: 50%;"></div></div>
+      <span class="spectrum-label" style="color: var(--primary-light);">N</span>
+    </div>
+    <p><strong style="color: var(--accent);">Sensing (S) 实感：</strong>关注可观察的、具体的事实和细节。信任经验、重视实际应用，关注"是什么"。倾向于线性、逐步地处理信息。</p>
+    <p><strong style="color: var(--primary-light);">Intuition (N) 直觉：</strong>关注模式、联想和可能性。信任灵感、重视创新概念，关注"可能是什么"。倾向于跳跃式、全局地处理信息。</p>
+    <div class="compare-grid" style="margin-top: 16px;">
+      <div class="compare-col" style="border-top-color: var(--accent);">
+        <h4 style="margin-top: 0; color: var(--accent);">实感型特征</h4>
+        <ul>
+          <li>关注具体细节和现实</li>
+          <li>相信经验，务实</li>
+          <li>擅长执行和操作流程</li>
+          <li>重视现在和近期</li>
+          <li>喜欢已验证的方法</li>
+        </ul>
+      </div>
+      <div class="compare-col" style="border-top-color: var(--primary-light);">
+        <h4 style="margin-top: 0; color: var(--primary-light);">直觉型特征</h4>
+        <ul>
+          <li>关注整体模式和未来</li>
+          <li>相信灵感，创新</li>
+          <li>擅长理论和战略</li>
+          <li>重视长远和潜力</li>
+          <li>喜欢探索新方法</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div>
+        <div class="dimension-title">决策方式维度</div>
+        <div class="dimension-subtitle">How you make decisions</div>
+      </div>
+      <div class="dimension-letter">T / F</div>
+    </div>
+    <div class="spectrum">
+      <span class="spectrum-label" style="color: var(--accent);">T</span>
+      <div class="spectrum-bar"><div class="spectrum-fill" style="left: 0; width: 50%;"></div></div>
+      <span class="spectrum-label" style="color: var(--primary-light);">F</span>
+    </div>
+    <p><strong style="color: var(--accent);">Thinking (T) 思考：</strong>决策时优先考虑逻辑、客观分析和因果一致性。追求公平（一视同仁），重视真理和效率，可能显得冷静或疏远。</p>
+    <p><strong style="color: var(--primary-light);">Feeling (F) 情感：</strong>决策时优先考虑价值观、人际和谐和对他人的影响。追求共情（因人而异），重视理解和包容，可能显得主观或情绪化。</p>
+    <div class="highlight-box">
+      <strong>关键澄清：</strong>T/F维度<strong>不表示</strong>智力水平或情商高低。思考型的人也有情感，情感型的人也能逻辑分析。差异在于做决策时<strong>优先权重</strong>的不同。
+    </div>
+    <div class="compare-grid" style="margin-top: 16px;">
+      <div class="compare-col" style="border-top-color: var(--accent);">
+        <h4 style="margin-top: 0; color: var(--accent);">思考型特征</h4>
+        <ul>
+          <li>分析利弊和因果关系</li>
+          <li>重视客观真理</li>
+          <li>倾向于批评和纠错</li>
+          <li>追求效率和系统优化</li>
+          <li>情感上需要空间</li>
+        </ul>
+      </div>
+      <div class="compare-col" style="border-top-color: var(--primary-light);">
+        <h4 style="margin-top: 0; color: var(--primary-light);">情感型特征</h4>
+        <ul>
+          <li>考量对他人的影响</li>
+          <li>重视价值观和和谐</li>
+          <li>倾向于鼓励和肯定</li>
+          <li>追求共识和认可</li>
+          <li>需要情感联结</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div>
+        <div class="dimension-title">生活方式维度</div>
+        <div class="dimension-subtitle">How you deal with the outer world</div>
+      </div>
+      <div class="dimension-letter">J / P</div>
+    </div>
+    <div class="spectrum">
+      <span class="spectrum-label" style="color: var(--accent);">J</span>
+      <div class="spectrum-bar"><div class="spectrum-fill" style="left: 0; width: 50%;"></div></div>
+      <span class="spectrum-label" style="color: var(--primary-light);">P</span>
+    </div>
+    <p><strong style="color: var(--accent);">Judging (J) 判断：</strong>倾向于有计划、有组织、有决断的生活方式。喜欢确定性、结构和 Closure（闭环），提前做决定，按计划行事。</p>
+    <p><strong style="color: var(--primary-light);">Perceiving (P) 感知：</strong>倾向于灵活、开放、自发的生活方式。喜欢可能性、适应性和 Openness（开放），保持选择弹性，随情况调整。</p>
+    <div class="compare-grid" style="margin-top: 16px;">
+      <div class="compare-col" style="border-top-color: var(--accent);">
+        <h4 style="margin-top: 0; color: var(--accent);">判断型特征</h4>
+        <ul>
+          <li>喜欢计划和控制</li>
+          <li>追求目标导向</li>
+          <li>截止日期前完成任务</li>
+          <li>重视秩序和结构</li>
+          <li>不喜欢意外变化</li>
+        </ul>
+      </div>
+      <div class="compare-col" style="border-top-color: var(--primary-light);">
+        <h4 style="margin-top: 0; color: var(--primary-light);">感知型特征</h4>
+        <ul>
+          <li>喜欢灵活和即兴</li>
+          <li>过程导向，探索导向</li>
+          <li>截止前冲刺，但常完成</li>
+          <li>适应力强，开放</li>
+          <li>把变化视为机会</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3>16种组合逻辑</h3>
+  <p>四个维度的组合遵循以下数学逻辑：2^4 = 16。每个维度的偏好按以下顺序排列：</p>
+  <ol>
+    <li><strong>能量指向 (E/I)</strong>：你的能量流向哪里</li>
+    <li><strong>信息获取 (S/N)</strong>：你用什么方式认识世界</li>
+    <li><strong>决策方式 (T/F)</strong>：你依据什么做出选择</li>
+    <li><strong>生活方式 (J/P)</strong>：你如何组织外部生活</li>
+  </ol>
+  <p>注意：J/P维度描述的是<strong>外显行为偏好</strong>，但认知功能栈的理论揭示了一个更深层的规律——J/P实际上由你的外倾功能是判断功能（T/F）还是感知功能（S/N）决定。</p>
+</section>
+
+<!-- ============ SECTION: FUNCTIONS ============ -->
+<section id="functions" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 认知功能栈</div>
+  <h2>认知功能栈：MBTI的深层体系</h2>
+  <div class="lead">
+    认知功能栈（Cognitive Function Stack）是MBTI体系中最系统、最深刻的部分，源自荣格的心理类型理论。每个MBTI类型由四个有序的认知功能构成，如同一个团队中的四个角色：主导（队长）、辅助（副手）、第三（孩童）、劣势（盲点）。
+  </div>
+
+  <h3>八大认知功能</h3>
+  <p>荣格提出心智通过四种基本心理功能运作：思维(Thinking)、情感(Feeling)、感觉(Sensation)、直觉(Intuition)。每种功能又可以以内倾(Introverted)或外倾(Extraverted)态度运作，共形成8种认知功能：</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>功能代码</th><th>全称</th><th>核心运作方式</th><th>关键词</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong style="color: var(--accent);">Te</strong></td><td>外倾思维 Extraverted Thinking</td><td>组织外部世界，建立客观标准、流程和可度量结果</td><td>效率、结构、执行、客观标准</td></tr>
+      <tr><td><strong style="color: var(--primary-light);">Ti</strong></td><td>内倾思维 Introverted Thinking</td><td>构建内部逻辑框架，追求精确性和内在一致性</td><td>分析、分类、原理、内在逻辑</td></tr>
+      <tr><td><strong style="color: var(--accent);">Fe</strong></td><td>外倾情感 Extraverted Feeling</td><td>维护外部和谐，关注群体情绪氛围和社交规范</td><td>共情、和谐、社交礼仪、群体价值</td></tr>
+      <tr><td><strong style="color: var(--primary-light);">Fi</strong></td><td>内倾情感 Introverted Feeling</td><td>坚守内在价值观，忠于真实自我和个人良知</td><td> authenticity、价值观、道德、个人情感</td></tr>
+      <tr><td><strong style="color: var(--accent);">Se</strong></td><td>外倾感觉 Extraverted Sensing</td><td>直接体验外部感官现实，关注当下具体细节</td><td>当下、行动、感官、现实</td></tr>
+      <tr><td><strong style="color: var(--primary-light);">Si</strong></td><td>内倾感觉 Introverted Sensing</td><td>调用内在经验数据库，重视传统、惯例和稳定性</td><td>经验、细节、传统、稳定</td></tr>
+      <tr><td><strong style="color: var(--accent);">Ne</strong></td><td>外倾直觉 Extraverted Intuition</td><td>探索外部世界的可能性，产生联想和新奇连接</td><td>可能性、联想、创新、发散</td></tr>
+      <tr><td><strong style="color: var(--primary-light);">Ni</strong></td><td>内倾直觉 Introverted Intuition</td><td>整合内在洞察，形成深层模式和未来预见</td><td>洞察、预见、象征、深层模式</td></tr>
+    </tbody>
+  </table>
+
+  <h3>功能栈的构建规则</h3>
+  <p>每个类型的功能栈不是随机组合，而是遵循严格的数学和逻辑规则：</p>
+
+  <h4>规则一：态度交替</h4>
+  <p>功能栈中内倾(I)和外倾(E)功能必须交替出现。如果主导功能是外倾，辅助功能必须是内倾，以此类推。</p>
+
+  <h4>规则二：判断-感知交替</h4>
+  <p>判断功能（T/F）和感知功能（S/N）必须交替出现。这样确保个体既有输入信息的手段，也有处理信息的方式。</p>
+
+  <h4>规则三：第一与第四对立</h4>
+  <p>主导功能（第1位）和劣势功能（第4位）使用同一心理功能但态度相反。例如INTJ是Ni-Te-Fi-Se，主导Ni与劣势Se相对。</p>
+
+  <h4>规则四：第二与第三互补</h4>
+  <p>辅助功能（第2位）和第三功能（第3位）使用同一心理功能但态度相反。例如INTJ的Te与Fi互补（都是判断功能，但Te外倾、Fi内倾）。</p>
+
+  <h3>功能位置的深层含义</h3>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div><div class="dimension-title">主导功能 (Dominant / Hero)</div><div class="dimension-subtitle">第一功能 · 人格的"英雄"</div></div>
+      <div class="dimension-letter" style="font-size: 24px;">1st</div>
+    </div>
+    <p>主导功能是个体最自然、最强大、最可信赖的心理工具。它在童年时期就开始发展，是个体感知世界和做出反应的默认模式。处于主导功能状态时，人感到最自信、最"像自己"。过度依赖主导功能可能导致其他功能的萎缩和盲点。</p>
+  </div>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div><div class="dimension-title">辅助功能 (Auxiliary / Parent)</div><div class="dimension-subtitle">第二功能 · 人格的"父母"</div></div>
+      <div class="dimension-letter" style="font-size: 24px;">2nd</div>
+    </div>
+    <p>辅助功能是成熟人格的关键标志。如果主导功能是"我想要什么"，辅助功能就是"我如何负责任地获得它"。辅助功能的态度与主导功能相反（E/I），起到平衡作用。它的健康发展标志着从青春期到成年的过渡。一个充分发展辅助功能的人，能够在自我表达和社会适应之间找到平衡。</p>
+  </div>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div><div class="dimension-title">第三功能 (Tertiary / Child)</div><div class="dimension-subtitle">第三功能 · 人格的"孩童"</div></div>
+      <div class="dimension-letter" style="font-size: 24px;">3rd</div>
+    </div>
+    <p>第三功能代表人格中 playful、轻松、但可能不成熟的一面。它可以带来创造力和乐趣，但也容易在压力或情绪下以幼稚方式表现出来。第三功能的发展往往需要刻意练习，它为生活增添色彩，但不能过度依赖。</p>
+  </div>
+
+  <div class="dimension-card">
+    <div class="dimension-header">
+      <div><div class="dimension-title">劣势功能 (Inferior / Aspirational)</div><div class="dimension-subtitle">第四功能 · 人格的"盲点/渴望"</div></div>
+      <div class="dimension-letter" style="font-size: 24px;">4th</div>
+    </div>
+    <p>劣势功能是个体最弱、最不熟悉的功能，通常与主导功能对立。它既是个体的最大盲点（容易忽视或搞砸的领域），也是内心深处隐秘的渴望。劣势功能的突然主导（如在极端压力下）会导致"grip"状态——个体表现出完全不像自己的、过度补偿的行为。健康的类型发展要求温和地整合劣势功能，而非压抑或逃避它。</p>
+  </div>
+
+  <h3>16型完整功能栈速查</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>类型</th><th>主导</th><th>辅助</th><th>第三</th><th>劣势</th><th>气质</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong style="color: var(--analyst);">INTJ</strong></td><td>Ni</td><td>Te</td><td>Fi</td><td>Se</td><td>分析师</td></tr>
+      <tr><td><strong style="color: var(--analyst);">INTP</strong></td><td>Ti</td><td>Ne</td><td>Si</td><td>Fe</td><td>分析师</td></tr>
+      <tr><td><strong style="color: var(--analyst);">ENTJ</strong></td><td>Te</td><td>Ni</td><td>Se</td><td>Fi</td><td>分析师</td></tr>
+      <tr><td><strong style="color: var(--analyst);">ENTP</strong></td><td>Ne</td><td>Ti</td><td>Fe</td><td>Si</td><td>分析师</td></tr>
+      <tr><td><strong style="color: var(--diplomat);">INFJ</strong></td><td>Ni</td><td>Fe</td><td>Ti</td><td>Se</td><td>外交官</td></tr>
+      <tr><td><strong style="color: var(--diplomat);">INFP</strong></td><td>Fi</td><td>Ne</td><td>Si</td><td>Te</td><td>外交官</td></tr>
+      <tr><td><strong style="color: var(--diplomat);">ENFJ</strong></td><td>Fe</td><td>Ni</td><td>Se</td><td>Ti</td><td>外交官</td></tr>
+      <tr><td><strong style="color: var(--diplomat);">ENFP</strong></td><td>Ne</td><td>Fi</td><td>Te</td><td>Si</td><td>外交官</td></tr>
+      <tr><td><strong style="color: var(--sentinel);">ISTJ</strong></td><td>Si</td><td>Te</td><td>Fi</td><td>Ne</td><td>哨兵</td></tr>
+      <tr><td><strong style="color: var(--sentinel);">ISFJ</strong></td><td>Si</td><td>Fe</td><td>Ti</td><td>Ne</td><td>哨兵</td></tr>
+      <tr><td><strong style="color: var(--sentinel);">ESTJ</strong></td><td>Te</td><td>Si</td><td>Ne</td><td>Fi</td><td>哨兵</td></tr>
+      <tr><td><strong style="color: var(--sentinel);">ESFJ</strong></td><td>Fe</td><td>Si</td><td>Ne</td><td>Ti</td><td>哨兵</td></tr>
+      <tr><td><strong style="color: var(--explorer);">ISTP</strong></td><td>Ti</td><td>Se</td><td>Ni</td><td>Fe</td><td>探险家</td></tr>
+      <tr><td><strong style="color: var(--explorer);">ISFP</strong></td><td>Fi</td><td>Se</td><td>Ni</td><td>Te</td><td>探险家</td></tr>
+      <tr><td><strong style="color: var(--explorer);">ESTP</strong></td><td>Se</td><td>Ti</td><td>Fe</td><td>Ni</td><td>探险家</td></tr>
+      <tr><td><strong style="color: var(--explorer);">ESFP</strong></td><td>Se</td><td>Fi</td><td>Te</td><td>Ni</td><td>探险家</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ SECTION: ALL TYPES ============ -->
+<section id="all-types" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 全部类型总览</div>
+  <h2>16型人格总览</h2>
+  <div class="lead">
+    点击下方卡片查看每种人格的详细解析，包括核心特征、认知功能栈、优势、盲点、职业倾向和人际关系模式。
+  </div>
+
+  <h3 style="color: var(--analyst);">分析师 Analysts (NT)</h3>
+  <div class="card-grid" id="analyst-grid"></div>
+
+  <h3 style="color: var(--diplomat);">外交官 Diplomats (NF)</h3>
+  <div class="card-grid" id="diplomat-grid"></div>
+
+  <h3 style="color: var(--sentinel);">哨兵 Sentinels (SJ)</h3>
+  <div class="card-grid" id="sentinel-grid"></div>
+
+  <h3 style="color: var(--explorer);">探险家 Explorers (SP)</h3>
+  <div class="card-grid" id="explorer-grid"></div>
+</section>
+
+<!-- ============ SECTION: ANALYSTS ============ -->
+<section id="analysts" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 分析师 (NT)</div>
+  <h2>分析师 Analysts</h2>
+  <div class="lead">
+    以直觉(N)和思考(T)为核心的四种类型，共享对知识、战略思维和系统优化的追求。他们是天生的规划者、设计者和理论构建者。
+  </div>
+  <div id="analyst-detail-content"></div>
+</section>
+
+<!-- ============ SECTION: DIPLOMATS ============ -->
+<section id="diplomats" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 外交官 (NF)</div>
+  <h2>外交官 Diplomats</h2>
+  <div class="lead">
+    以直觉(N)和情感(F)为核心的四种类型，共享对意义、价值观和人际联结的追求。他们是天生的激励者、治愈者和理想主义者。
+  </div>
+  <div id="diplomat-detail-content"></div>
+</section>
+
+<!-- ============ SECTION: SENTINELS ============ -->
+<section id="sentinels" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 哨兵 (SJ)</div>
+  <h2>哨兵 Sentinels</h2>
+  <div class="lead">
+    以实感(S)和判断(J)为核心的四种类型，共享对秩序、责任和传统价值的尊重。他们是天生的组织者、维护者和执行者。
+  </div>
+  <div id="sentinel-detail-content"></div>
+</section>
+
+<!-- ============ SECTION: EXPLORERS ============ -->
+<section id="explorers" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 探险家 (SP)</div>
+  <h2>探险家 Explorers</h2>
+  <div class="lead">
+    以实感(S)和感知(P)为核心的四种类型，共享对当下体验、技艺精进和自由探索的热爱。他们是天生的实践者、艺术家和应变专家。
+  </div>
+  <div id="explorer-detail-content"></div>
+</section>
+
+<!-- ============ SECTION: DYNAMICS ============ -->
+<section id="dynamics" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 类型动力学</div>
+  <h2>类型动力学</h2>
+  <div class="lead">
+    人格类型不是静态标签，而是动态发展的系统。理解类型在不同生命阶段、压力状态和成长路径中的表现，是MBTI深度应用的关键。
+  </div>
+
+  <h3>生命周期的类型发展</h3>
+
+  <h4>童年期：主导功能的觉醒 (0-12岁)</h4>
+  <p>儿童最先发展和表现的是主导功能。一个主导Te的孩子可能从小就喜欢组织游戏、制定规则；主导Fi的孩子则可能展现出强烈的个人偏好和情感反应。这个阶段，辅助功能尚未成熟，孩子往往显得"极端"或"片面"。</p>
+
+  <h4>青少年期：辅助功能的挑战 (12-25岁)</h4>
+  <p>青春期是辅助功能发展的关键期。社会和学校环境要求青少年发展更平衡的能力——主导功能为内倾(I)的类型需要学习外倾表达，主导功能为感知(P)的类型需要学习判断和计划。这个阶段的内心冲突往往源于主导与辅助功能之间的张力。</p>
+
+  <h4>成年期：第三功能的整合 (25-50岁)</h4>
+  <p>成熟的成年人开始舒适地使用第三功能，为生活增添乐趣和灵活性。这是"中年危机"之前的稳定期，但也可能因过度依赖前三个功能而忽视劣势功能，导致某种形式的停滞。</p>
+
+  <h4>中年期：劣势功能的召唤 (50岁后)</h4>
+  <p>中年阶段，个体开始意识到被长期忽视的劣势功能。这种"召唤"可能表现为对新领域的好奇、对年轻时放弃可能性的遗憾，或是一种想要变得"更完整"的内在驱动力。健康的中年发展意味着温和地整合劣势功能，而非被其淹没。</p>
+
+  <h3>Grip Stress：压力下的类型扭曲</h3>
+  <p>当个体长期处于极端压力或疲劳状态时，可能落入"Grip"状态——劣势功能以不健康、过度补偿的方式接管人格。这不是"变成另一种类型"，而是同一类型在应激状态下的扭曲表现。</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>类型</th><th>正常状态</th><th>Grip状态表现</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>INTJ/INFJ</td><td>战略性、洞察力强</td><td>过度沉溺感官（暴饮暴食、冲动消费、强迫性运动）</td></tr>
+      <tr><td>INTP/ISTP</td><td>逻辑分析、冷静 detached</td><td>过度寻求外部情感确认（情绪化、讨好他人、敏感多疑）</td></tr>
+      <tr><td>ENTP/ENFP</td><td>充满可能性、创意发散</td><td>沉迷于细节和过去（强迫性回忆、过度关注身体感受）</td></tr>
+      <tr><td>ENTJ/ESTJ</td><td>高效执行、目标导向</td><td>陷入内在情感漩涡（自我怜悯、道德焦虑、情感爆发）</td></tr>
+      <tr><td>INFP/ISFP</td><td>忠于价值观、温和内敛</td><td>强迫性批判和组织（对他人吹毛求疵、过度控制环境）</td></tr>
+      <tr><td>ENFJ/ESFJ</td><td>关怀他人、社交和谐</td><td>冷漠分析和过度批判（突然变得刻薄、逻辑至上）</td></tr>
+      <tr><td>ISTJ/ISFJ</td><td>可靠、注重传统</td><td>灾难化想象和偏执（过度担忧未来、看到不存在模式）</td></tr>
+      <tr><td>ESTP/ESFP</td><td>活在当下、灵活应变</td><td>脱离现实的抽象恐惧（存在主义焦虑、过度哲学化）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>从Grip中恢复</h3>
+  <ol>
+    <li><strong>识别信号：</strong>意识到自己"不像平常的自己"，行为模式突然极端化。</li>
+    <li><strong>减少刺激：</strong>Grip状态下不宜做重大决定，先恢复基本生理需求（睡眠、营养、运动）。</li>
+    <li><strong>回归主导功能：</strong>有意识地使用主导功能进行少量、低压力的活动，重建"自我感"。</li>
+    <li><strong>温和接触劣势：</strong>不要压抑劣势功能的表现，而是以健康方式满足其需求（如INTJ可通过有意识的体育活动满足Se）。</li>
+    <li><strong>寻求支持：</strong>与信任的人交流，尤其是辅助功能发达的人（如INTJ寻找ENTJ或ENFP朋友）。</li>
+  </ol>
+</section>
+
+<!-- ============ SECTION: COMPARISON ============ -->
+<section id="comparison" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 类型对比</div>
+  <h2>类型对比与辨析</h2>
+  <div class="lead">
+    许多类型在外显行为上相似，但底层认知机制截然不同。以下是常见易混淆类型的深度辨析。
+  </div>
+
+  <h3>INTJ vs INFJ</h3>
+  <div class="compare-grid">
+    <div class="compare-col" style="border-top-color: var(--analyst);">
+      <h4 style="margin-top: 0; color: var(--analyst);">INTJ (Ni-Te-Fi-Se)</h4>
+      <p>洞察服务于<strong>效率和系统构建</strong>。INTJ看到未来后，立即思考"如何实现"。他们的共情(Fi)是内在的、选择性的——只关心少数亲近的人。可能显得冷漠但高效。</p>
+      <p><strong>关键区分：</strong>做决定时优先考虑逻辑可行性和资源优化，情感是私人领域的事。</p>
+    </div>
+    <div class="compare-col" style="border-top-color: var(--diplomat);">
+      <h4 style="margin-top: 0; color: var(--diplomat);">INFJ (Ni-Fe-Ti-Se)</h4>
+      <p>洞察服务于<strong>理解和帮助他人</strong>。INFJ看到未来后，立即思考"这对他人意味着什么"。他们的思考(Ti)是辅助工具——用来分析理解他人情感。</p>
+      <p><strong>关键区分：</strong>做决定时优先考虑人际和谐和他人感受，逻辑是服务性工具。</p>
+    </div>
+  </div>
+
+  <h3>INTP vs ISTP</h3>
+  <div class="compare-grid">
+    <div class="compare-col" style="border-top-color: var(--analyst);">
+      <h4 style="margin-top: 0; color: var(--analyst);">INTP (Ti-Ne-Si-Fe)</h4>
+      <p>通过<strong>抽象理论和可能性</strong>构建内在逻辑框架。INTP的Ti服务于理解宇宙运行规律，Ne提供无限的联想和假设。擅长哲学、编程、理论物理。</p>
+      <p><strong>关键区分：</strong>兴趣在理论和概念，喜欢讨论"如果...会怎样"，对具体操作缺乏耐心。</p>
+    </div>
+    <div class="compare-col" style="border-top-color: var(--explorer);">
+      <h4 style="margin-top: 0; color: var(--explorer);">ISTP (Ti-Se-Ni-Fe)</h4>
+      <p>通过<strong>直接操作和现实反馈</strong>构建内在逻辑框架。ISTP的Ti服务于理解事物如何实际运作，Se提供即时的感官数据。擅长机械、运动、紧急应变。</p>
+      <p><strong>关键区分：</strong>兴趣在具体事物和动手操作，喜欢"拆解-理解-重组"，是沉默的实干家。</p>
+    </div>
+  </div>
+
+  <h3>ENFP vs ESFP</h3>
+  <div class="compare-grid">
+    <div class="compare-col" style="border-top-color: var(--diplomat);">
+      <h4 style="margin-top: 0; color: var(--diplomat);">ENFP (Ne-Fi-Te-Si)</h4>
+      <p>外向探索<strong>抽象可能性</strong>。ENFP的活力来自新想法、新联系、新意义。他们热情是因为看到了别人看不到的潜力。社交中关注"这个人的独特性和可能性"。</p>
+    </div>
+    <div class="compare-col" style="border-top-color: var(--explorer);">
+      <h4 style="margin-top: 0; color: var(--explorer);">ESFP (Se-Fi-Te-Ni)</h4>
+      <p>外向探索<strong>当下体验和感官刺激</strong>。ESFP的活力来自当下的氛围、动作、美感。他们热情是因为生活本身就很精彩。社交中关注"当下的氛围和共享体验"。</p>
+    </div>
+  </div>
+
+  <h3>ENTJ vs ESTJ</h3>
+  <div class="compare-grid">
+    <div class="compare-col" style="border-top-color: var(--analyst);">
+      <h4 style="margin-top: 0; color: var(--analyst);">ENTJ (Te-Ni-Se-Fi)</h4>
+      <p>以<strong>战略愿景</strong>驱动组织。ENTJ的Te服务于Ni洞察到的长远目标。他们擅长"从0到1"的开创和转型，愿意打破现有规则以实现愿景。直接、果断、宏观。</p>
+    </div>
+    <div class="compare-col" style="border-top-color: var(--sentinel);">
+      <h4 style="margin-top: 0; color: var(--sentinel);">ESTJ (Te-Si-Ne-Fi)</h4>
+      <p>以<strong>经验和传统</strong>驱动组织。ESTJ的Te服务于Si验证过的有效方法。他们擅长"从1到N"的执行和优化，重视维护现有秩序和标准。务实、可靠、具体。</p>
+    </div>
+  </div>
+
+  <h3>ISFJ vs ISTJ</h3>
+  <div class="compare-grid">
+    <div class="compare-col" style="border-top-color: var(--sentinel);">
+      <h4 style="margin-top: 0; color: var(--sentinel);">ISFJ (Si-Fe-Ti-Ne)</h4>
+      <p>通过<strong>关怀他人</strong>维护传统。ISFJ的记忆(Si)与群体和谐(Fe)结合，表现为无微不至的照顾和"记住每个人的喜好"。温暖的守护者。</p>
+    </div>
+    <div class="compare-col" style="border-top-color: var(--sentinel);">
+      <h4 style="margin-top: 0; color: var(--sentinel);">ISTJ (Si-Te-Fi-Ne)</h4>
+      <p>通过<strong>高效执行</strong>维护传统。ISTJ的记忆(Si)与逻辑组织(Te)结合，表现为可靠的责任履行和"按规矩办事"。冷静的 executor。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION: APPLICATION ============ -->
+<section id="application" class="section">
+  <div class="breadcrumb">MBTI 学习系统 / 应用场景</div>
+  <h2>MBTI 的实际应用</h2>
+  <div class="lead">
+    MBTI的真正价值不在于"贴标签"，而在于增进自我理解、改善人际沟通和促进团队协作。以下是各场景的系统化应用方法。
+  </div>
+
+  <h3>1. 个人成长路径</h3>
+  <p>每种类型都有特定的成长方向，核心原则是：发展辅助功能以平衡主导功能，有意识地整合劣势功能。</p>
+  <table class="data-table">
+    <thead>
+      <tr><th>类型</th><th>核心成长课题</th><th>实践建议</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>IxxJ (Ni/Si主导)</td><td>学习外倾表达和灵活性</td><td>主动分享想法，允许计划外的事件发生，练习即兴应对</td></tr>
+      <tr><td>IxxP (Ti/Fi主导)</td><td>建立外部结构和承诺</td><td>设定公开deadline，寻找 accountability partner，学习坚持完成</td></tr>
+      <tr><td>ExxJ (Te/Fe主导)</td><td>倾听内在声音和放慢节奏</td><td>独处反思时间，练习说"不"，允许自己暂时不完美</td></tr>
+      <tr><td>ExxP (Ne/Se主导)</td><td>深入专注和长期承诺</td><td>选择一个方向深耕，练习延迟满足，建立日常routine</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2. 职业匹配逻辑</h3>
+  <p>职业匹配不应基于类型标签本身，而应基于<strong>认知功能的工作方式</strong>与岗位要求的匹配度。</p>
+
+  <h4>主导功能与职业方向</h4>
+  <ul>
+    <li><strong>Ni主导 (INTJ, INFJ)：</strong>战略规划、咨询、研究、写作、设计——需要长期专注和深度洞察的领域。</li>
+    <li><strong>Ne主导 (ENTP, ENFP)：</strong>创意、创业、营销、产品开发——需要发散思维和探索可能性的领域。</li>
+    <li><strong>Si主导 (ISTJ, ISFJ)：</strong>会计、医疗、行政、教育——需要精确、可靠、遵循流程的领域。</li>
+    <li><strong>Se主导 (ESTP, ESFP)：</strong>销售、急救、表演、体育——需要即时反应和感官参与的领域。</li>
+    <li><strong>Ti主导 (INTP, ISTP)：</strong>工程、编程、分析、法医——需要独立分析和逻辑构建的领域。</li>
+    <li><strong>Te主导 (ENTJ, ESTJ)：</strong>管理、运营、法律、项目管理——需要组织资源和达成目标的领域。</li>
+    <li><strong>Fi主导 (INFP, ISFP)：</strong>艺术、写作、辅导、设计——需要忠于内在价值观和审美表达的领域。</li>
+    <li><strong>Fe主导 (ENFJ, ESFJ)：</strong>人力资源、教育、医疗护理、客户服务——需要人际协调和关怀支持的领域。</li>
+  </ul>
+
+  <h3>3. 人际沟通策略</h3>
+  <div class="highlight-box">
+    <strong>核心原则：</strong>与不同类型沟通时，用你的<strong>辅助功能</strong>去对接对方的<strong>主导功能</strong>，而非强迫对方适应你的主导功能。
+  </div>
+
+  <h4>与思考型(T)沟通</h4>
+  <ul>
+    <li>先说结论，再补充逻辑和证据</li>
+    <li>避免过度情感铺垫，直接切入主题</li>
+    <li>接受他们的批评性反馈，不要视为个人攻击</li>
+    <li>给他们独立思考和决策的空间</li>
+  </ul>
+
+  <h4>与情感型(F)沟通</h4>
+  <ul>
+    <li>先建立联结和信任，再讨论事务</li>
+    <li>认可他们的感受和价值观</li>
+    <li>批评时采用"三明治法则"（肯定-建议-肯定）</li>
+    <li>关注决策对他人的影响</li>
+  </ul>
+
+  <h4>与直觉型(N)沟通</h4>
+  <ul>
+    <li>讨论大局、意义和可能性</li>
+    <li>允许跳跃式思维和联想</li>
+    <li>避免过度关注琐碎细节</li>
+    <li>激发他们对未来的想象</li>
+  </ul>
+
+  <h4>与实感型(S)沟通</h4>
+  <ul>
+    <li>提供具体、可操作的信息</li>
+    <li>用实例和经验支持观点</li>
+    <li>关注当下和近期的实际影响</li>
+    <li>步骤清晰，避免过于抽象</li>
+  </ul>
+
+  <h3>4. 团队协作互补</h3>
+  <p>高效的团队需要多种认知功能的互补。一个理想的项目团队通常需要：</p>
+  <ul>
+    <li><strong>愿景者 (Ni/Ne)：</strong>设定方向和发现可能性</li>
+    <li><strong>执行者 (Te/Si)：</strong>制定计划、分配资源、确保落地</li>
+    <li><strong>协调者 (Fe)：</strong>维护团队氛围、处理人际冲突</li>
+    <li><strong>质检者 (Ti/Si)：</strong>检查逻辑一致性、识别风险</li>
+    <li><strong>应变者 (Se/Ne)：</strong>应对突发状况、提供创意解决方案</li>
+  </ul>
+
+  <h3>5. 常见误用与避坑</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>误用方式</th><th>问题</th><th>正确态度</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>类型歧视</td><td>"你是S型所以不适合创新"</td><td>任何类型都有创新能力，只是方式不同</td></tr>
+      <tr><td>刻板印象</td><td>"INTJ都是冷漠的天才"</td><td>类型描述的是倾向，不是固定人设</td></tr>
+      <tr><td>自我设限</td><td>"我是P型所以无法自律"</td><td>类型可以发展，劣势功能可以整合</td></tr>
+      <tr><td>过度分析他人</td><td>未经同意给人"判型"</td><td>MBTI最适合用于自我探索</td></tr>
+      <tr><td>替代专业诊断</td><td>用MBTI解释心理问题</td><td>心理困扰应寻求专业帮助</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Type Detail Modal (injected via JS) -->
+<div id="type-modal" style="display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.8); overflow-y:auto;">
+  <div style="max-width:900px; margin: 40px auto; background: var(--bg-dark); border-radius: var(--radius); border: 1px solid var(--border);">
+    <div style="padding: 24px; border-bottom: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+      <span style="color: var(--text-muted); font-size: 12px;">MBTI 类型详情</span>
+      <button onclick="closeModal()" style="background:none; border:none; color: var(--text-primary); font-size: 20px; cursor:pointer;">✕</button>
+    </div>
+    <div id="type-modal-content" style="padding: 40px;"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ============ TYPE DATA ============
+const typeData = {
+  INTJ: {
+    name: '建筑师', en: 'Architect',
+    role: 'analyst', color: 'var(--analyst)',
+    population: '2.1%', gender: '男性偏多',
+    tagline: '富有想象力和战略性的思想家，一切皆在计划之中',
+    desc: 'INTJ是独立的战略家，以深邃的洞察力和高效的执行力著称。他们善于看到系统的漏洞和长期趋势，是天生的规划者和变革推动者。',
+    traits: ['独立自主', '战略思维', '目标导向', '高标准', '知识渴求', '冷静理性'],
+    strengths: ['出色的长期规划能力', '在复杂系统中识别模式', '坚定的意志力和自律', '持续学习和自我提升', '对低效和虚伪零容忍'],
+    weaknesses: ['可能显得傲慢或冷漠', '过度追求完美导致拖延', '不擅长处理情感冲突', '对他人耐心不足', '可能过度控制'],
+    careers: ['战略顾问', '系统架构师', '投资分析师', '科学家/研究员', '企业高管', '律师'],
+    relations: '在关系中寻求智识上的平等和深度交流。表达爱意的方式往往是通过帮助对方成长和解决问题，而非甜言蜜语。需要伴侣尊重他们的独立空间。',
+    functions: { dom: 'Ni', aux: 'Te', tert: 'Fi', inf: 'Se' },
+    functionDesc: {
+      Ni: '通过深层模式识别和内在洞察形成对未来的预见',
+      Te: '用逻辑和效率组织外部世界，建立可执行的系统',
+      Fi: '在亲密关系中展现个人价值观和深层情感',
+      Se: '劣势功能——可能忽视当下体验和身体信号'
+    }
+  },
+  INTP: {
+    name: '逻辑学家', en: 'Logician',
+    role: 'analyst', color: 'var(--analyst)',
+    population: '3.3%', gender: '男性偏多',
+    tagline: '具有创造力的发明家，对知识有止不住的渴望',
+    desc: 'INTP是纯粹的思想者，以逻辑分析和对真理的追求为核心驱动力。他们喜欢拆解概念、寻找悖论、构建理论模型。',
+    traits: ['分析性强', '客观冷静', '好奇心旺盛', '理论偏好', '独立思考', '开放包容'],
+    strengths: ['卓越的逻辑分析能力', '快速学习新概念', '创造性的问题解决', '对偏见和假设敏感', '能接受复杂性和不确定性'],
+    weaknesses: ['执行力弱，想法多实践少', '社交中显得疏离或尴尬', '过度分析导致 paralysis', '忽视情感需求和社交礼仪', '可能变得愤世嫉俗'],
+    careers: ['软件工程师', '数据科学家', '哲学家', '理论物理学家', '系统分析师', '学术研究者'],
+    relations: '重视智识上的刺激和真诚交流。不喜欢社交游戏和情感操控。一旦建立深层联结，会非常忠诚，但日常表达可能显得冷淡。',
+    functions: { dom: 'Ti', aux: 'Ne', tert: 'Si', inf: 'Fe' },
+    functionDesc: {
+      Ti: '构建精密的内在逻辑框架，追求定义和分类的精确性',
+      Ne: '探索可能性和概念间的隐藏联系，产生创新想法',
+      Si: '第三功能——偶尔沉浸在怀旧和舒适习惯中',
+      Fe: '劣势功能——在压力下可能变得过度在意他人评价'
+    }
+  },
+  ENTJ: {
+    name: '指挥官', en: 'Commander',
+    role: 'analyst', color: 'var(--analyst)',
+    population: '1.8%', gender: '男性偏多',
+    tagline: '大胆、富有想象力且意志强大的领导者，总能找到或创造解决方法',
+    desc: 'ENTJ是天生的领导者，以战略眼光和果断执行力著称。他们善于发现低效之处，并毫不犹豫地推动变革。',
+    traits: ['领导力强', '果断自信', '战略眼光', '效率至上', '直言不讳', '目标驱动'],
+    strengths: ['卓越的组织领导能力', '快速决策和执行力', '在危机中保持冷静', '激励他人发挥潜能', '长远的战略思维'],
+    weaknesses: ['可能显得专横或不耐烦', '对情感反应迟钝', '可能过度工作而忽视健康', '对低效者容忍度极低', '可能将人视为资源'],
+    careers: ['企业CEO', '管理顾问', '投资银行家', '创业家', '律师', '政治领袖'],
+    relations: '追求平等、智识匹配的伙伴关系。欣赏能跟上他们节奏、敢于挑战他们的伴侣。需要学习放慢脚步，倾听情感需求。',
+    functions: { dom: 'Te', aux: 'Ni', tert: 'Se', inf: 'Fi' },
+    functionDesc: {
+      Te: '高效组织外部资源和人力以实现目标',
+      Ni: '洞察长远趋势和战略方向',
+      Se: '第三功能——享受感官刺激和当下体验',
+      Fi: '劣势功能——深层的个人价值观和情感容易被忽视'
+    }
+  },
+  ENTP: {
+    name: '辩论家', en: 'Debater',
+    role: 'analyst', color: 'var(--analyst)',
+    population: '3.2%', gender: '男性偏多',
+    tagline: '聪明好奇的思想者，无法抵挡智力挑战的诱惑',
+    desc: 'ENTP是创意的催化剂，以敏捷的思维和对辩论的热爱著称。他们喜欢挑战现有观念，探索新的可能性。',
+    traits: ['机智幽默', '创新思维', '辩论热情', '适应力强', '好奇心强', '直言不讳'],
+    strengths: ['出色的即兴应变能力', '从多角度看待问题', '激励团队创新', '善于谈判和说服', '不怕挑战权威'],
+    weaknesses: ['可能好辩且挑衅', '难以坚持完成项目', '容易感到无聊和分心', '可能忽视他人感受', '对细节和常规不耐烦'],
+    careers: ['创业家', '战略顾问', '律师', '记者', '产品经理', '创意总监'],
+    relations: '需要智识刺激和自由的伴侣。喜欢"头脑风暴"式的交流，可能对过于情感化或传统的表达方式感到不适。',
+    functions: { dom: 'Ne', aux: 'Ti', tert: 'Fe', inf: 'Si' },
+    functionDesc: {
+      Ne: '不断在外部世界探索新的可能性和概念联系',
+      Ti: '用内在逻辑分析和完善想法',
+      Fe: '第三功能——在舒适状态下善于社交和调节氛围',
+      Si: '劣势功能——对例行公事和过去细节感到束缚'
+    }
+  },
+  INFJ: {
+    name: '提倡者', en: 'Advocate',
+    role: 'diplomat', color: 'var(--diplomat)',
+    population: '1.5%', gender: '女性偏多',
+    tagline: '安静而神秘，同时鼓舞人心且不知疲倦的理想主义者',
+    desc: 'INFJ是最稀少的类型，以深刻的洞察力和强烈的理想主义著称。他们能深刻理解他人，同时坚守内心的愿景。',
+    traits: ['洞察深刻', '理想主义', '共情力强', '有创造力', '追求完美', '私密内敛'],
+    strengths: ['深刻理解人性和动机', '对可能性的独特洞察', '坚定追求理想', '出色的写作和表达能力', '能激发他人潜能'],
+    weaknesses: ['容易倦怠和过度付出', '对批评极度敏感', '可能过于完美主义', '难以设立边界', '容易陷入悲观或孤独'],
+    careers: ['心理咨询师', '作家', 'HR组织发展', '非营利组织领导者', '教师', '艺术家'],
+    relations: '追求灵魂层面的深度联结。一旦信任某人，会极其忠诚和付出。需要伴侣理解他们的复杂性和独处需求。',
+    functions: { dom: 'Ni', aux: 'Fe', tert: 'Ti', inf: 'Se' },
+    functionDesc: {
+      Ni: '对人和情境的深层洞察和预见',
+      Fe: '敏锐感知群体情绪，追求和谐与理解',
+      Ti: '第三功能——用逻辑分析和理解自己的洞察',
+      Se: '劣势功能——可能忽视当下和身体需求'
+    }
+  },
+  INFP: {
+    name: '调停者', en: 'Mediator',
+    role: 'diplomat', color: 'var(--diplomat)',
+    population: '4.4%', gender: '女性偏多',
+    tagline: '诗意、善良的利他主义者，总是热情地为正义事业提供帮助',
+    desc: 'INFP是理想主义的治愈者，以丰富的内心世界和强烈的个人价值观为核心。他们忠于自我，追求authenticity和意义。',
+    traits: ['理想主义', '忠于自我', '共情力强', '创造力丰富', '适应力强', '开放包容'],
+    strengths: ['深刻的自我认知', '对他人痛苦的敏锐感知', '独特的创造性表达', '坚守价值观的勇气', '灵活开放的思维'],
+    weaknesses: ['可能脱离现实', '对批评过度敏感', '难以做决定和完成项目', '容易自我批评', '在社交中感到疲惫'],
+    careers: ['作家/诗人', '心理咨询师', '艺术家', '社会工作者', '教师', '翻译'],
+    relations: '追求真实、深度的情感联结。需要伴侣尊重他们的价值观和创作空间。表达爱意的方式往往是通过创造性行动和深度倾听。',
+    functions: { dom: 'Fi', aux: 'Ne', tert: 'Si', inf: 'Te' },
+    functionDesc: {
+      Fi: '深刻的内在价值体系和情感真实性',
+      Ne: '探索可能性和新的表达方式',
+      Si: '第三功能——沉浸在舒适的记忆和习惯中',
+      Te: '劣势功能——可能逃避组织、计划和外部成就'
+    }
+  },
+  ENFJ: {
+    name: '主人公', en: 'Protagonist',
+    role: 'diplomat', color: 'var(--diplomat)',
+    population: '2.5%', gender: '女性偏多',
+    tagline: '富有魅力、鼓舞人心的领导者，有使听众着迷的能力',
+    desc: 'ENFJ是天生的导师和激励者，以强大的共情能力和领导魅力著称。他们能洞察他人潜能，并热情助人实现成长。',
+    traits: ['魅力非凡', '共情力强', '领导才能', '理想主义', '善于沟通', '责任感强'],
+    strengths: ['卓越的人际影响力', '洞察他人潜能', '激励团队达成共同目标', '处理冲突的能力', '真诚关怀他人'],
+    weaknesses: ['可能过度干涉他人', '对拒绝和冲突极度不适', '容易忽视自身需求', '可能变得操纵性', '对批评过于敏感'],
+    careers: ['人力资源总监', '培训师/教练', '市场营销', '公关', '教育管理者', '非营利组织领导'],
+    relations: '热情、忠诚、全心投入的伴侣。需要被需要和欣赏。需要学会接受伴侣的不完美，避免过度"改造"对方。',
+    functions: { dom: 'Fe', aux: 'Ni', tert: 'Se', inf: 'Ti' },
+    functionDesc: {
+      Fe: '敏锐感知和调节群体情绪氛围',
+      Ni: '洞察他人的成长路径和潜力',
+      Se: '第三功能——享受当下的感官体验和社交活动',
+      Ti: '劣势功能——可能逃避冷峻的逻辑分析'
+    }
+  },
+  ENFP: {
+    name: '竞选者', en: 'Campaigner',
+    role: 'diplomat', color: 'var(--diplomat)',
+    population: '8.1%', gender: '女性偏多',
+    tagline: '热情、有创造力、爱社交的自由精神，总能找到微笑的理由',
+    desc: 'ENFP是热情洋溢的追梦者，以无限的好奇心和温暖的共情力感染周围的人。他们看到每个人的独特性和可能性。',
+    traits: ['热情洋溢', '创意无限', '社交能力强', '好奇心强', '乐观积极', '灵活多变'],
+    strengths: ['感染他人的热情和能量', '看到人和事物的无限可能', '出色的沟通和联结能力', '适应变化的能力', '创意解决问题'],
+    weaknesses: ['难以专注和坚持', '容易过度承诺', '对细节和常规不耐烦', '情绪波动较大', '可能逃避深层冲突'],
+    careers: ['创意策划', '记者', '演员', '创业家', '公关', '教师/培训师'],
+    relations: '热情、浪漫、充满惊喜的伴侣。需要自由和成长空间。可能害怕承诺，但一旦承诺会非常投入。',
+    functions: { dom: 'Ne', aux: 'Fi', tert: 'Te', inf: 'Si' },
+    functionDesc: {
+      Ne: '对外部世界可能性的无限探索和联想',
+      Fi: '忠于个人价值观和真实情感',
+      Te: '第三功能——在需要时能有效组织和执行',
+      Si: '劣势功能——可能忽视身体信号和例行维护'
+    }
+  },
+  ISTJ: {
+    name: '检查员', en: 'Logistician',
+    role: 'sentinel', color: 'var(--sentinel)',
+    population: '11.6%', gender: '男性偏多',
+    tagline: '实际、注重事实的个人，其可靠性是不容置疑的',
+    desc: 'ISTJ是社会的基石，以可靠性、责任感和对传统的尊重著称。他们默默履行职责，确保系统和流程稳定运行。',
+    traits: ['可靠负责', '务实严谨', '注重细节', '遵守规则', '逻辑清晰', '自律自制'],
+    strengths: ['出色的组织和执行能力', '可靠、说到做到', '对细节和事实的精准把握', '在压力下保持冷静', '维护标准和质量'],
+    weaknesses: ['可能过于保守和抗拒变化', '对抽象概念缺乏耐心', '可能显得冷漠或严厉', '不擅长表达情感', '可能过度批评他人'],
+    careers: ['会计师', '审计师', '军官', '法官', '系统管理员', '质量检测'],
+    relations: '忠诚、稳定、用行动表达爱的伴侣。不轻易承诺，但一旦承诺就是一生。需要伴侣理解他们务实的爱之语言。',
+    functions: { dom: 'Si', aux: 'Te', tert: 'Fi', inf: 'Ne' },
+    functionDesc: {
+      Si: '基于经验和已知事实的精确数据库',
+      Te: '用逻辑和效率执行计划和维护秩序',
+      Fi: '第三功能——对亲近的人展现深层个人情感',
+      Ne: '劣势功能——对未知可能性感到不安'
+    }
+  },
+  ISFJ: {
+    name: '保护者', en: 'Defender',
+    role: 'sentinel', color: 'var(--sentinel)',
+    population: '13.8%', gender: '女性偏多',
+    tagline: '非常专注而温暖的守护者，时刻准备着保护所爱之人',
+    desc: 'ISFJ是低调的守护者，以无私的关怀和细致入微的照顾著称。他们记住每个人的喜好，默默营造温暖和谐的环境。',
+    traits: ['温暖体贴', '责任心强', '注重细节', '传统保守', '耐心倾听', '实际行动'],
+    strengths: ['卓越的记忆力和细节关注', '无私关怀他人', '创造舒适和谐的环境', '可靠、值得信赖', '强烈的责任感'],
+    weaknesses: ['容易过度付出而忽视自己', '对变化感到不安', '难以说"不"', '可能过度担忧', '回避冲突和批评'],
+    careers: ['护士', '教师', '社工', '行政助理', '图书管理员', '客户服务'],
+    relations: '温柔、体贴、默默付出的伴侣。通过实际行动（做饭、照顾、记住喜好）表达爱意。需要被认可和感激。',
+    functions: { dom: 'Si', aux: 'Fe', tert: 'Ti', inf: 'Ne' },
+    functionDesc: {
+      Si: '详细的个人经验和传统知识库',
+      Fe: '敏锐感知他人需求，维护群体和谐',
+      Ti: '第三功能——在舒适时用逻辑分析问题',
+      Ne: '劣势功能——对未来可能性过度担忧'
+    }
+  },
+  ESTJ: {
+    name: '总经理', en: 'Executive',
+    role: 'sentinel', color: 'var(--sentinel)',
+    population: '8.7%', gender: '男性偏多',
+    tagline: '出色的管理者，在管理事务或人员方面具有无与伦比的能力',
+    desc: 'ESTJ是高效的组织者，以务实、果断和对秩序的维护著称。他们相信规则和传统，擅长建立并执行有效的系统。',
+    traits: ['务实高效', '组织能力强', '直率坦诚', '责任心强', '传统保守', '目标导向'],
+    strengths: ['卓越的项目管理和执行', '清晰的标准和期望设定', '在混乱中建立秩序', '可靠、说到做到', '保护团队和传统'],
+    weaknesses: ['可能显得专横和不灵活', '对情感需求不敏感', '可能过度坚持传统', '对非常规想法不耐烦', '可能显得过于严厉'],
+    careers: ['项目经理', '军官/警察', '法官', '企业管理者', '政府官员', '财务总监'],
+    relations: '忠诚、负责、提供稳定的伴侣。通过解决问题和提供实际支持表达爱意。需要伴侣尊重他们的权威和规则。',
+    functions: { dom: 'Te', aux: 'Si', tert: 'Ne', inf: 'Fi' },
+    functionDesc: {
+      Te: '高效组织人力和资源以达成目标',
+      Si: '基于经验和已验证的方法执行',
+      Ne: '第三功能——偶尔产生新的想法和可能性',
+      Fi: '劣势功能——深层个人情感被隐藏或压抑'
+    }
+  },
+  ESFJ: {
+    name: '执政官', en: 'Consul',
+    role: 'sentinel', color: 'var(--sentinel)',
+    population: '12.3%', gender: '女性偏多',
+    tagline: '极有同情心、爱社交、受欢迎的人，总是热心帮助他人',
+    desc: 'ESFJ是社交的核心，以热情、体贴和对和谐的维护著称。他们天生善于照顾他人，营造愉快的社交氛围。',
+    traits: ['热情友好', '善于社交', '责任心强', '传统保守', '乐于助人', '注重和谐'],
+    strengths: ['出色的组织和协调能力', '敏锐感知社交动态', '创造温暖和包容的氛围', '可靠、愿意付出', '维护传统和礼仪'],
+    weaknesses: ['过于在意他人评价', '对批评极度敏感', '可能变得八卦或多管闲事', '回避深层冲突', '可能过度依赖外部认可'],
+    careers: ['人力资源', '护士/护理', '教师', '客户服务经理', '活动策划', '销售'],
+    relations: '温暖、忠诚、全心投入的伴侣。通过照顾、陪伴和社交活动表达爱意。需要被需要和公开认可。',
+    functions: { dom: 'Fe', aux: 'Si', tert: 'Ne', inf: 'Ti' },
+    functionDesc: {
+      Fe: '主动维护和创造外部和谐氛围',
+      Si: '基于传统和已知经验建立舒适环境',
+      Ne: '第三功能——偶尔探索新的社交可能性',
+      Ti: '劣势功能——在压力下可能过度分析或变得刻薄'
+    }
+  },
+  ISTP: {
+    name: '鉴赏家', en: 'Virtuoso',
+    role: 'explorer', color: 'var(--explorer)',
+    population: '5.4%', gender: '男性偏多',
+    tagline: '大胆而实际的实验家，擅长使用各种工具',
+    desc: 'ISTP是冷静的工匠，以动手能力、危机应变和对自由的热爱著称。他们喜欢拆解事物、理解原理、掌握技艺。',
+    traits: ['务实冷静', '动手能力强', '独立自由', '适应力强', '理性客观', '喜欢冒险'],
+    strengths: ['卓越的危机处理能力', '出色的机械/技术天赋', '冷静理性的分析', '灵活应变', '高效解决问题'],
+    weaknesses: ['可能显得冷漠疏离', '难以承诺和长期规划', '对情感表达感到不适', '容易感到无聊', '可能冲动冒险'],
+    careers: ['工程师', '飞行员', '消防员/急救', '机械师', '法医', '运动员'],
+    relations: '独立、低调、用行动而非言语表达的伴侣。需要大量个人空间。一旦承诺，会以实际支持和陪伴表达忠诚。',
+    functions: { dom: 'Ti', aux: 'Se', tert: 'Ni', inf: 'Fe' },
+    functionDesc: {
+      Ti: '通过拆解和分析理解事物运作原理',
+      Se: '直接体验当下，通过感官数据行动',
+      Ni: '第三功能——偶尔产生深层洞察和预见',
+      Fe: '劣势功能——在社交和情感表达上感到笨拙'
+    }
+  },
+  ISFP: {
+    name: '探险家', en: 'Adventurer',
+    role: 'explorer', color: 'var(--explorer)',
+    population: '8.8%', gender: '女性偏多',
+    tagline: '灵活、有魅力的艺术家，时刻准备着探索和体验新事物',
+    desc: 'ISFP是温和的艺术家，以审美敏感、活在当下和对个人自由的珍视著称。他们通过艺术和行动表达内心世界。',
+    traits: ['艺术气质', '温和善良', '活在当下', '独立自主', '审美敏锐', '灵活适应'],
+    strengths: ['卓越的艺术和审美能力', '对他人痛苦的敏锐感知', '灵活应变', '忠于自我和价值观', '创造美好体验'],
+    weaknesses: ['难以长期规划', '对批评极度敏感', '容易回避冲突', '可能显得孤僻', '不善于表达内心'],
+    careers: ['艺术家/设计师', '音乐家', '摄影师', '护士', '厨师', '心理咨询师'],
+    relations: '温柔、浪漫、用行动和创造表达爱的伴侣。需要自由和空间。不喜欢被控制或被过度要求表达。',
+    functions: { dom: 'Fi', aux: 'Se', tert: 'Ni', inf: 'Te' },
+    functionDesc: {
+      Fi: '通过审美和行动表达深层个人价值观',
+      Se: '沉浸在当下的感官体验和美感中',
+      Ni: '第三功能——偶尔产生对未来的直觉感知',
+      Te: '劣势功能——在压力下可能变得控制欲强'
+    }
+  },
+  ESTP: {
+    name: '企业家', en: 'Entrepreneur',
+    role: 'explorer', color: 'var(--explorer)',
+    population: '4.3%', gender: '男性偏多',
+    tagline: '聪明、精力充沛、善于感知的人，真心享受生活在边缘',
+    desc: 'ESTP是行动的先锋，以冒险精神、即时反应和对刺激的渴求著称。他们活在当下，善于把握眼前机会。',
+    traits: ['精力充沛', '大胆果断', '善于应变', '务实直接', '社交能力强', '喜欢冒险'],
+    strengths: ['卓越的即时决策能力', '在危机中冷静果断', '感染他人的热情和能量', '善于把握商业机会', '实用主义的问题解决'],
+    weaknesses: ['可能冲动和不计后果', '对长期规划不耐烦', '容易感到无聊', '可能忽视他人感受', '可能显得粗鲁'],
+    careers: ['创业家', '销售', '急救人员', '运动员', '交易员', '现场工程师'],
+    relations: '刺激、有趣、充满活力的伴侣。喜欢共享冒险和体验。需要学会深度承诺和情感交流。',
+    functions: { dom: 'Se', aux: 'Ti', tert: 'Fe', inf: 'Ni' },
+    functionDesc: {
+      Se: '直接行动，把握当下的机会和刺激',
+      Ti: '用内在逻辑分析局势和优化策略',
+      Fe: '第三功能——在社交场合善于调节氛围',
+      Ni: '劣势功能——可能忽视长远后果和深层模式'
+    }
+  },
+  ESFP: {
+    name: '表演者', en: 'Entertainer',
+    role: 'explorer', color: 'var(--explorer)',
+    population: '8.5%', gender: '女性偏多',
+    tagline: '自发的、精力充沛的、热情的娱乐者——生活在他们周围永远不会无聊',
+    desc: 'ESFP是舞台的明星，以热情、幽默和对生活的热爱感染每一个人。他们让每一刻都变得精彩和难忘。',
+    traits: ['热情奔放', '幽默风趣', '善于社交', '活在当下', '审美敏锐', '乐于助人'],
+    strengths: ['卓越的社交和表演才能', '创造快乐和难忘的体验', '敏锐感知他人情绪', '灵活应变', '感染他人的积极能量'],
+    weaknesses: ['难以专注和坚持', '对批评敏感', '容易回避深层问题', '可能冲动消费', '不喜欢规划和 routine'],
+    careers: ['演员/主持人', '销售', '公关', '活动策划', '时尚/美容', '旅游顾问'],
+    relations: '热情、浪漫、让每一天都充满乐趣的伴侣。通过陪伴、惊喜和社交活动表达爱意。需要被关注和欣赏。',
+    functions: { dom: 'Se', aux: 'Fi', tert: 'Te', inf: 'Ni' },
+    functionDesc: {
+      Se: '沉浸在当下的感官体验和社交刺激中',
+      Fi: '忠于个人价值观和真实情感',
+      Te: '第三功能——在需要时能有效组织和推动',
+      Ni: '劣势功能——对未来可能性和深层意义感到不安'
+    }
+  }
+};
+
+// ============ RENDER FUNCTIONS ============
+function renderTypeCards() {
+  const groups = {
+    analyst: { el: document.getElementById('analyst-grid'), types: ['INTJ','INTP','ENTJ','ENTP'] },
+    diplomat: { el: document.getElementById('diplomat-grid'), types: ['INFJ','INFP','ENFJ','ENFP'] },
+    sentinel: { el: document.getElementById('sentinel-grid'), types: ['ISTJ','ISFJ','ESTJ','ESFJ'] },
+    explorer: { el: document.getElementById('explorer-grid'), types: ['ISTP','ISFP','ESTP','ESFP'] }
+  };
+
+  for (const g of Object.values(groups)) {
+    g.el.innerHTML = g.types.map(code => {
+      const t = typeData[code];
+      return `<div class="card" onclick="openTypeModal('${code}')" style="border-color: ${t.color};">
+        <div class="card-header">
+          <div class="card-type" style="color: ${t.color};">${code}</div>
+          <div class="card-name">${t.name}<span>${t.en} · ${t.population}</span></div>
+        </div>
+        <div class="card-desc">${t.tagline}</div>
+        <div class="card-tags">${t.traits.slice(0,3).map(tr => `<span class="tag">${tr}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function renderGroupDetail(role, containerId) {
+  const types = Object.entries(typeData).filter(([k,v]) => v.role === role);
+  const container = document.getElementById(containerId);
+  container.innerHTML = types.map(([code, t]) => `
+    <div class="type-detail" style="margin-bottom: 32px;">
+      <div class="type-hero">
+        <div class="type-hero-code" style="color: ${t.color};">${code}</div>
+        <div class="type-hero-info">
+          <h3>${t.name} <span style="font-size: 18px; color: var(--text-muted);">${t.en}</span></h3>
+          <div class="subtitle">${t.tagline}</div>
+          <div class="stats-row">
+            <div class="stat-box"><div class="stat-value">${t.population}</div><div class="stat-label">人口占比</div></div>
+            <div class="stat-box"><div class="stat-value">${t.gender}</div><div class="stat-label">性别倾向</div></div>
+            <div class="stat-box"><div class="stat-value">${t.functions.dom}</div><div class="stat-label">主导功能</div></div>
+          </div>
+        </div>
+      </div>
+
+      <h4 style="color: ${t.color};">核心特征</h4>
+      <p>${t.desc}</p>
+
+      <h4>认知功能栈</h4>
+      <div class="function-stack">
+        <div class="function-item f-dominant">
+          <div class="function-pos">主导 Dominant</div>
+          <div class="function-code" style="color: var(--accent);">${t.functions.dom}</div>
+          <div class="function-name">${t.functionDesc[t.functions.dom]}</div>
+        </div>
+        <div class="function-item f-auxiliary">
+          <div class="function-pos">辅助 Auxiliary</div>
+          <div class="function-code" style="color: var(--primary-light);">${t.functions.aux}</div>
+          <div class="function-name">${t.functionDesc[t.functions.aux]}</div>
+        </div>
+        <div class="function-item f-tertiary">
+          <div class="function-pos">第三 Tertiary</div>
+          <div class="function-code" style="color: var(--secondary);">${t.functions.tert}</div>
+          <div class="function-name">${t.functionDesc[t.functions.tert]}</div>
+        </div>
+        <div class="function-item f-inferior">
+          <div class="function-pos">劣势 Inferior</div>
+          <div class="function-code" style="color: var(--text-muted);">${t.functions.inf}</div>
+          <div class="function-name">${t.functionDesc[t.functions.inf]}</div>
+        </div>
+      </div>
+
+      <h4>优势</h4>
+      <ul>${t.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+
+      <h4>盲点与挑战</h4>
+      <ul>${t.weaknesses.map(w => `<li>${w}</li>`).join('')}</ul>
+
+      <h4>职业方向</h4>
+      <div class="card-tags" style="margin-bottom: 16px;">${t.careers.map(c => `<span class="tag">${c}</span>`).join('')}</div>
+
+      <h4>人际关系</h4>
+      <p>${t.relations}</p>
+    </div>
+  `).join('');
+}
+
+function openTypeModal(code) {
+  const t = typeData[code];
+  const content = document.getElementById('type-modal-content');
+  content.innerHTML = `
+    <div class="type-hero" style="border-bottom-color: ${t.color};">
+      <div class="type-hero-code" style="color: ${t.color};">${code}</div>
+      <div class="type-hero-info">
+        <h3 style="color: ${t.color};">${t.name} <span style="font-size: 18px; color: var(--text-muted);">${t.en}</span></h3>
+        <div class="subtitle">${t.tagline}</div>
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-value">${t.population}</div><div class="stat-label">人口占比</div></div>
+          <div class="stat-box"><div class="stat-value">${t.gender}</div><div class="stat-label">性别倾向</div></div>
+          <div class="stat-box"><div class="stat-value">${t.functions.dom}</div><div class="stat-label">主导功能</div></div>
+        </div>
+      </div>
+    </div>
+    <p style="font-size: 16px; color: var(--text-primary);">${t.desc}</p>
+    <h4>核心特质</h4>
+    <div class="card-tags" style="margin-bottom: 20px;">${t.traits.map(tr => `<span class="tag" style="background: ${t.color}20; color: ${t.color};">${tr}</span>`).join('')}</div>
+
+    <h4>认知功能栈</h4>
+    <div class="function-stack">
+      <div class="function-item f-dominant">
+        <div class="function-pos">主导</div>
+        <div class="function-code" style="color: var(--accent);">${t.functions.dom}</div>
+        <div class="function-name">${t.functionDesc[t.functions.dom]}</div>
+      </div>
+      <div class="function-item f-auxiliary">
+        <div class="function-pos">辅助</div>
+        <div class="function-code" style="color: var(--primary-light);">${t.functions.aux}</div>
+        <div class="function-name">${t.functionDesc[t.functions.aux]}</div>
+      </div>
+      <div class="function-item f-tertiary">
+        <div class="function-pos">第三</div>
+        <div class="function-code" style="color: var(--secondary);">${t.functions.tert}</div>
+        <div class="function-name">${t.functionDesc[t.functions.tert]}</div>
+      </div>
+      <div class="function-item f-inferior">
+        <div class="function-pos">劣势</div>
+        <div class="function-code" style="color: var(--text-muted);">${t.functions.inf}</div>
+        <div class="function-name">${t.functionDesc[t.functions.inf]}</div>
+      </div>
+    </div>
+
+    <div class="compare-grid" style="margin-top: 24px;">
+      <div class="compare-col" style="border-top-color: ${t.color};">
+        <h4 style="color: ${t.color};">优势</h4>
+        <ul>${t.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+      </div>
+      <div class="compare-col" style="border-top-color: var(--text-muted);">
+        <h4 style="color: var(--text-muted);">盲点</h4>
+        <ul>${t.weaknesses.map(w => `<li>${w}</li>`).join('')}</ul>
+      </div>
+    </div>
+
+    <h4>职业方向</h4>
+    <div class="card-tags">${t.careers.map(c => `<span class="tag">${c}</span>`).join('')}</div>
+
+    <h4>人际关系模式</h4>
+    <p>${t.relations}</p>
+  `;
+  document.getElementById('type-modal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('type-modal').style.display = 'none';
+}
+
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  document.querySelector('.sidebar').classList.remove('open');
+}
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+  renderTypeCards();
+  renderGroupDetail('analyst', 'analyst-detail-content');
+  renderGroupDetail('diplomat', 'diplomat-detail-content');
+  renderGroupDetail('sentinel', 'sentinel-detail-content');
+  renderGroupDetail('explorer', 'explorer-detail-content');
+});
+</script>
+<script>
+const nav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+</script>
+<script>
+// Theme toggle
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme');
+const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+}
+
+if (savedTheme) {
+  applyTheme(savedTheme);
+} else if (prefersLight) {
+  applyTheme('light');
+}
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  applyTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+</script>
+</body>
+</html>
