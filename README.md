@@ -44,7 +44,7 @@
 ## 本地预览
 
 ```bash
-cd cognitive-garden
+cd "心界 MindSphere"
 python3 -m http.server 8080
 # 或
 npx serve .
