@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>正典 · 心界书架</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+    :root {
+      --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+    }
+
+    body {
+      background:
+        linear-gradient(rgba(212,163,115,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,163,115,0.025) 1px, transparent 1px),
+        var(--bg);
+      background-size: 64px 64px, 64px 64px, 100% 100%;
+    }
+
+    main.canon-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 32px 80px;
+    }
+
+    /* ============ HERO ============ */
+    .canon-hero {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 48px;
+      align-items: end;
+      padding-bottom: 48px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+
+    .canon-hero .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .canon-hero .eyebrow .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .canon-hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.01em;
+      margin: 0 0 18px;
+    }
+
+    .canon-hero .en {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(16px, 1.6vw, 22px);
+      letter-spacing: 0.32em;
+      color: var(--accent-light);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0.85;
+    }
+
+    .canon-hero .lede {
+      font-size: 17px;
+      line-height: 1.85;
+      color: var(--text-secondary);
+      max-width: 540px;
+    }
+
+    .canon-hero .lede em {
+      color: var(--accent-light);
+      font-style: italic;
+      font-family: var(--serif);
+    }
+
+    .canon-stats {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 24px;
+      background: var(--bg-elevated);
+    }
+
+    .canon-stats .stat-row {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .canon-stats .stat-cell {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .canon-stats .stat-cell:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .canon-stats .stat-cell .v {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-light);
+    }
+
+    .canon-stats .stat-cell .l {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ============ LEGEND ============ */
+    .canon-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-bottom: 48px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    .canon-legend .leg {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .canon-legend .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Noto Serif SC', serif;
+    }
+
+    .badge[data-state="read"]    { background: rgba(212,163,115,0.18); color: var(--accent-light); border: 1px solid rgba(212,163,115,0.4); }
+    .badge[data-state="reading"] { background: rgba(95,138,124,0.18); color: #8eb8a8; border: 1px solid rgba(95,138,124,0.4); }
+    .badge[data-state="want"]    { background: rgba(140,160,184,0.15); color: #a0b4c8; border: 1px solid rgba(140,160,184,0.35); }
+
+    /* ============ SECTION ============ */
+    .canon-section { margin-bottom: 64px; }
+
+    .canon-section-head {
+      display: flex;
+      align-items: baseline;
+      gap: 18px;
+      margin-bottom: 28px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .canon-section-head .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .canon-section-head .zh {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .canon-section-head .en {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .canon-section-head .count {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+    }
+
+    .canon-section .link-module {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .canon-section .link-module a {
+      color: var(--accent-light);
+      border-bottom: 1px dashed var(--accent);
+    }
+
+    .canon-section .link-module a:hover {
+      color: var(--accent);
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
+    }
+
+    .book {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+      position: relative;
+    }
+
+    .book:hover {
+      border-color: color-mix(in oklab, var(--accent), transparent 60%);
+      transform: translateY(-2px);
+    }
+
+    .book .book-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .book .book-titles { flex: 1; }
+
+    .book .zh {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 4px;
+    }
+
+    .book .orig {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      font-weight: 400;
+    }
+
+    .book .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .book .meta .sep { color: var(--border); margin: 0 6px; }
+
+    .book .line {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .book .line strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Highlighted "终身书" */
+    .book.canon-prime {
+      border-color: color-mix(in oklab, var(--accent), transparent 45%);
+      background: linear-gradient(135deg, rgba(212,163,115,0.06), rgba(212,163,115,0));
+    }
+
+    .book.canon-prime::after {
+      content: 'CANON';
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 2.5px;
+      color: var(--accent);
+      opacity: 0.7;
+    }
+
+    /* ============ CLOSING ============ */
+    .canon-coda {
+      margin-top: 64px;
+      padding: 40px 36px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(212,163,115,0.06), rgba(212,163,115,0.01));
+      border-left: 3px solid var(--accent);
+    }
+
+    .canon-coda .ratio {
+      font-family: var(--serif);
+      font-size: 20px;
+      line-height: 1.7;
+      font-style: italic;
+      color: var(--text);
+      max-width: 760px;
+    }
+
+    .canon-coda .ratio .source {
+      display: block;
+      margin-top: 16px;
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-style: normal;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      main.canon-main { padding: 96px 20px 60px; }
+      .canon-hero { grid-template-columns: 1fr; gap: 32px; align-items: start; padding-bottom: 32px; margin-bottom: 32px; }
+      .canon-section-head { flex-wrap: wrap; row-gap: 6px; }
+      .canon-section-head .count { margin-left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">心</span>
+    <span>心界 <span style="color:var(--text-muted);font-weight:500;font-family:'Sora',sans-serif;font-size:0.85em;">MindSphere</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="mbti.html">人格类型</a>
+    <a href="nvc.html">沟通</a>
+    <a href="cbt.html">认知</a>
+    <a href="stoicism.html">斯多葛</a>
+    <a href="first_principles.html">第一性原理</a>
+    <a href="canon.html" class="active">正典</a>
+    <a href="flashcards.html">记忆</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<main class="canon-main">
+
+  <header class="canon-hero">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> THE CANON · VOL.01 · 2026</div>
+      <h1>正典</h1>
+      <div class="en">The Canon · Personal Bookshelf</div>
+      <p class="lede">这是一个会跟着我走 <em>十年</em> 的书架。它不是"读过的全部"，是"我愿意反复回看的那些"。每一本都在心界的某一个模块里留下了印记 —— 心理、沟通、认知、实践、本质。<br><br>越简短的清单，往往越能定义一个人的内在生活。</p>
+    </div>
+    <aside class="canon-stats">
+      <div class="stat-row">
+        <div class="stat-cell"><span class="v" id="statTotal">—</span><span class="l">Total</span></div>
+        <div class="stat-cell"><span class="v" id="statRead">—</span><span class="l">Read</span></div>
+        <div class="stat-cell"><span class="v" id="statReading">—</span><span class="l">Reading</span></div>
+        <div class="stat-cell"><span class="v" id="statWant">—</span><span class="l">Wanted</span></div>
+      </div>
+    </aside>
+  </header>
+
+  <div class="canon-legend">
+    <span class="leg"><span class="badge" data-state="read">已</span> 已读 · 至少一遍</span>
+    <span class="leg"><span class="badge" data-state="reading">在</span> 在读 · 进行中</span>
+    <span class="leg"><span class="badge" data-state="want">想</span> 想读 · 在书单上</span>
+    <span class="leg" style="margin-left:auto;color:var(--accent);">CANON · 标记为终身书</span>
+  </div>
+
+  <!-- ============ 01 · SELF-KNOWLEDGE ============ -->
+  <section class="canon-section">
+    <header class="canon-section-head">
+      <span class="num">01</span>
+      <span class="zh">自我认知</span>
+      <span class="en">SELF-KNOWLEDGE</span>
+      <span class="count">4 books</span>
+    </header>
+    <div class="link-module">→ 对应模块：<a href="mbti.html">MBTI 人格类型</a></div>
+    <div class="book-grid">
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">心理类型</div>
+            <div class="orig">Psychological Types</div>
+          </div>
+          <span class="badge" data-state="want">想</span>
+        </div>
+        <div class="meta">Carl G. Jung <span class="sep">·</span> 1921</div>
+        <div class="line">MBTI 的全部源头。读起来沉重，但你会看清"功能"这个概念为什么不是分类游戏，而是认知机制本身。</div>
+      </article>
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">天生不同</div>
+            <div class="orig">Gifts Differing: Understanding Personality Type</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Isabel Briggs Myers <span class="sep">·</span> 1980</div>
+        <div class="line"><strong>MBTI 的母本。</strong>Myers 用一生写出的解释。任何其他 MBTI 书都是它的衍生。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">个性类型</div>
+            <div class="orig">Personality Types: Jung's Model of Typology</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Daryl Sharp <span class="sep">·</span> 1987</div>
+        <div class="line">把 Jung 的原始概念翻译成可懂的语言。对真正想理解功能栈的人，比互联网上一切 MBTI 内容都靠谱。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">那真的是我吗？</div>
+            <div class="orig">Was That Really Me? How Everyday Stress Brings Out Our Hidden Personality</div>
+          </div>
+          <span class="badge" data-state="want">想</span>
+        </div>
+        <div class="meta">Naomi Quenk <span class="sep">·</span> 2002</div>
+        <div class="line">劣势功能（inferior function）的最深刻指南。压力下你为什么变成另一个人 —— 答案就在这里。</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 02 · COMMUNICATION ============ -->
+  <section class="canon-section">
+    <header class="canon-section-head">
+      <span class="num">02</span>
+      <span class="zh">沟通</span>
+      <span class="en">COMMUNICATION</span>
+      <span class="count">3 books</span>
+    </header>
+    <div class="link-module">→ 对应模块：<a href="nvc.html">非暴力沟通</a></div>
+    <div class="book-grid">
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">非暴力沟通</div>
+            <div class="orig">Nonviolent Communication: A Language of Life</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Marshall B. Rosenberg <span class="sep">·</span> 2003</div>
+        <div class="line"><strong>30 岁建立健康关系的基础工程。</strong>不是技巧书，是关于"如何不带评判地活着"的一本书。每读一遍发现自己又长出了新评判。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">不分胜负</div>
+            <div class="orig">Never Split the Difference: Negotiating As If Your Life Depended On It</div>
+          </div>
+          <span class="badge" data-state="reading">在</span>
+        </div>
+        <div class="meta">Chris Voss <span class="sep">·</span> 2016</div>
+        <div class="line">前 FBI 谈判专家的"高赌注沟通"指南。和 NVC 是协作—博弈的对偶 —— 后者教你和爱的人说话，前者教你和不一定爱你的人说话。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">关键对话</div>
+            <div class="orig">Crucial Conversations: Tools for Talking When Stakes Are High</div>
+          </div>
+          <span class="badge" data-state="want">想</span>
+        </div>
+        <div class="meta">Patterson · Grenny · McMillan · Switzler <span class="sep">·</span> 2002</div>
+        <div class="line">职场沟通的标准教材。在 30 岁开始带团队、面对难谈话时，是最实用的脚手架。</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 03 · COGNITION ============ -->
+  <section class="canon-section">
+    <header class="canon-section-head">
+      <span class="num">03</span>
+      <span class="zh">认知</span>
+      <span class="en">COGNITION</span>
+      <span class="count">4 books</span>
+    </header>
+    <div class="link-module">→ 对应模块：<a href="cbt.html">认知行为疗法</a></div>
+    <div class="book-grid">
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">伯恩斯新情绪疗法</div>
+            <div class="orig">Feeling Good: The New Mood Therapy</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">David D. Burns <span class="sep">·</span> 1980</div>
+        <div class="line"><strong>CBT 自助版的最佳入门。</strong>读完之后你脑子里就会自动开始识别认知扭曲。研究证实"读这本书"本身对轻中度抑郁有干预效果。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">伯恩斯情绪疗法手册</div>
+            <div class="orig">The Feeling Good Handbook</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">David D. Burns <span class="sep">·</span> 1989</div>
+        <div class="line">第一本的进阶版，包含大量练习题和思维记录表模板。配合主书使用。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">理智胜过情感</div>
+            <div class="orig">Mind Over Mood: Change How You Feel by Changing the Way You Think</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Padesky · Greenberger <span class="sep">·</span> 1995</div>
+        <div class="line">临床 CBT 工作手册的"用户友好版"。7 列思维记录表就是出自这里。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">认知疗法：基础与超越</div>
+            <div class="orig">Cognitive Therapy: Basics and Beyond</div>
+          </div>
+          <span class="badge" data-state="want">想</span>
+        </div>
+        <div class="meta">Judith S. Beck <span class="sep">·</span> 1995</div>
+        <div class="line">Beck 之女的临床教科书。如果你想从"读者"变成能给自己做完整 CBT 流程的人，这本是路径。</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 04 · LIVING PHILOSOPHY ============ -->
+  <section class="canon-section">
+    <header class="canon-section-head">
+      <span class="num">04</span>
+      <span class="zh">实践哲学</span>
+      <span class="en">LIVING PHILOSOPHY</span>
+      <span class="count">6 books</span>
+    </header>
+    <div class="link-module">→ 对应模块：<a href="stoicism.html">斯多葛</a></div>
+    <div class="book-grid">
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">手册</div>
+            <div class="orig">Enchiridion (The Manual)</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Epictetus <span class="sep">·</span> c. AD 125</div>
+        <div class="line"><strong>30 分钟可读完，可读一辈子。</strong>整个斯多葛体系的最小内核。建议每年生日读一遍 —— 每一次你都会发现它说的是另一件事。</div>
+      </article>
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">沉思录</div>
+            <div class="orig">Meditations (Τὰ εἰς ἑαυτόν)</div>
+          </div>
+          <span class="badge" data-state="reading">在</span>
+        </div>
+        <div class="meta">Marcus Aurelius <span class="sep">·</span> c. AD 170</div>
+        <div class="line"><strong>30 岁后读最有共鸣的书。</strong>一个有真实权力、真实痛苦、真实疑惑的中年人写给自己的私人日记 —— 从未打算出版。挑章节读，不必从头到尾。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">道德书简</div>
+            <div class="orig">Epistulae Morales ad Lucilium</div>
+          </div>
+          <span class="badge" data-state="reading">在</span>
+        </div>
+        <div class="meta">Seneca <span class="sep">·</span> c. AD 65</div>
+        <div class="line">罗马最富有的人之一写给朋友的 124 封信。最适合精英背景的 30 岁人入门 —— 他理解野心、财富、地位的诱惑。从第 1, 7, 12, 18 封开始。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">通向美好生活的指南</div>
+            <div class="orig">A Guide to the Good Life: The Ancient Art of Stoic Joy</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">William B. Irvine <span class="sep">·</span> 2008</div>
+        <div class="line">把晚期斯多葛系统化成现代日常技术（负面预演、上方视角、三分法）。如果你只读一本现代斯多葛入门，就读它。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">何谓古代哲学</div>
+            <div class="orig">Philosophy as a Way of Life</div>
+          </div>
+          <span class="badge" data-state="want">想</span>
+        </div>
+        <div class="meta">Pierre Hadot <span class="sep">·</span> 1995</div>
+        <div class="line">让斯多葛被重新理解为"精神操练（spiritual exercises）"而不是只可读的理论。理解"哲学是用来活出的，不是用来知道的"这一点的源头。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">像罗马皇帝一样思考</div>
+            <div class="orig">How to Think Like a Roman Emperor</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Donald Robertson <span class="sep">·</span> 2019</div>
+        <div class="line">临床心理学家写的马可传记 + 斯多葛实践指南。是把 CBT 和斯多葛"接回去"最清晰的一本现代书。</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 05 · FIRST PRINCIPLES ============ -->
+  <section class="canon-section">
+    <header class="canon-section-head">
+      <span class="num">05</span>
+      <span class="zh">本质思维</span>
+      <span class="en">FIRST PRINCIPLES &amp; MENTAL MODELS</span>
+      <span class="count">4 books</span>
+    </header>
+    <div class="link-module">→ 对应模块：<a href="first_principles.html">第一性原理</a></div>
+    <div class="book-grid">
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">穷查理宝典</div>
+            <div class="orig">Poor Charlie's Almanack</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Peter D. Kaufman 编 (Charlie Munger) <span class="sep">·</span> 2005</div>
+        <div class="line"><strong>心智模型的百科全书。</strong>Munger 的演讲合集。读他比读他推荐的任何书更高密度。"多元思维模型"这一概念几乎是他个人发明的。</div>
+      </article>
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">思考，快与慢</div>
+            <div class="orig">Thinking, Fast and Slow</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Daniel Kahneman <span class="sep">·</span> 2011</div>
+        <div class="line">诺奖经济学家用一生研究的总结。系统 1 / 系统 2、损失厌恶、锚定效应 —— 30 岁后理解自己判断的所有底层框架。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">伟大的心智模型 I–IV</div>
+            <div class="orig">The Great Mental Models, Vol. I–IV</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Shane Parrish (Farnam Street) <span class="sep">·</span> 2019–2024</div>
+        <div class="line">Farnam Street 把 Munger 路径系统化的尝试。比读 Munger 演讲稿更结构化，但密度也更稀。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">超级思维</div>
+            <div class="orig">Super Thinking: The Big Book of Mental Models</div>
+          </div>
+          <span class="badge" data-state="want">想</span>
+        </div>
+        <div class="meta">Gabriel Weinberg · Lauren McCann <span class="sep">·</span> 2019</div>
+        <div class="line">300+ 心智模型百科。不适合通读，适合做案头查阅。</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 06 · CROSS-CUTTING ============ -->
+  <section class="canon-section">
+    <header class="canon-section-head">
+      <span class="num">06</span>
+      <span class="zh">跨界 · 关于活着</span>
+      <span class="en">CROSS-CUTTING · ON BEING ALIVE</span>
+      <span class="count">7 books</span>
+    </header>
+    <div class="link-module">→ 不属于任何单一模块，但塑造了整张地图的底色</div>
+    <div class="book-grid">
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">活出意义来</div>
+            <div class="orig">Man's Search for Meaning</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Viktor E. Frankl <span class="sep">·</span> 1946</div>
+        <div class="line"><strong>30 岁必读。</strong>奥斯维辛幸存者的回忆 + 他在集中营里发现的"意义疗法"。"在刺激和反应之间存在空间，那个空间是我们选择的自由"—— 几乎是爱比克泰德的现代复述。</div>
+      </article>
+
+      <article class="book canon-prime">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">有限与无限的游戏</div>
+            <div class="orig">Finite and Infinite Games</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">James P. Carse <span class="sep">·</span> 1986</div>
+        <div class="line"><strong>整本书可能就是一个想法的展开，但那个想法能改变你看人生的方式。</strong>有限游戏为了赢而玩；无限游戏为了继续玩下去而玩。你 30 岁后大部分关于"成功"的焦虑，都来自把无限游戏当作有限游戏来玩。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">被讨厌的勇气</div>
+            <div class="orig">嫌われる勇気 · The Courage to Be Disliked</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">岸見一郎 · 古賀史健 <span class="sep">·</span> 2013</div>
+        <div class="line">用对话体讲阿德勒心理学。"课题分离"几乎就是控制二分法的关系版本。比看起来更扎实。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">原子习惯</div>
+            <div class="orig">Atomic Habits</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">James Clear <span class="sep">·</span> 2018</div>
+        <div class="line">所有"知道"翻译成"做到"的粘合剂。任何模块（CBT、斯多葛、NVC）的练习都需要这本书的脚手架。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">道德经</div>
+            <div class="orig">Tao Te Ching</div>
+          </div>
+          <span class="badge" data-state="reading">在</span>
+        </div>
+        <div class="meta">老子 <span class="sep">·</span> c. BC 400</div>
+        <div class="line">给整个体系留白。"无为"不是不做，是不强求。和斯多葛"接受不可控的部分"是同一个洞察，从另一边走来。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">地位游戏</div>
+            <div class="orig">The Status Game</div>
+          </div>
+          <span class="badge" data-state="want">想</span>
+        </div>
+        <div class="meta">Will Storr <span class="sep">·</span> 2021</div>
+        <div class="line">关于人为什么不停追求地位的演化心理学。理解这一点之后，30 岁开始你能省下很多冤枉的能量。</div>
+      </article>
+
+      <article class="book">
+        <div class="book-top">
+          <div class="book-titles">
+            <div class="zh">论生命之短暂</div>
+            <div class="orig">De Brevitate Vitae</div>
+          </div>
+          <span class="badge" data-state="read">已</span>
+        </div>
+        <div class="meta">Seneca <span class="sep">·</span> c. AD 49</div>
+        <div class="line">两千年来关于"时间被偷走"最锋利的一篇文章。不是抱怨人生太短，是质问你把人生借给了谁。30 岁读它会刺痛。</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ CODA ============ -->
+  <div class="canon-coda">
+    <p class="ratio">
+      "你不需要读很多书，你需要的是反复读真正重要的那几本书。一本书一旦进入你的'正典'，就不再是消费对象，而是回望对象。"
+      <span class="source">—— 心界的阅读原则</span>
+    </p>
+  </div>
+
+</main>
+
+<script>
+// Stats
+const books = document.querySelectorAll('.book');
+let read = 0, reading = 0, want = 0;
+books.forEach(b => {
+  const s = b.querySelector('.badge')?.dataset.state;
+  if (s === 'read') read++;
+  else if (s === 'reading') reading++;
+  else if (s === 'want') want++;
+});
+document.getElementById('statTotal').textContent = books.length;
+document.getElementById('statRead').textContent = read;
+document.getElementById('statReading').textContent = reading;
+document.getElementById('statWant').textContent = want;
+</script>
+
+<script>
+const nav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme');
+const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+}
+
+if (savedTheme) applyTheme(savedTheme);
+else if (prefersLight) applyTheme('light');
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  applyTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+</script>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>心界 MindSphere</h3>
+      <p>把心理学、哲学、决策科学，整理成一个可以反复回望、持续生长的认知体系。慢工出细活。</p>
+    </div>
+    <div class="footer-col">
+      <h4>Modules</h4>
+      <ul>
+        <li><a href="mbti.html">MBTI 人格类型</a></li>
+        <li><a href="nvc.html">非暴力沟通</a></li>
+        <li><a href="cbt.html">认知行为疗法</a></li>
+        <li><a href="stoicism.html">斯多葛</a></li>
+        <li><a href="first_principles.html">第一性原理</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>About</h4>
+      <ul>
+        <li><a href="index.html#philosophy">设计理念</a></li>
+        <li><a href="index.html#journey">认知地图</a></li>
+        <li><a href="index.html#modules">学习模块</a></li>
+        <li><a href="canon.html">正典书架</a></li>
+        <li><a href="flashcards.html">记忆卡片</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 · 心界 MindSphere · 系统化自我成长知识库</div>
+    <div>Vol. 01 · Last updated 05 / 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>

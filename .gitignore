@@ -1,0 +1,11 @@
+# Local
+.DS_Store
+Thumbs.db
+*.log
+
+# Editor
+.vscode/
+.idea/
+
+# Dependencies (if you later add any)
+node_modules/

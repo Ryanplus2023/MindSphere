@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>斯多葛 · 系统化生活哲学指南</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background:
+        linear-gradient(rgba(168,144,96,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,144,96,0.03) 1px, transparent 1px),
+        var(--bg);
+      background-size: 60px 60px, 60px 60px, 100% 100%;
+      color: var(--text);
+      line-height: 1.75;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, .display-font {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-weight: 700;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0;
+      width: 300px; height: 100vh;
+      background: linear-gradient(180deg, var(--bg-elevated), var(--bg));
+      border-right: 1px solid var(--border);
+      z-index: 100;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-header h1 {
+      font-size: 22px;
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-section { margin-bottom: 10px; }
+
+    .nav-section-title {
+      padding: 12px 32px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 10px 32px 10px 40px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      border-left: 3px solid transparent;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text);
+      background: rgba(168,144,96,0.06);
+      border-left-color: var(--accent);
+    }
+
+    /* Main */
+    .main-content {
+      margin-left: 300px;
+      min-height: 100vh;
+    }
+
+    .section {
+      display: none;
+      padding: 56px 72px;
+      max-width: 920px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 40px 0 18px;
+      color: var(--accent-light);
+      padding-left: 18px;
+      border-left: 3px solid var(--accent);
+    }
+
+    h4 {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 28px 0 12px;
+      color: var(--accent-secondary);
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--text-secondary);
+      font-size: 16.5px;
+      line-height: 1.85;
+    }
+
+    .lead {
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.9;
+      margin-bottom: 32px;
+      padding: 24px 28px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--accent);
+      font-weight: 400;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 28px 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg), 0 0 60px rgba(168,144,96,0.08);
+      border-color: rgba(168,144,96,0.25);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    .card-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Dichotomy diagram — two columns */
+    .dichotomy {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 32px 0;
+    }
+
+    .dicho-col {
+      padding: 28px;
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dicho-col.in {
+      background: linear-gradient(135deg, rgba(168,144,96,0.12), rgba(168,144,96,0.02));
+      border: 1px solid rgba(168,144,96,0.3);
+    }
+
+    .dicho-col.out {
+      background: linear-gradient(135deg, rgba(63,91,95,0.10), rgba(63,91,95,0.02));
+      border: 1px solid rgba(63,91,95,0.3);
+    }
+
+    .dicho-label {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .dicho-col.in .dicho-label { color: var(--accent); }
+    .dicho-col.out .dicho-label { color: var(--accent-secondary); }
+
+    .dicho-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .dicho-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .dicho-list li {
+      padding: 8px 0;
+      font-size: 15px;
+      color: var(--text-secondary);
+      border-bottom: 1px dashed var(--border);
+      margin: 0;
+    }
+
+    .dicho-list li:last-child { border-bottom: none; }
+
+    /* Process Flow */
+    .process-flow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 32px 0;
+      padding: 28px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .process-step {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 18px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .process-step:hover {
+      background: rgba(168,144,96,0.06);
+      border-color: rgba(168,144,96,0.25);
+      transform: translateY(-3px);
+    }
+
+    .process-step .step-num {
+      font-family: 'Sora', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .process-step .step-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .process-step .step-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .process-arrow {
+      color: var(--text-muted);
+      font-size: 20px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    /* Comparison */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .compare-col {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 24px;
+      border-top: 3px solid;
+    }
+
+    .compare-col.ancient { border-top-color: var(--accent); }
+    .compare-col.modern { border-top-color: var(--accent-tertiary); }
+
+    .compare-label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-family: 'Sora', sans-serif;
+    }
+
+    .compare-col.ancient .compare-label { color: var(--accent); }
+    .compare-col.modern .compare-label { color: var(--accent-tertiary); }
+
+    .compare-col p {
+      font-size: 15.5px;
+      margin-bottom: 10px;
+      color: var(--text-secondary);
+    }
+
+    /* Tables */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 15px;
+    }
+
+    .data-table th {
+      background: var(--bg-hover);
+      color: var(--accent-light);
+      padding: 14px 18px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid var(--accent);
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .data-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(168,144,96,0.04);
+      color: var(--text);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 12px 0 12px 28px;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    li::marker { color: var(--accent); }
+
+    /* Tags */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .tag {
+      font-size: 14px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+
+    .tag:hover {
+      background: rgba(168,144,96,0.1);
+      border-color: rgba(168,144,96,0.3);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    /* Quote / Insight Box */
+    .insight-box {
+      background: linear-gradient(135deg, rgba(168,144,96,0.10), rgba(63,91,95,0.05));
+      border: 1px solid rgba(168,144,96,0.2);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .insight-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      opacity: 0.6;
+    }
+
+    .insight-box p {
+      margin: 0;
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.9;
+      font-family: 'Noto Serif SC', 'Songti SC', serif;
+    }
+
+    .insight-box .source {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Scenario Practice */
+    .scenario-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .scenario-card:hover {
+      border-color: rgba(168,144,96,0.25);
+    }
+
+    .scenario-title {
+      font-family: 'Sora', 'Noto Sans SC', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scenario-context {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .scenario-options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      color: var(--text-secondary);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-size: 14px;
+      line-height: 1.6;
+      font-family: inherit;
+    }
+
+    .option-btn:hover {
+      background: rgba(168,144,96,0.06);
+      border-color: rgba(168,144,96,0.3);
+      color: var(--text);
+    }
+
+    .option-btn.revealed.correct {
+      background: rgba(95,138,124,0.10);
+      border-color: var(--accent-secondary);
+      color: var(--text);
+    }
+
+    .option-btn.revealed.incorrect {
+      background: rgba(239,68,68,0.08);
+      border-color: rgba(239,68,68,0.3);
+      opacity: 0.6;
+    }
+
+    .option-btn .label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .option-btn.revealed.correct .label { color: var(--accent-secondary); }
+    .option-btn.revealed.incorrect .label { color: #ef4444; }
+
+    .explanation {
+      display: none;
+      margin-top: 16px;
+      padding: 20px;
+      background: rgba(95,138,124,0.06);
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-secondary);
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    .explanation.show { display: block; animation: slideUp 0.4s ease; }
+
+    /* Philosopher cards */
+    .phil-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+      margin: 24px 0;
+    }
+
+    .phil-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: all 0.3s ease;
+    }
+
+    .phil-card:hover {
+      border-color: rgba(168,144,96,0.3);
+      transform: translateY(-2px);
+    }
+
+    .phil-card .phil-name {
+      font-family: 'Noto Serif SC', 'Songti SC', serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--accent-light);
+      margin-bottom: 4px;
+    }
+
+    .phil-card .phil-en {
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .phil-card .phil-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .phil-card .phil-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Virtue medallion */
+    .virtue-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin: 24px 0;
+    }
+
+    .virtue {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .virtue::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(168,144,96,0.08), transparent 60%);
+      pointer-events: none;
+    }
+
+    .virtue-en {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .virtue-name {
+      font-family: 'Noto Serif SC', 'Songti SC', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .virtue-body {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+    }
+
+    .virtue-body strong { color: var(--text); }
+
+    /* Toolbox */
+    .tool-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .tool-card h4 {
+      margin-top: 0;
+    }
+
+    .tool-template {
+      background: var(--bg-elevated);
+      border: 1px dashed var(--border-light, var(--border));
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-top: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.9;
+      white-space: pre-wrap;
+    }
+
+    /* Mobile */
+    @media (max-width: 1024px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .section { padding: 80px 28px 48px; }
+      .compare-grid,
+      .dichotomy,
+      .virtue-grid { grid-template-columns: 1fr; }
+      .process-flow { flex-direction: column; }
+      .process-arrow { transform: rotate(90deg); }
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .breadcrumb span {
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .breadcrumb span:hover { text-decoration: underline; }
+
+    .hidden { display: none !important; }
+  </style>
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+  :root {
+    --accent: #a89060; --accent-light: #c9b380;
+    --accent-secondary: #3f5b5f; --accent-tertiary: #8a9a8e;
+  }
+  [data-theme="light"] {
+    --accent: #8a7440; --accent-light: #a89060;
+    --accent-secondary: #2f4a4e; --accent-tertiary: #6c8076;
+  }
+  </style>
+
+</head>
+<body>
+
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">M</span>
+    心界 MindSphere
+  </a>
+  <div class="nav-links">
+    <a href="mbti.html">MBTI人格类型</a>
+    <a href="nvc.html">非暴力沟通</a>
+    <a href="cbt.html">认知疗法</a>
+    <a href="stoicism.html" class="active">斯多葛</a>
+    <a href="first_principles.html">第一性原理</a>
+    <a href="canon.html">正典</a>
+    <a href="flashcards.html">记忆</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<aside class="sidebar">
+  <div class="sidebar-scroll">
+    <div class="nav-section">
+      <div class="nav-section-title">理论基础</div>
+      <a class="nav-link active" onclick="showSection('overview', this)">体系概览</a>
+      <a class="nav-link" onclick="showSection('lineage', this)">哲学谱系</a>
+      <a class="nav-link" onclick="showSection('dichotomy', this)">控制二分法</a>
+      <a class="nav-link" onclick="showSection('virtues', this)">四大美德</a>
+      <a class="nav-link" onclick="showSection('disciplines', this)">三大学说</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">核心实践</div>
+      <a class="nav-link" onclick="showSection('practices', this)">日常练习</a>
+      <a class="nav-link" onclick="showSection('emotions', this)">情绪与激情</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">对接与误读</div>
+      <a class="nav-link" onclick="showSection('cbt-bridge', this)">与 CBT 的桥梁</a>
+      <a class="nav-link" onclick="showSection('traps', this)">常见误读</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">工具与练习</div>
+      <a class="nav-link" onclick="showSection('toolbox', this)">工具箱</a>
+      <a class="nav-link" onclick="showSection('practice', this)">场景练习</a>
+    </div>
+  </div>
+  <div class="sidebar-header">
+    <h1>斯多葛主义</h1>
+    <p>控制 · 美德 · 当下 · 死亡</p>
+  </div>
+</aside>
+<button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<main class="main-content">
+
+<!-- ============ OVERVIEW ============ -->
+<section id="overview" class="section active">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('overview', this)">体系概览</span></div>
+  <h2>斯多葛主义</h2>
+  <div class="lead">
+    斯多葛主义（Stoicism）不是一种"压抑情绪、不动声色"的态度——这是它被现代英文 "stoic" 一词污染后最常见的误读。它是一套始于公元前 300 年雅典、在罗马帝国成熟的<strong>生活操作系统</strong>：通过分辨什么在你控制之内、什么不在，把全部精力投入到你能塑造的部分（你的判断、选择与行动），从而获得不依赖外界的内在自由。
+  </div>
+
+  <div class="insight-box">
+    <p>"人不是被事情本身所困扰，而是被其对事情的看法所困扰。"</p>
+    <div class="source">—— 爱比克泰德《手册》第 5 节（也是 CBT 的哲学源头）</div>
+  </div>
+
+  <h3>为什么 30 岁是斯多葛最好的切入年纪</h3>
+  <ul>
+    <li><strong>外部压力开始系统化：</strong>事业、亲密关系、父母健康、子女、财务，第一次同时变成长期变量。"控制二分法"是把它们排序的最快工具。</li>
+    <li><strong>身份开始定型，但还能修：</strong>核心信念已经形成，但还有 20–30 年可以重塑。斯多葛的"价值与角色"练习正是为此设计。</li>
+    <li><strong>开始真正面对失去：</strong>父母变老、朋友远离、青春身体的退场。Memento mori 不再是装腔，而是必修。</li>
+    <li><strong>认知带宽稀缺：</strong>20 岁可以靠"再多努力"，30 岁要靠"减少消耗"。斯多葛的训练本质就是减少非必要的情绪开销。</li>
+  </ul>
+
+  <h3>斯多葛完整理论架构</h3>
+  <div class="card-grid">
+    <div class="card" onclick="showSection('dichotomy', document.querySelector('[onclick*=dichotomy]'))">
+      <div class="card-icon" style="color: var(--accent);">⚖️</div>
+      <div class="card-title">控制二分法</div>
+      <div class="card-desc">把世界一刀切成"在我控制内"与"不在我控制内"，是整套体系的入口与回归点。</div>
+    </div>
+    <div class="card" onclick="showSection('virtues', document.querySelector('[onclick*=virtues]'))">
+      <div class="card-icon" style="color: var(--accent-secondary);">🏛️</div>
+      <div class="card-title">四大美德</div>
+      <div class="card-desc">智慧、正义、勇气、节制——衡量一切选择的内在指南针，唯一真正的"善"。</div>
+    </div>
+    <div class="card" onclick="showSection('disciplines', document.querySelector('[onclick*=disciplines]'))">
+      <div class="card-icon" style="color: var(--accent-tertiary);">📐</div>
+      <div class="card-title">三大学说</div>
+      <div class="card-desc">欲望的学说、行动的学说、判断的学说——哈多特对爱比克泰德体系的现代重构。</div>
+    </div>
+    <div class="card" onclick="showSection('practices', document.querySelector('[onclick*=practices]'))">
+      <div class="card-icon" style="color: var(--accent);">🌅</div>
+      <div class="card-title">日常练习</div>
+      <div class="card-desc">晨思晚省、预先冥想、上方视角、记忆死亡——把哲学落到每天可执行的动作。</div>
+    </div>
+    <div class="card" onclick="showSection('emotions', document.querySelector('[onclick*=emotions]'))">
+      <div class="card-icon" style="color: var(--accent-secondary);">🌊</div>
+      <div class="card-title">情绪与激情</div>
+      <div class="card-desc">区分"激情 πάθη"与"良好情感 εὐπάθειαι"，斯多葛从不要求你没有情绪，而要求你不被情绪挟持。</div>
+    </div>
+    <div class="card" onclick="showSection('cbt-bridge', document.querySelector('[onclick*=cbt-bridge]'))">
+      <div class="card-icon" style="color: var(--accent-tertiary);">🔗</div>
+      <div class="card-title">与 CBT 的桥梁</div>
+      <div class="card-desc">Albert Ellis 公开承认 REBT 借鉴爱比克泰德。古—今映射让你两边的工具互相加固。</div>
+    </div>
+    <div class="card" onclick="showSection('traps', document.querySelector('[onclick*=traps]'))">
+      <div class="card-icon" style="color: #f87171;">⚠️</div>
+      <div class="card-title">常见误读</div>
+      <div class="card-desc">斯多葛 ≠ 冷漠、≠ 宿命论、≠ 不爱、≠ 不行动。先排雷再使用。</div>
+    </div>
+    <div class="card" onclick="showSection('toolbox', document.querySelector('[onclick*=toolbox]'))">
+      <div class="card-icon" style="color: var(--accent);">🧰</div>
+      <div class="card-title">工具箱</div>
+      <div class="card-desc">晨间预演模板、晚间三问、控制二分法卡、负面预演表——拿来即用的结构化文档。</div>
+    </div>
+  </div>
+
+  <h3>核心假设</h3>
+  <ul>
+    <li><strong>判断中介：</strong>事件 → 印象（impression）→ 你的"同意/不同意"（assent）→ 情绪反应。同意权永远在你这里。</li>
+    <li><strong>美德即至善：</strong>外部的健康、财富、名声只是"被偏好的中性物"（preferred indifferents）。它们值得追求，但不是好坏的标准——你的品格才是。</li>
+    <li><strong>理性是人之本：</strong>人区别于动物的是 logos（理性）。按理性生活=按本性生活=幸福（eudaimonia）。</li>
+    <li><strong>当下即一切：</strong>过去无法改变，未来无法占有。你只真正拥有当下这一刻的判断与行动。</li>
+  </ul>
+
+  <h3>三个活着的导师</h3>
+  <div class="phil-grid">
+    <div class="phil-card">
+      <div class="phil-name">塞涅卡</div>
+      <div class="phil-en">SENECA · c. 4 BC – AD 65</div>
+      <div class="phil-meta">罗马参议员 / 尼禄的导师</div>
+      <div class="phil-desc">最适合 30 岁人入门：他是顶级精英，理解野心、财富、地位的诱惑，从内部教你如何与之共处而不被吞没。核心文本：《道德书简》《论生命之短暂》。</div>
+    </div>
+    <div class="phil-card">
+      <div class="phil-name">爱比克泰德</div>
+      <div class="phil-en">EPICTETUS · c. AD 50 – 135</div>
+      <div class="phil-meta">出身为奴 / 后获自由 / 学校创办者</div>
+      <div class="phil-desc">体系最严密。控制二分法、印象与同意、三大学说均出自他。核心文本：《手册》（Enchiridion，30 分钟可读完，可读一辈子）、《谈话录》。</div>
+    </div>
+    <div class="phil-card">
+      <div class="phil-name">马可·奥勒留</div>
+      <div class="phil-en">MARCUS AURELIUS · AD 121 – 180</div>
+      <div class="phil-meta">罗马皇帝 / 哲人</div>
+      <div class="phil-desc">《沉思录》是他写给自己的私人日记，从未打算出版——所以读起来像一个有真实权力、真实痛苦、真实疑惑的中年人在自我对话。30 岁后读最有共鸣。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LINEAGE ============ -->
+<section id="lineage" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('lineage', this)">哲学谱系</span></div>
+  <h2>哲学谱系</h2>
+  <div class="lead">
+    斯多葛主义不是一时一人的灵感，而是横跨 500 年的学派传承，并在 20 世纪经心理学、维克多·弗兰克尔的集中营经验、CBT 与硅谷企业家文化等多个入口复活。理解谱系，能帮你判断不同书与博主在讲哪一层斯多葛。
+  </div>
+
+  <h3>三个阶段</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>阶段</th><th>时间</th><th>地点</th><th>关键人物</th><th>关注重心</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>古斯多葛</td><td>BC 300 – BC 100</td><td>雅典</td><td>芝诺、克里安提斯、克吕西普</td><td>逻辑学、物理学、伦理学三足鼎立</td></tr>
+      <tr><td>中期斯多葛</td><td>BC 100 – AD 50</td><td>罗德岛、罗马</td><td>帕奈提乌斯、波昔多尼乌斯</td><td>引入柏拉图，进入罗马上层精英</td></tr>
+      <tr><td>晚期 / 罗马斯多葛</td><td>AD 50 – AD 180</td><td>罗马</td><td>塞涅卡、爱比克泰德、马可</td><td>放弃形而上学，专注实践伦理与生活方式</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <p>我们今天读的"斯多葛"几乎全部是晚期版本——它本就是被罗马精英为应对真实政治压力、个人苦难和死亡焦虑而打磨过的实用版。这也是它对 30 岁人格外好用的原因：它不要求你信什么，只要求你做什么。</p>
+    <div class="source">—— 一段重要的提示：现代实践斯多葛 ≈ 晚期斯多葛</div>
+  </div>
+
+  <h3>现代复兴</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-secondary);">维克多·弗兰克尔</div>
+      <div class="card-desc">奥斯维辛幸存者。《活出意义来》中的"在刺激与反应之间存在空间，那个空间是我们选择的自由"几乎是爱比克泰德的现代翻译。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-secondary);">Albert Ellis</div>
+      <div class="card-desc">REBT 创始人。在多本著作中公开承认其 ABC 模型直接借自爱比克泰德"困扰我们的不是事情本身"。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-secondary);">Aaron Beck</div>
+      <div class="card-desc">CBT 之父。把"自动思维"与"认知扭曲"概念学术化，但同样指认斯多葛为思想源头。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent);">Pierre Hadot</div>
+      <div class="card-desc">法国哲学史家。《何谓古代哲学》《内心堡垒》提出"哲学是 spiritual exercise（精神操练）"的视角，使斯多葛重新被理解为可练之物，而非只可读之物。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent);">William B. Irvine</div>
+      <div class="card-desc">《A Guide to the Good Life》将晚期斯多葛系统化为日常技术（负面预演、上方视角等），适合现代人入门。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent);">Ryan Holiday</div>
+      <div class="card-desc">把斯多葛变成现象级流行的人。《障碍即道路》《自律的力量》。是入门糖衣，但小心糖衣下省略了关于美德与共同体的深层部分。</div>
+    </div>
+  </div>
+
+  <h3>读什么、按什么顺序读</h3>
+  <ol>
+    <li><strong>第 1 周：</strong>爱比克泰德《手册》（Enchiridion）—— 几十页，是整个体系的最小内核。先读 3 遍。</li>
+    <li><strong>第 2–4 周：</strong>马可·奥勒留《沉思录》—— 像私人笔记，挑章节读，标记触动你的句子。</li>
+    <li><strong>第 2 月：</strong>塞涅卡《道德书简》—— 选读《论生命之短暂》《论闲暇》《致卢西利乌斯书简》第 1, 7, 12, 18, 47, 49 封。</li>
+    <li><strong>第 3 月：</strong>Pierre Hadot《Philosophy as a Way of Life》—— 理解"精神操练"的方法论。</li>
+    <li><strong>第 4 月起：</strong>把任意一本带在身边，每天读 5 分钟。一年后再回头读《手册》，你会发现它变成了另一本书。</li>
+  </ol>
+</section>
+
+<!-- ============ DICHOTOMY OF CONTROL ============ -->
+<section id="dichotomy" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('dichotomy', this)">控制二分法</span></div>
+  <h2>控制二分法</h2>
+  <div class="lead">
+    控制二分法（Dichotomy of Control）是整个斯多葛体系的入口。爱比克泰德在《手册》开篇就说："世上有些事在我们能力之内，有些事不在。"这句话貌似常识，但<strong>当你真的执行它时，90% 的日常焦虑会被瞬间分类、降级、释放。</strong>
+  </div>
+
+  <div class="insight-box">
+    <p>"在我们能力之内的有：判断、追求、欲望、回避——一言以蔽之，凡是我们自己作为的，皆在我们能力之内。不在我们能力之内的有：身体、财产、名声、官职——一言以蔽之，凡是非我们作为的，皆不在我们能力之内。"</p>
+    <div class="source">—— 爱比克泰德《手册》第 1 节</div>
+  </div>
+
+  <h3>什么在 / 不在你控制之内</h3>
+  <div class="dichotomy">
+    <div class="dicho-col in">
+      <div class="dicho-label">UP TO ME · 在我控制之内</div>
+      <div class="dicho-title">完全可控</div>
+      <ul class="dicho-list">
+        <li>我对这件事的判断</li>
+        <li>我选择投入什么、回避什么</li>
+        <li>我的努力与态度</li>
+        <li>我对别人言行的回应</li>
+        <li>我的价值观与立场</li>
+        <li>我现在的注意力放在哪里</li>
+        <li>我是否同意一个"印象"</li>
+      </ul>
+    </div>
+    <div class="dicho-col out">
+      <div class="dicho-label">NOT UP TO ME · 不在我控制之内</div>
+      <div class="dicho-title">完全不可控</div>
+      <ul class="dicho-list">
+        <li>别人怎么看我</li>
+        <li>结果是否如我预期</li>
+        <li>身体是否生病、是否衰老</li>
+        <li>父母、伴侣、孩子的选择</li>
+        <li>市场、经济、运气</li>
+        <li>过去已经发生的事</li>
+        <li>未来不在当下行动范围内的部分</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>三分法：爱比克泰德的更精细版本</h3>
+  <p>William Irvine 注意到，现代生活中很多事既不是"完全可控"也不是"完全不可控"，于是把二分法升级为三分：</p>
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-num">A</div>
+      <div class="step-title">完全可控</div>
+      <div class="step-sub">价值、判断、努力</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">B</div>
+      <div class="step-title">部分可控</div>
+      <div class="step-sub">网球比赛的胜负<br>面试是否拿到 offer</div>
+    </div>
+    <div class="process-arrow">→</div>
+    <div class="process-step">
+      <div class="step-num">C</div>
+      <div class="step-title">完全不可控</div>
+      <div class="step-sub">明天是否下雨<br>别人怎么想我</div>
+    </div>
+  </div>
+  <p>关键技巧：把 <strong>B 类（部分可控）</strong>的目标从"赢得比赛"重新表述为"在我能控制的部分尽力（专注、准备、不放弃）"。这叫<strong>内化的目标（internalized goal）</strong>——你把胜负的标准从外部移回内部，从此再也不会因为外部结果而被击溃。</p>
+
+  <h3>实操：三秒分类法</h3>
+  <p>当你感到焦虑、愤怒或不安时，立刻问自己三个问题：</p>
+  <ol>
+    <li>"这件事里，<strong>哪一部分</strong>在我控制之内？"（具体写出来）</li>
+    <li>"哪一部分<strong>不</strong>在我控制之内？"</li>
+    <li>"我现在的情绪能量，能 100% 投入到第 1 类的哪一个动作上？"</li>
+  </ol>
+
+  <div class="insight-box">
+    <p>"你之所以痛苦，不是因为坏事发生在你身上——而是因为你把一件不属于你的事，当作属于你的来对待。"</p>
+    <div class="source">—— 释义自爱比克泰德《谈话录》第 1 卷</div>
+  </div>
+</section>
+
+<!-- ============ FOUR VIRTUES ============ -->
+<section id="virtues" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('virtues', this)">四大美德</span></div>
+  <h2>四大美德</h2>
+  <div class="lead">
+    斯多葛认为外部世界没有真正的"好"与"坏"，只有<strong>美德</strong>是绝对的善，<strong>恶习</strong>是绝对的恶，其他一切（健康、财富、名声、关系）都是"被偏好的中性物"——可以追求，但不可以作为人生意义的根基。四大美德是衡量任何具体选择的内在指南针。
+  </div>
+
+  <div class="virtue-grid">
+    <div class="virtue">
+      <div class="virtue-en">SOPHIA · WISDOM</div>
+      <div class="virtue-name">智慧</div>
+      <div class="virtue-body">
+        分辨什么重要、什么不重要的能力。<br><br>
+        <strong>在 30 岁的表现：</strong>在工作机会、关系、健康、家庭之间做权衡时，能识别哪一个是"看起来重要"，哪一个是"长期真的重要"。<br><br>
+        <strong>对立面：</strong>愚蠢（无知）、轻信、被广告/社交媒体的注意力经济驱使。
+      </div>
+    </div>
+    <div class="virtue">
+      <div class="virtue-en">DIKAIOSYNE · JUSTICE</div>
+      <div class="virtue-name">正义</div>
+      <div class="virtue-body">
+        以公平、诚实、对共同体负责的方式对待他人。马可强调它是"最伟大的美德"。<br><br>
+        <strong>在 30 岁的表现：</strong>面对下属、伴侣的家人、不在场的人时，做出的选择是否经得起公开。<br><br>
+        <strong>对立面：</strong>自私、操纵、利用信息差占便宜、把别人当工具。
+      </div>
+    </div>
+    <div class="virtue">
+      <div class="virtue-en">ANDREIA · COURAGE</div>
+      <div class="virtue-name">勇气</div>
+      <div class="virtue-body">
+        不只是面对外部危险，更是面对真相、承认错误、坚持立场的内在勇气。<br><br>
+        <strong>在 30 岁的表现：</strong>说出不被听见会被讨厌的真话；离开一份不合适的工作或关系；承认自己 5 年前的某个决定是错的。<br><br>
+        <strong>对立面：</strong>逃避、犬儒、用讽刺代替立场、用"现实"为不行动找借口。
+      </div>
+    </div>
+    <div class="virtue">
+      <div class="virtue-en">SOPHROSYNE · TEMPERANCE</div>
+      <div class="virtue-name">节制</div>
+      <div class="virtue-body">
+        在欲望、愤怒、悲伤等情绪面前保持比例感。<br><br>
+        <strong>在 30 岁的表现：</strong>不被短期奖赏（多喝一杯、多刷一小时手机、多说一句话）劫持长期目标；在愤怒峰值时不发那条信息。<br><br>
+        <strong>对立面：</strong>放纵、过度、缺乏比例感、即时满足成瘾。
+      </div>
+    </div>
+  </div>
+
+  <h3>美德是"复合"的，不是"勾选清单"</h3>
+  <p>斯多葛主张<strong>美德的统一性</strong>（unity of virtue）：你不能只有勇气没有智慧（那叫莽撞）；不能只有节制没有正义（那叫精致利己）；不能只有正义没有勇气（那叫纸上谈兵）。一个真实的好决定，往往同时通过四扇门的考验。</p>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>情境</th><th>智慧问</th><th>正义问</th><th>勇气问</th><th>节制问</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>是否接受一份高薪但价值观不合的工作</td>
+        <td>它真的能换来我以为的东西吗？</td>
+        <td>这工作对他人或社会有害吗？</td>
+        <td>如果不接，我是在逃避变化吗？</td>
+        <td>我是被金钱本身诱惑了，还是真的需要它？</td>
+      </tr>
+      <tr>
+        <td>是否对伴侣说出一直没说的不满</td>
+        <td>说出来后，会改善关系还是只是发泄？</td>
+        <td>我有没有把对方妖魔化？</td>
+        <td>不说，是怕冲突还是怕真的面对自己？</td>
+        <td>我现在的情绪强度，是事实的几倍？</td>
+      </tr>
+      <tr>
+        <td>是否离开父母不喜欢的城市</td>
+        <td>对我长期幸福的影响是什么？</td>
+        <td>对父母的责任如何履行？</td>
+        <td>我是否在用"孝顺"做不冒险的挡箭牌？</td>
+        <td>我是不是在被一时新鲜感驱动？</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <p>"如果你能找到比正义、真理、节制、勇气更好的东西——那就用全部灵魂去拥抱它。"</p>
+    <div class="source">—— 马可·奥勒留《沉思录》3.6</div>
+  </div>
+</section>
+
+<!-- ============ THREE DISCIPLINES ============ -->
+<section id="disciplines" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('disciplines', this)">三大学说</span></div>
+  <h2>三大学说</h2>
+  <div class="lead">
+    Pierre Hadot 从爱比克泰德的著作中提炼出斯多葛实践的三大维度：<strong>判断</strong>、<strong>欲望</strong>、<strong>行动</strong>。它们对应人意识活动的三个面：你怎么解释世界、你想要/拒绝什么、你怎么投入到世界里。每天的练习就是在这三条轴上反复对齐。
+  </div>
+
+  <div class="process-flow">
+    <div class="process-step">
+      <div class="step-num" style="color: var(--accent);">第一</div>
+      <div class="step-title">判断的学说</div>
+      <div class="step-sub">Discipline of Assent<br>正确解释印象</div>
+    </div>
+    <div class="process-arrow">⇄</div>
+    <div class="process-step">
+      <div class="step-num" style="color: var(--accent-secondary);">第二</div>
+      <div class="step-title">欲望的学说</div>
+      <div class="step-sub">Discipline of Desire<br>欲求什么、回避什么</div>
+    </div>
+    <div class="process-arrow">⇄</div>
+    <div class="process-step">
+      <div class="step-num" style="color: var(--accent-tertiary);">第三</div>
+      <div class="step-title">行动的学说</div>
+      <div class="step-sub">Discipline of Action<br>如何与他人共在</div>
+    </div>
+  </div>
+
+  <h3>第一：判断的学说（Assent）</h3>
+  <p>每一个外部事件先以"印象"（impression）的形式进入你的意识，例如："他刚才那个表情代表他讨厌我。" 印象之后，是你的<strong>同意（assent）</strong>——你是否接受这个印象为真。爱比克泰德的训练就是在"印象"与"同意"之间打开一个缝。</p>
+  <ul>
+    <li><strong>把印象命名出来：</strong>"我现在有一个印象——他讨厌我。"（这一步已经把它和现实分开了）</li>
+    <li><strong>检验：</strong>"这是事实，还是我对事实的解释？还有其他解释吗？"</li>
+    <li><strong>暂缓同意：</strong>"在我没有证据之前，我先不同意它为真。"</li>
+  </ul>
+  <p>这一步——延迟同意（suspend assent）——就是 CBT 里"识别自动思维"的古希腊版本。</p>
+
+  <h3>第二：欲望的学说（Desire）</h3>
+  <p>你想要什么、害怕什么，决定了你被什么牵着走。斯多葛主张：<strong>欲望只指向你完全控制的东西（美德、判断、努力）；不可控的东西（健康、财富、他人的爱）只能"偏好"，不能"渴求"。</strong></p>
+  <ul>
+    <li>错误的欲望姿态："我必须升职，否则我就是失败的。"</li>
+    <li>正确的欲望姿态："我偏好升职，所以我会全力以赴。但升职本身不是我能控制的——它取决于我做了什么、做得怎么样，以及很多与我无关的因素。"</li>
+  </ul>
+  <p>这是斯多葛对"野心"的处理方式——不是压抑它，而是把它的对象从"结果"转移到"努力"。</p>
+
+  <h3>第三：行动的学说（Action）</h3>
+  <p>人是社会性动物（zōon politikon）。斯多葛绝不是逃避主义。<strong>你的任务是在你的位置上，以美德的方式与他人共在。</strong></p>
+  <ul>
+    <li><strong>"保留条款"（the reserve clause）：</strong>所有行动都加一个"如果命运允许"。你做你该做的，但不执着于结果如你所愿。</li>
+    <li><strong>角色伦理：</strong>你是儿子、丈夫、父亲、同事——每个角色都有它的本份。在每个角色里以美德行事，就是斯多葛的实践。</li>
+    <li><strong>共同体取向：</strong>马可反复强调"我们生来就是为彼此服务的"——这是反"硅谷个人主义版斯多葛"最关键的一条。</li>
+  </ul>
+
+  <div class="insight-box">
+    <p>"一个人退避到任何地方都不会比退避到自己内心更安静、更不被打扰——尤其是那种只要内省片刻就能获得完全平静的内心。"</p>
+    <div class="source">—— 马可·奥勒留《沉思录》4.3（"内心堡垒"的原型）</div>
+  </div>
+</section>
+
+<!-- ============ DAILY PRACTICES ============ -->
+<section id="practices" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('practices', this)">日常练习</span></div>
+  <h2>日常练习</h2>
+  <div class="lead">
+    斯多葛和大部分哲学不同：它的目的不是"懂"，而是"做"。Pierre Hadot 称之为<strong>精神操练（spiritual exercises）</strong>——和身体训练一样，需要反复、刻意、长期。下面是被两千年验证过的五种核心练习。
+  </div>
+
+  <h3>1 · 晨思（Morning Premeditation）</h3>
+  <p>马可《沉思录》第 2 卷开头就是这种练习：</p>
+  <div class="insight-box">
+    <p>"清晨告诉自己：今天我会遇到爱管闲事的人、忘恩负义的人、傲慢的人、骗子、嫉妒的人、不友善的人。他们之所以如此，是因为不能分辨善恶。但我已经看清了善的本性是美、恶的本性是丑，也看清了那作恶者本身的本性与我相同……所以他们不能伤害我，也不能让我陷入丑陋。"</p>
+    <div class="source">—— 马可·奥勒留《沉思录》2.1</div>
+  </div>
+  <p><strong>怎么用：</strong>每天起床后 3 分钟，预演今天可能发生的难处（被批评、被打断、堵车、孩子闹脾气），并预先决定：当它发生时，我用哪一种美德回应。这不是悲观——它的作用恰恰是<strong>把"被突袭"换成"被预期"</strong>。</p>
+
+  <h3>2 · 晚省（Evening Review）</h3>
+  <p>塞涅卡每晚都会进行的自我审查：</p>
+  <div class="insight-box">
+    <p>"我把整个一天都摊开在自己面前，反复检视我的言行……我对自己什么都不隐瞒，什么都不放过。我为什么要害怕承认我的错误呢？——'你不会再这样做了，今天就这样原谅你；但下一次，你要更小心。'"</p>
+    <div class="source">—— 塞涅卡《论愤怒》3.36</div>
+  </div>
+  <p><strong>三个问题（建议睡前 5 分钟写下来）：</strong></p>
+  <ol>
+    <li>今天我做了什么不好的事？哪些言行违背了美德？</li>
+    <li>今天我做了什么好的事？哪一个时刻我按美德行事了？</li>
+    <li>明天我可以怎么做得更好？具体哪个场景、哪个动作？</li>
+  </ol>
+  <p>关键态度：像一个温和但严格的老师审视自己，<strong>不是法官，不是被告</strong>。</p>
+
+  <h3>3 · 负面预演（Premeditatio Malorum）</h3>
+  <p>定期主动想象：失业、生病、所爱之人离开、财富归零，会怎么样？</p>
+  <ul>
+    <li><strong>目的不是悲观：</strong>是给"最坏情况"祛魅。绝大多数我们害怕的事，真的发生时，比想象中可承受。</li>
+    <li><strong>副产品 1：</strong>会立刻感激当前所拥有的——它们都是可能消失的。</li>
+    <li><strong>副产品 2：</strong>会发现真正应该投入精力做的准备（保险、储蓄、技能、关系），而不是模糊地"担忧"。</li>
+  </ul>
+  <p><strong>怎么用：</strong>每周一次，挑一件你最依赖的东西（工作、健康、某段关系），在脑中详细想象它消失的那一天。问自己：我能承受吗？怎么承受？现在可以为这件事的可承受性做什么？</p>
+
+  <h3>4 · 上方视角（View From Above）</h3>
+  <p>马可经常做的精神练习：想象自己从空中俯瞰这座城市，再俯瞰这片大陆，再俯瞰地球，再俯瞰太阳系。在这个尺度下，你今天烦恼的事看起来如何？</p>
+  <div class="insight-box">
+    <p>"想想宇宙物质的全部，你只是其中最微小的一份；想想全部时间，你只占据其中短暂的一瞬；想想命运，你只是其中多么微不足道的一部分。"</p>
+    <div class="source">—— 马可·奥勒留《沉思录》5.24</div>
+  </div>
+  <p><strong>怎么用：</strong>当情绪过载时，停下来 30 秒，做一次"心智的拉远"。这不是贬低你的烦恼，而是<strong>给它正确的比例</strong>。</p>
+
+  <h3>5 · 记忆死亡（Memento Mori）</h3>
+  <p>记得自己会死，是为了更清醒地活着，而不是为了忧郁。</p>
+  <ul>
+    <li><strong>每天早上：</strong>"今天也许是最后一天。我希望这一天怎么度过？"</li>
+    <li><strong>每个决定前：</strong>"如果我只剩 6 个月，我现在的选择会变吗？"</li>
+    <li><strong>看到亲人时：</strong>"如果这是最后一次见面，我会怎样和他相处？"</li>
+  </ul>
+  <p>30 岁是 memento mori 真正开始有意义的年纪——父母肉眼可见地老去，第一个同龄人离世可能已经发生，自己的身体开始第一次"叛变"（颈椎、视力、代谢）。这个练习不会让你抑郁——恰恰相反，它会让大量原本被认为重要的东西自动降级，让真正重要的东西浮现。</p>
+
+  <h3>奖励练习：自愿不适（Voluntary Discomfort）</h3>
+  <p>塞涅卡建议定期"练习贫穷几日"——主动选择简单、清淡、不舒适的生活，让自己保持对"基本生活"的熟悉。</p>
+  <ul>
+    <li>每月一两天只吃简单的食物</li>
+    <li>冷水澡（爱比克泰德式）</li>
+    <li>一次安静的、不带任何娱乐的长走</li>
+    <li>主动选择更小、更简单的住所或物件</li>
+  </ul>
+  <p>不是为了苦行，是为了<strong>降低"舒适基线"</strong>——当你能在更少的条件下依然安宁，外部的得失对你的影响就更小。</p>
+</section>
+
+<!-- ============ EMOTIONS ============ -->
+<section id="emotions" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('emotions', this)">情绪与激情</span></div>
+  <h2>情绪与激情</h2>
+  <div class="lead">
+    最大的误读："斯多葛 = 没有情绪"。完全错。斯多葛区分两类情感状态：<strong>激情（πάθη, passions）</strong>是被错误判断驱动、夺走理性的情绪；<strong>良好情感（εὐπάθειαι, eupatheiai）</strong>是与理性同行、与美德相伴的情感。斯多葛要消除前者，培养后者。
+  </div>
+
+  <h3>四种基本"激情"</h3>
+  <p>古斯多葛把所有失控情绪归到这四个原型上：</p>
+  <table class="data-table">
+    <thead>
+      <tr><th>激情</th><th>错误判断</th><th>时间</th><th>对象</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>欲求 / ἐπιθυμία</td><td>"那是好的，我必须得到"</td><td>未来</td><td>实际只是中性物</td></tr>
+      <tr><td>恐惧 / φόβος</td><td>"那是坏的，必须避免"</td><td>未来</td><td>实际只是中性物</td></tr>
+      <tr><td>愉悦 / ἡδονή</td><td>"已经得到的好东西"（依赖式）</td><td>当下</td><td>实际只是中性物</td></tr>
+      <tr><td>悲伤 / λύπη</td><td>"我失去了真正重要的东西"</td><td>当下/过去</td><td>实际只是中性物</td></tr>
+    </tbody>
+  </table>
+
+  <h3>三种"良好情感"</h3>
+  <p>注意：没有"悲伤"的对应良好版本——斯多葛认为悲伤总是源于错误判断（把不可控的中性物当作绝对的好）。但其他三种都有对应的健康形态：</p>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title" style="color: var(--accent);">愿（βούλησις）</div>
+      <div class="card-desc">理性化的欲求。指向真正在你控制内的善——美德、智慧、对他人的善意。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-secondary);">慎（εὐλάβεια）</div>
+      <div class="card-desc">理性化的回避。不是恐惧，是对真正会损害品格之事的清醒避让。</div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-tertiary);">喜（χαρά）</div>
+      <div class="card-desc">理性化的喜悦。源于按美德生活、与他人良好相处、与自然和谐共处的内在愉悦——不依赖外部条件。</div>
+    </div>
+  </div>
+
+  <h3>处理具体情绪的斯多葛操作</h3>
+  <h4>愤怒</h4>
+  <p>塞涅卡专门写了一本《论愤怒》。他认为愤怒是"短暂的疯狂"，且<strong>从来没有任何用处</strong>。</p>
+  <ul>
+    <li><strong>暂停规则：</strong>"愤怒最大的疗法，是延迟。"——感受到愤怒的第一秒，强制等待。不发那条消息，不说那句话，不做那个决定。</li>
+    <li><strong>问自己：</strong>"我愤怒，是因为对方在故意作恶，还是因为他无知/愚蠢？"如果是后者，愤怒像对盲人发火。</li>
+    <li><strong>身体调节：</strong>洗冷水脸、走出房间、深呼吸——古代斯多葛已经知道，激情有强烈的身体维度，先降低身体唤起，理性才回得来。</li>
+  </ul>
+
+  <h4>悲伤与哀悼</h4>
+  <p>斯多葛常被误解为"不应悲伤"。塞涅卡自己丧子，他在《致马尔西亚的安慰》中写得很温柔——但他强调：悲伤是阶段，不是身份。哀悼是必然的，但<strong>把"我应该一辈子被这件事定义"作为信念，是错误判断</strong>。</p>
+  <ul>
+    <li><strong>承认情绪的"第一次震动"：</strong>看到坏消息的瞬间生理反应是不可避免的——斯多葛称之为 propatheiai（前-激情），它本身不是错误。错误的是之后你<strong>同意</strong>了它（"我完了"），把它扩大成完整的激情。</li>
+    <li><strong>回到角色：</strong>"作为父亲/儿子/朋友，他/她现在希望我做什么？"</li>
+  </ul>
+
+  <h4>焦虑</h4>
+  <p>斯多葛对焦虑的诊断：<strong>把不可控的未来当作可控来执着</strong>。</p>
+  <ul>
+    <li>问："我焦虑的对象，哪一部分在我控制之内？"——把焦虑能量重新分配到那一部分上。</li>
+    <li>问："如果最坏情况发生，我真的不能承受吗？"（负面预演）</li>
+    <li>问："我现在能做的最小动作是什么？"——焦虑是停滞的能量，行动是它的解药。</li>
+  </ul>
+
+  <div class="insight-box">
+    <p>"如果你为外物所苦，痛苦你的不是那东西本身，而是你对它的判断。而判断，是你立刻可以改变的。"</p>
+    <div class="source">—— 马可·奥勒留《沉思录》8.47</div>
+  </div>
+</section>
+
+<!-- ============ CBT BRIDGE ============ -->
+<section id="cbt-bridge" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('cbt-bridge', this)">与 CBT 的桥梁</span></div>
+  <h2>与 CBT 的桥梁</h2>
+  <div class="lead">
+    现代 CBT 不是凭空诞生的。Albert Ellis（REBT 创始人）和 Aaron Beck（CBT 之父）都<strong>明确指认</strong>爱比克泰德的"困扰我们的不是事情本身，而是我们对事情的看法"为整套疗法的哲学根基。理解这种古—今对应，能让你两侧的工具互相加固。
+  </div>
+
+  <h3>核心对应表</h3>
+  <div class="compare-grid">
+    <div class="compare-col ancient">
+      <div class="compare-label">斯多葛 · 古典</div>
+      <p><strong>印象（phantasia）</strong></p>
+      <p><strong>同意（synkatathesis）</strong></p>
+      <p><strong>激情（pathos）</strong></p>
+      <p><strong>错误判断（错误的同意）</strong></p>
+      <p><strong>延迟同意</strong></p>
+      <p><strong>晨思晚省</strong></p>
+      <p><strong>负面预演</strong></p>
+      <p><strong>角色伦理</strong></p>
+    </div>
+    <div class="compare-col modern">
+      <div class="compare-label">CBT · 现代</div>
+      <p><strong>自动思维（automatic thought）</strong></p>
+      <p><strong>对自动思维的"相信"</strong></p>
+      <p><strong>失调情绪反应</strong></p>
+      <p><strong>认知扭曲</strong></p>
+      <p><strong>认知去融合 / 苏格拉底式提问</strong></p>
+      <p><strong>思维记录表 + 行为激活日历</strong></p>
+      <p><strong>暴露阶梯 / 行为实验</strong></p>
+      <p><strong>价值澄清（ACT）</strong></p>
+    </div>
+  </div>
+
+  <h3>三个最有价值的"双工具"</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">ABC 模型 ↔ 印象-同意-反应</div>
+      <div class="card-desc">CBT 的 A（事件）→ B（信念）→ C（情绪），就是爱比克泰德的"印象→同意→激情"。爱比克泰德更强调"在 B 阶段你有同意/不同意的权力"，CBT 更强调"B 是可以系统识别和检验的"。两者合起来更完整。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">认知扭曲 ↔ 错误判断</div>
+      <div class="card-desc">CBT 的 12 种认知扭曲（灾难化、读心术、应该陈述……）其实是斯多葛"错误同意"的精细分类。读 CBT 后再读爱比克泰德，你会看见后者已经在 BC 50 年描述了同样的现象——只是没列清单。</div>
+    </div>
+    <div class="card">
+      <div class="card-title">价值导向（ACT）↔ 美德</div>
+      <div class="card-desc">第三代 CBT（ACT）的"按价值生活"几乎是斯多葛"按美德生活"的现代复述。差别：CBT 的"价值"是个人定义的，斯多葛的"美德"是普遍的——这是值得保留的张力，而不是要消除的差异。</div>
+    </div>
+  </div>
+
+  <h3>怎么协同使用：一周的双轨练习</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>日</th><th>斯多葛侧</th><th>CBT 侧</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>晨</td><td>晨间预演（今天可能的难处 + 美德回应）</td><td>列出当天可能的"自动思维触发情境"</td></tr>
+      <tr><td>白天事件</td><td>提醒自己"这只是印象，我有同意权"</td><td>记一行思维记录表</td></tr>
+      <tr><td>事件后</td><td>问"它在我控制之内吗？"</td><td>问"我落入哪一种认知扭曲？"</td></tr>
+      <tr><td>晚</td><td>晚省三问（恶 / 善 / 改进）</td><td>用证据检验当天最强烈的自动思维</td></tr>
+      <tr><td>周末</td><td>负面预演 + 上方视角</td><td>行为激活计划下周</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight-box">
+    <p>"爱比克泰德的《手册》是世界上第一份认知行为治疗手册。" </p>
+    <div class="source">—— 临床心理学家 Donald Robertson《How to Think Like a Roman Emperor》</div>
+  </div>
+</section>
+
+<!-- ============ TRAPS / MISREADINGS ============ -->
+<section id="traps" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('traps', this)">常见误读</span></div>
+  <h2>常见误读</h2>
+  <div class="lead">
+    现代英语 "stoic" 的日常含义已经偏离原义两千年，且近年硅谷企业家文化把它压缩成了"忍耐+生产力"的版本。要真正用斯多葛，必须先把这些误读拆掉。
+  </div>
+
+  <h3>七个最常见的误读</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">01 · 斯多葛 = 没有情绪</div>
+      <div class="card-desc">
+        <strong>错。</strong> 斯多葛要消除的是"激情"（被错误判断驱动的情绪），不是情感本身。他们恰恰强调要培养"良好情感"——喜、慎、愿。马可在《沉思录》里反复表达爱、感激、悲悯。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">02 · 斯多葛 = 宿命论</div>
+      <div class="card-desc">
+        <strong>错。</strong> 斯多葛承认有命运（不在你控制的部分），但<strong>极其强调</strong>在你控制之内的部分要全力以赴。爱比克泰德、塞涅卡都是积极入世、参与政治、教学、写作的人。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">03 · 斯多葛 = 不爱、不依恋</div>
+      <div class="card-desc">
+        <strong>错，但接近一个真问题。</strong> 斯多葛要你"准备好失去任何人"，但这是为了在拥有时更全心地爱——而不是为了避免爱。塞涅卡是出了名的深情者。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">04 · 斯多葛 = 个人主义</div>
+      <div class="card-desc">
+        <strong>错。</strong> 斯多葛的核心命题之一是"我们生而为他人"。马可整本《沉思录》都在反复提醒自己：人是社会性动物，正义是首要美德。把斯多葛裁成"我只管我自己"是被现代个人主义文化扭曲的版本。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">05 · 斯多葛 = 苦行</div>
+      <div class="card-desc">
+        <strong>错。</strong> "自愿不适"是定期练习，不是常态。塞涅卡是罗马最富有的人之一，他对此并不矛盾——他主张"使用财富，但不依赖财富"。健康、财富、舒适是"被偏好的中性物"，可以追求。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">06 · 斯多葛 = 男性气质</div>
+      <div class="card-desc">
+        <strong>错。</strong> 这是 21 世纪英文播客圈造出来的版本。斯多葛的核心美德——智慧、正义、节制——里没有任何性别色彩。事实上，斯多葛是古代少数明确主张"女性同样能成为哲人"的学派（Musonius Rufus《女性是否应该学哲学》）。
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: #f87171;">07 · 斯多葛 = 不抱怨 = 忍受不公</div>
+      <div class="card-desc">
+        <strong>错，且危险。</strong> 斯多葛要求<strong>勇气</strong>与<strong>正义</strong>。当系统、上司、关系是不公的，斯多葛要求你以理性方式行动——发声、抵抗、离开——而不是把它合理化为"我应该接受不可控的部分"。把斯多葛当作"忍耐学"是它最有毒的滥用方式。
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <p>"接受你无法改变的"≠"不去改变你能改变的"。斯多葛的二分法是为了让你<strong>停止</strong>把能量浪费在不可控之物上，从而<strong>更有力地</strong>投入可控之物——它是行动哲学，不是不动哲学。</p>
+    <div class="source">—— 关于现代误读的关键提醒</div>
+  </div>
+</section>
+
+<!-- ============ TOOLBOX ============ -->
+<section id="toolbox" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('toolbox', this)">工具箱</span></div>
+  <h2>实践工具箱</h2>
+  <div class="lead">
+    下面是可以直接复制、抄入笔记本或 Obsidian 的结构化模板。建议挑 2 个先用 30 天，再考虑加。哲学的"操练"特性意味着——只读不练，等于没学。
+  </div>
+
+  <div class="tool-card">
+    <h4>① 晨间预演模板（3 分钟）</h4>
+    <p>每天起床后、看手机前完成。</p>
+    <div class="tool-template">日期：______
+今天 1–2 个可能的难处：
+  · ____________________
+  · ____________________
+
+每个难处我用哪种美德回应？
+  · 难处 1 → [智慧 / 正义 / 勇气 / 节制]：具体动作 ________
+  · 难处 2 → [智慧 / 正义 / 勇气 / 节制]：具体动作 ________
+
+今天我最希望我以什么样的人结束这一天？
+  · ____________________</div>
+  </div>
+
+  <div class="tool-card">
+    <h4>② 晚省三问模板（5 分钟）</h4>
+    <p>睡前完成。语气：温和的老师，不是法官。</p>
+    <div class="tool-template">日期：______
+
+恶（quid mali）：今天哪一刻我背离了美德？
+  · 情境 ________
+  · 我做了什么 ________
+  · 它属于哪种激情（欲求 / 恐惧 / 失控愉悦 / 悲伤）？
+
+善（quid boni）：今天哪一刻我按美德行事了？
+  · 情境 ________
+  · 我做了什么 ________
+
+改（quid omissum）：明天具体怎么改？
+  · 如果再遇到类似情境，我会 ________
+  · 我想培养的习惯：________</div>
+  </div>
+
+  <div class="tool-card">
+    <h4>③ 控制二分法卡（30 秒）</h4>
+    <p>当焦虑/愤怒袭来时立刻使用。可以做成手机锁屏或钱包卡片。</p>
+    <div class="tool-template">事件：________
+
+✅ 在我控制之内：
+  · ________
+  · ________
+  · ________
+
+❌ 不在我控制之内：
+  · ________
+  · ________
+  · ________
+
+我现在的能量，100% 投入到上面 ✅ 列的哪一个动作上？
+→ ________</div>
+  </div>
+
+  <div class="tool-card">
+    <h4>④ 负面预演表（每周 1 次）</h4>
+    <p>挑一件你最依赖/最害怕失去的东西。详细想象，写下来。</p>
+    <div class="tool-template">假设我失去的对象：________
+（工作 / 健康 / 财富 / 一段关系 / 某种身份）
+
+如果它在 6 个月内消失：
+  · 第一周我会怎么感受？________
+  · 我会怎么应对？________
+  · 我会发现自己依然拥有什么？________
+  · 我现在可以做什么，让那个"失去后的我"过得更好？________
+
+写完后的感受（通常会是平静 + 感激）：________</div>
+  </div>
+
+  <div class="tool-card">
+    <h4>⑤ 美德决策矩阵（重大决定前）</h4>
+    <p>对每一个大决定（换工作、搬家、结束/开始关系、大额支出）使用。</p>
+    <div class="tool-template">决定：________
+
+智慧问：长期看，它真的是好的吗？我看清了所有真相吗？
+  → ________
+
+正义问：对其他人是否公平？经得起公开吗？
+  → ________
+
+勇气问：我是在面对，还是在逃避？
+  → ________
+
+节制问：是被一时情绪推动，还是经过权衡的？
+  → ________
+
+四扇门都通过？是 / 否
+如否，哪一扇门提示了什么？________</div>
+  </div>
+
+  <div class="tool-card">
+    <h4>⑥ 印象暂停四步法（任何强烈情绪到来时）</h4>
+    <div class="tool-template">1. 命名：
+   "我现在有一个印象——_______"
+   （把它和事实分开）
+
+2. 检验：
+   这是事实还是我对事实的解释？
+   还有什么其他解释？
+
+3. 暂缓：
+   在我没有足够证据之前，我先不同意它为真。
+
+4. 选择：
+   即使它是真的，我接下来按哪种美德回应？
+   → ________</div>
+  </div>
+
+  <div class="insight-box">
+    <p>"哲学不是讲台上能讨论的东西。哲学是用来活出的。"</p>
+    <div class="source">—— 爱比克泰德《谈话录》</div>
+  </div>
+</section>
+
+<!-- ============ SCENARIO PRACTICE ============ -->
+<section id="practice" class="section">
+  <div class="breadcrumb">斯多葛 / <span onclick="showSection('practice', this)">场景练习</span></div>
+  <h2>场景练习</h2>
+  <div class="lead">
+    每个场景给出一个 30 岁阶段的典型困境，你需要在三个选项里挑出最贴合斯多葛精神的回应。注意：不是"最礼貌"或"最坚强"，而是<strong>最符合控制二分法 + 美德导向</strong>的。
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习一：控制二分法</div>
+    <div class="scenario-context">你为一个升职机会准备了三个月。最后内部决策把它给了和老板私交更好的另一位同事。你很愤怒，怀疑整个流程都是表演。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "我不能再相信公司了，从今天开始消极怠工，让他们看看没了我什么效果。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 B</div>
+        "结果不在我控制之内。我能控制的是：(1) 复盘自己的准备里哪里有可改进；(2) 决定我要在这里继续投入，还是开始看外部机会；(3) 不让这次失望污染我接下来三个月的判断力。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 C</div>
+        "升职本来就不重要，我接受这一切，不去想了。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是把不可控（公司决策）的愤怒泄向可控（自己的工作品质）——典型的"愤怒滥用"。C 看似斯多葛但其实是<strong>压抑</strong>，是"假节制"——升职是合理的"被偏好的中性物"，对它失望是正常的"前-激情"。B 是正解：承认事件 → 区分可控与不可控 → 把能量回流到可控部分 → 同时保护未来的判断力（不让一次失望扭曲长期决策）。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习二：印象与同意</div>
+    <div class="scenario-context">你给一位很久没联系的朋友发了消息，三天没回复。你脑中开始想"她是不是觉得我太功利、只在需要时才找她"。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "她肯定讨厌我了。我应该再发一条消息道歉。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 B</div>
+        "无所谓，关系本来就是过眼云烟，我不在乎了。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 C</div>
+        "我注意到一个印象——'她觉得我功利'。这只是印象，不是事实。她可能在忙、可能没看到、可能确实有些距离感。在我没有更多信息之前，我先不给这个印象'同意'。如果一周后还没回，我可以发一句简单的关心，不带要求。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是直接同意了印象，并迅速进入补偿行为——典型的"读心术"+"应该陈述"。B 是用犬儒（伪斯多葛）保护自己，但代价是关闭真实情感。C 是标准操作：命名印象 → 列其他解释 → 延迟同意 → 决定一个不会损害自尊也不会过度依赖的下一步。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习三：负面预演 + 美德决策</div>
+    <div class="scenario-context">你正在考虑一个跨城市的工作机会。薪资是当前的 1.6 倍，但要离开父母（父亲今年体检查出一个不大不小的问题），伴侣的职业也需要重新铺设。你最近三周失眠。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "钱多就是好的，机会不等人，先去再说。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 B</div>
+        "我不能去，家人是最重要的，再大的机会也不能换。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 C</div>
+        "我对两个方向都做一次负面预演：去之后 3 年（父亲出事我远在他处 / 伴侣职业受挫 / 我自己习惯不了）；不去之后 3 年（错过这次成长 / 心存怨怼）。再用四美德过一遍——智慧：哪条路真的对长期好？正义：对伴侣是否公平？勇气：B 是不是我用'家人'做了不冒险的挡箭牌？节制：A 是不是被薪资数字诱惑？根据这些再决定，并且明白无论选哪条，都有它的代价，我接受这个代价。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 把薪资（被偏好的中性物）当成绝对的善，是节制的失败。B 用了一个看似高尚的理由（"家人最重要"）但没有真正面对自己是否在逃避变化——可能是勇气的失败。C 是标准斯多葛决策法：负面预演两条路 → 四美德过滤 → 接受"任何选择都有代价"这一基本事实（避免把决定理想化）。
+    </div>
+  </div>
+
+  <div class="scenario-card">
+    <div class="scenario-title">练习四：愤怒与延迟</div>
+    <div class="scenario-context">深夜 23:47。你看到团队群里一个下属说了一段话，让你感觉他在公开质疑你最近的决定。你的手已经开始打字了。</div>
+    <div class="scenario-options">
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 A</div>
+        "趁热打铁，立刻把我的理由讲清楚，让所有人看到对错在哪里。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, true)">
+        <div class="label">选项 B</div>
+        "我注意到我在愤怒——身体发热、心率上升、想要立刻反驳。塞涅卡说愤怒最大的疗法是延迟。我把手机放下，洗个脸，明早起来再看。明早如果我依然认为需要回应，我会以更冷静的方式公开或私下沟通——但不是现在。"
+      </button>
+      <button class="option-btn" onclick="revealAnswer(this, false)">
+        <div class="label">选项 C</div>
+        "算了，斯多葛人不应该愤怒，我假装没看到这件事。"
+      </button>
+    </div>
+    <div class="explanation">
+      <strong>解析：</strong>A 是激情压倒理性，且深夜公开冲突几乎一定会被它的语气放大——塞涅卡反复警告这一点。C 是压抑（假斯多葛），且回避了管理者的"正义"责任——如果下属真的在公开质疑，是需要回应的，只是不是现在、不是这样。B 是标准操作：识别身体信号 → 命名情绪 → 强制延迟 → 把"是否回应"和"怎么回应"分开，前者交给理性，后者交给方法。
+    </div>
+  </div>
+
+  <div class="insight-box" style="margin-top: 32px;">
+    <p>"困扰你的不是事情本身，而是你对事情的看法。在这件事上，你随时可以收回你的看法。"</p>
+    <div class="source">—— 马可·奥勒留《沉思录》</div>
+  </div>
+</section>
+
+</main>
+
+<script>
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+  document.querySelector('.sidebar').classList.remove('open');
+}
+
+function revealAnswer(btn, isCorrect) {
+  const card = btn.closest('.scenario-card');
+  const buttons = card.querySelectorAll('.option-btn');
+  const explanation = card.querySelector('.explanation');
+
+  buttons.forEach(b => {
+    b.classList.add('revealed');
+    if (b === btn) {
+      b.classList.add(isCorrect ? 'correct' : 'incorrect');
+    } else if (b.onclick.toString().includes('true')) {
+      b.classList.add('correct');
+    } else {
+      b.classList.add('incorrect');
+    }
+    b.onclick = null;
+    b.style.cursor = 'default';
+  });
+
+  explanation.classList.add('show');
+}
+</script>
+<script>
+const nav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+});
+
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme');
+const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+}
+
+if (savedTheme) {
+  applyTheme(savedTheme);
+} else if (prefersLight) {
+  applyTheme('light');
+}
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  applyTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+</script>
+
+</body>
+</html>

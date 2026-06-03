@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>记忆卡片 · 间隔重复学习系统</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+    :root {
+      --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      --accent: #d4a373;
+      --accent-light: #e9c46a;
+      --card-flip: 0.55s;
+    }
+
+    body {
+      background:
+        radial-gradient(ellipse at 30% 10%, rgba(212,163,115,0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 90%, rgba(95,138,124,0.03) 0%, transparent 55%),
+        var(--bg);
+    }
+
+    main.srs-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 100px 32px 80px;
+    }
+
+    /* ============ HERO ============ */
+    .srs-hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: end;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    .srs-hero .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .srs-hero .eyebrow::before {
+      content: '';
+      width: 28px; height: 1px;
+      background: var(--accent);
+    }
+
+    .srs-hero h1 {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+    .srs-hero h1 em {
+      font-style: normal;
+      font-family: 'Sora', sans-serif;
+      font-size: 0.4em;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+
+    .srs-hero .lead {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.8;
+      max-width: 540px;
+    }
+
+    /* ============ STATS DASHBOARD ============ */
+    .srs-stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .stat-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      transition: all var(--duration) var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .stat-box[data-box="1"]::before { background: #e74c3c; }
+    .stat-box[data-box="2"]::before { background: #e67e22; }
+    .stat-box[data-box="3"]::before { background: #f1c40f; }
+    .stat-box[data-box="4"]::before { background: #2ecc71; }
+    .stat-box[data-box="5"]::before { background: var(--accent); }
+
+    .stat-box .box-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .stat-box .box-count {
+      font-family: 'Sora', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .stat-box .box-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ============ CONTROLS ============ */
+    .srs-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .filter-btn {
+      padding: 8px 18px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+    }
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .filter-divider {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .action-btn {
+      padding: 10px 24px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark, #b08d5f));
+      color: #fff;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+      margin-left: auto;
+    }
+    .action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-accent);
+    }
+    .action-btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .due-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 100px;
+      background: #e74c3c;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-left: 8px;
+    }
+
+    /* ============ FLASHCARD AREA ============ */
+    .card-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      min-height: 380px;
+      margin-bottom: 40px;
+    }
+
+    .card-progress-bar {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-progress-bar .bar-track {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .card-progress-bar .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      border-radius: 2px;
+      transition: width 0.4s var(--ease);
+      width: 0%;
+    }
+    .card-progress-bar .bar-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Flip card */
+    .flip-container {
+      perspective: 1200px;
+      width: 100%;
+      max-width: 640px;
+      height: 340px;
+      cursor: pointer;
+    }
+
+    .flip-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform var(--card-flip) var(--ease);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .flip-face::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .flip-front {
+      align-items: center;
+      text-align: center;
+    }
+    .flip-front::before {
+      background: radial-gradient(ellipse at 30% 20%, var(--accent-glow), transparent 70%);
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+    .flip-back::before {
+      background: radial-gradient(ellipse at 70% 80%, rgba(95,138,124,0.08), transparent 70%);
+    }
+
+    .flip-face .module-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .flip-front .card-question {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-weight: 600;
+      line-height: 1.6;
+      color: var(--text);
+      max-width: 500px;
+    }
+
+    .flip-front .flip-hint {
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .flip-front .flip-hint kbd {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: var(--bg);
+    }
+
+    .flip-back .card-answer {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+    .flip-back .card-answer strong {
+      color: var(--accent-light);
+    }
+    .flip-back .card-answer .answer-title {
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* Rating buttons */
+    .rating-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s var(--ease);
+      pointer-events: none;
+    }
+    .rating-row.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .rate-btn {
+      padding: 12px 28px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+    }
+    .rate-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .rate-btn.again {
+      border-color: #e74c3c44;
+    }
+    .rate-btn.again:hover {
+      background: #e74c3c22;
+      border-color: #e74c3c;
+      color: #e74c3c;
+    }
+
+    .rate-btn.good {
+      border-color: #2ecc7144;
+    }
+    .rate-btn.good:hover {
+      background: #2ecc7122;
+      border-color: #2ecc71;
+      color: #2ecc71;
+    }
+
+    .rate-btn.easy {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark, #b08d5f));
+      color: #fff;
+    }
+    .rate-btn.easy:hover {
+      box-shadow: var(--shadow-accent);
+    }
+
+    .rate-btn .rate-label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    /* Empty / idle state */
+    .stage-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      min-height: 340px;
+      text-align: center;
+    }
+    .stage-empty .empty-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .stage-empty h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      color: var(--text);
+      margin: 0;
+    }
+    .stage-empty p {
+      color: var(--text-muted);
+      font-size: 14px;
+      max-width: 360px;
+    }
+
+    /* ============ CARD BROWSER (table) ============ */
+    .browser-section {
+      margin-top: 56px;
+    }
+    .browser-section h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .browser-section h2 .count-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .card-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+    }
+
+    .card-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      text-align: left;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .card-table tr td:first-child {
+      border-left: 1px solid var(--border);
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    }
+    .card-table tr td:last-child {
+      border-right: 1px solid var(--border);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .card-table .q-cell {
+      color: var(--text);
+      font-weight: 500;
+      max-width: 400px;
+    }
+
+    .card-table .module-pill {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+    .module-pill[data-m="mbti"]    { background: #d4a37318; color: #d4a373; }
+    .module-pill[data-m="nvc"]     { background: #5f8a7c18; color: #5f8a7c; }
+    .module-pill[data-m="cbt"]     { background: #7c9ea018; color: #7c9ea0; }
+    .module-pill[data-m="stoic"]   { background: #a8906018; color: #a89060; }
+    .module-pill[data-m="fp"]      { background: #6366f118; color: #818cf8; }
+
+    [data-theme="light"] .module-pill[data-m="mbti"]  { background: #d4a37320; color: #8f5f2a; }
+    [data-theme="light"] .module-pill[data-m="nvc"]   { background: #5f8a7c20; color: #3a5f52; }
+    [data-theme="light"] .module-pill[data-m="cbt"]   { background: #7c9ea020; color: #4a6a6c; }
+    [data-theme="light"] .module-pill[data-m="stoic"] { background: #a8906020; color: #6a5830; }
+    [data-theme="light"] .module-pill[data-m="fp"]    { background: #6366f120; color: #4f46e5; }
+
+    .card-table .box-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .box-pill[data-b="1"] { background: #e74c3c20; color: #e74c3c; }
+    .box-pill[data-b="2"] { background: #e67e2220; color: #e67e22; }
+    .box-pill[data-b="3"] { background: #f1c40f20; color: #f1c40f; }
+    .box-pill[data-b="4"] { background: #2ecc7120; color: #2ecc71; }
+    .box-pill[data-b="5"] { background: var(--accent-glow); color: var(--accent); }
+
+    /* ============ LEITNER EXPLANATION ============ */
+    .leitner-explain {
+      margin-top: 56px;
+      padding: 32px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .leitner-explain h3 {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      margin: 0 0 16px;
+    }
+    .leitner-explain .flow-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .leitner-explain .flow-box {
+      padding: 8px 20px;
+      border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .flow-box.b1 { border-color: #e74c3c44; color: #e74c3c; background: #e74c3c0a; }
+    .flow-box.b2 { border-color: #e67e2244; color: #e67e22; background: #e67e220a; }
+    .flow-box.b3 { border-color: #f1c40f44; color: #f1c40f; background: #f1c40f0a; }
+    .flow-box.b4 { border-color: #2ecc7144; color: #2ecc71; background: #2ecc710a; }
+    .flow-box.b5 { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+    .flow-arrow {
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+    .leitner-explain .explain-text {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .leitner-explain .explain-text strong {
+      color: var(--text);
+    }
+
+    /* ============ RESET BUTTON ============ */
+    .reset-row {
+      margin-top: 32px;
+      text-align: center;
+    }
+    .reset-btn {
+      padding: 8px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all var(--duration) var(--ease);
+    }
+    .reset-btn:hover {
+      border-color: #e74c3c;
+      color: #e74c3c;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      main.srs-main { padding: 80px 16px 56px; }
+      .srs-hero { grid-template-columns: 1fr; }
+      .srs-stats { grid-template-columns: repeat(3, 1fr); }
+      .srs-stats .stat-box:nth-child(4),
+      .srs-stats .stat-box:nth-child(5) { grid-column: span 1; }
+      .flip-container { height: 320px; }
+      .flip-face { padding: 28px; }
+      .rating-row { gap: 8px; }
+      .rate-btn { padding: 10px 18px; font-size: 13px; }
+      .card-table { font-size: 13px; }
+      .srs-controls { gap: 8px; }
+      .filter-btn { padding: 6px 12px; font-size: 12px; }
+    }
+
+    @media (max-width: 480px) {
+      .srs-stats { grid-template-columns: repeat(2, 1fr); }
+      .flip-container { height: 360px; }
+      .leitner-explain .flow-row { flex-direction: column; align-items: flex-start; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top nav -->
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">心</span>
+    <span>心界 <span style="color:var(--text-muted);font-weight:500;font-family:'Sora',sans-serif;font-size:0.85em;">MindSphere</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="mbti.html">人格类型</a>
+    <a href="nvc.html">沟通</a>
+    <a href="cbt.html">认知</a>
+    <a href="stoicism.html">斯多葛</a>
+    <a href="first_principles.html">第一性原理</a>
+    <a href="canon.html">正典</a>
+    <a href="flashcards.html" class="active">记忆</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<main class="srs-main">
+
+  <!-- Hero -->
+  <section class="srs-hero">
+    <div>
+      <div class="eyebrow">MindSphere · Spaced Repetition</div>
+      <h1>记忆卡片<em>SRS Flashcards · Leitner System</em></h1>
+      <p class="lead">
+        知道 ≠ 记住 ≠ 用上。间隔重复是把「知道」转化为「记住」的最有效方法。<br>
+        每天 5–10 分钟，用 Leitner 五箱系统复习五大模块的核心概念。
+      </p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="srs-stats" id="statsRow">
+    <div class="stat-box" data-box="1">
+      <div class="box-label">Box 1 · 新卡</div>
+      <div class="box-count" id="box1Count">0</div>
+      <div class="box-hint">每天复习</div>
+    </div>
+    <div class="stat-box" data-box="2">
+      <div class="box-label">Box 2</div>
+      <div class="box-count" id="box2Count">0</div>
+      <div class="box-hint">隔 1 天</div>
+    </div>
+    <div class="stat-box" data-box="3">
+      <div class="box-label">Box 3</div>
+      <div class="box-count" id="box3Count">0</div>
+      <div class="box-hint">隔 3 天</div>
+    </div>
+    <div class="stat-box" data-box="4">
+      <div class="box-label">Box 4</div>
+      <div class="box-count" id="box4Count">0</div>
+      <div class="box-hint">隔 7 天</div>
+    </div>
+    <div class="stat-box" data-box="5">
+      <div class="box-label">Box 5 · 已掌握</div>
+      <div class="box-count" id="box5Count">0</div>
+      <div class="box-hint">隔 14 天</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="srs-controls">
+    <button class="filter-btn active" data-filter="all">全部</button>
+    <button class="filter-btn" data-filter="mbti">MBTI</button>
+    <button class="filter-btn" data-filter="nvc">NVC</button>
+    <button class="filter-btn" data-filter="cbt">CBT</button>
+    <button class="filter-btn" data-filter="stoic">斯多葛</button>
+    <button class="filter-btn" data-filter="fp">第一性原理</button>
+    <div class="filter-divider"></div>
+    <button class="action-btn" id="startReview">
+      开始复习
+      <span class="due-badge" id="dueBadge">0</span>
+    </button>
+  </div>
+
+  <!-- Card stage -->
+  <div class="card-stage" id="cardStage">
+    <div class="stage-empty" id="stageEmpty">
+      <div class="empty-icon">📇</div>
+      <h3>准备好了吗？</h3>
+      <p>点击「开始复习」进入今日的间隔重复练习。系统会优先展示到期需要复习的卡片。</p>
+    </div>
+  </div>
+
+  <!-- Card browser -->
+  <section class="browser-section">
+    <h2>卡片总览 <span class="count-pill" id="totalPill">0 cards</span></h2>
+    <table class="card-table" id="cardTable">
+      <thead>
+        <tr>
+          <th>Module</th>
+          <th>Question</th>
+          <th>Box</th>
+          <th>Next Review</th>
+        </tr>
+      </thead>
+      <tbody id="cardTableBody"></tbody>
+    </table>
+  </section>
+
+  <!-- Leitner explanation -->
+  <section class="leitner-explain">
+    <h3>🧠 Leitner 五箱系统 — 如何运作</h3>
+    <div class="flow-row">
+      <span class="flow-box b1">Box 1 · 每天</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-box b2">Box 2 · 隔1天</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-box b3">Box 3 · 隔3天</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-box b4">Box 4 · 隔7天</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-box b5">Box 5 · 已掌握</span>
+    </div>
+    <p class="explain-text">
+      所有新卡片从 <strong>Box 1</strong> 开始。每次复习：答对 → 升一箱；答错 → 退回 Box 1。<br>
+      箱子越高，复习间隔越长。到达 <strong>Box 5</strong> 的概念代表你已牢固掌握，每两周复习一次即可。<br>
+      每日只需复习「到期」的卡片（约 5–15 张），<strong>5 分钟</strong>就够。进度自动保存到浏览器。
+    </p>
+  </section>
+
+  <!-- Reset -->
+  <div class="reset-row">
+    <button class="reset-btn" id="resetBtn">⟲ 重置所有进度</button>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>心界 MindSphere</h3>
+      <p>把心理学、哲学、决策科学，整理成一个可以反复回望、持续生长的认知体系。慢工出细活。</p>
+    </div>
+    <div class="footer-col">
+      <h4>Modules</h4>
+      <ul>
+        <li><a href="mbti.html">MBTI 人格类型</a></li>
+        <li><a href="nvc.html">非暴力沟通</a></li>
+        <li><a href="cbt.html">认知行为疗法</a></li>
+        <li><a href="stoicism.html">斯多葛</a></li>
+        <li><a href="first_principles.html">第一性原理</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>About</h4>
+      <ul>
+        <li><a href="index.html#philosophy">设计理念</a></li>
+        <li><a href="index.html#journey">认知地图</a></li>
+        <li><a href="index.html#modules">学习模块</a></li>
+        <li><a href="canon.html">正典书架</a></li>
+        <li><a href="flashcards.html">记忆卡片</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 · 心界 MindSphere · 系统化自我成长知识库</div>
+    <div>Vol. 01 · Last updated 05 / 2026</div>
+  </div>
+</footer>
+
+<script>
+// ===========================================================================
+//  FLASHCARD DATA — 60+ cards from all 5 MindSphere modules
+// ===========================================================================
+const CARDS = [
+  // ──────────── MBTI (12 cards) ────────────
+  { id:"m01", m:"mbti", q:"MBTI 四个维度分别是什么？", a:"<strong>E/I</strong>（外倾/内倾 · 精力方向）、<strong>S/N</strong>（感觉/直觉 · 信息获取）、<strong>T/F</strong>（思维/情感 · 决策方式）、<strong>J/P</strong>（判断/感知 · 生活态度）。" },
+  { id:"m02", m:"mbti", q:"认知功能栈是什么？和四字母有什么区别？", a:"四字母只是外在偏好的缩写。<strong>认知功能栈</strong>揭示的是底层的信息加工顺序：主导功能 → 辅助功能 → 第三功能 → 劣势功能。同一个字母组合（如 INFJ vs INFP）的功能栈完全不同。" },
+  { id:"m03", m:"mbti", q:"Si（内倾感觉）的核心特征是什么？", a:"Si 关注<strong>已知经验的内在印记</strong>——它把新信息与过去的细节记忆做比较，看重传统、稳定性和可靠性。高 Si 的人擅长记住细节、遵循流程，但可能抗拒新方式。" },
+  { id:"m04", m:"mbti", q:"Ne（外倾直觉）和 Ni（内倾直觉）最核心的区别？", a:"<strong>Ne</strong> 是发散的——从一个点联想出无数可能性，像树状展开；<strong>Ni</strong> 是收敛的——从无数信息中提炼出一个本质洞见，像漏斗聚焦。Ne 问「还有什么可能？」，Ni 问「这一切最终指向什么？」" },
+  { id:"m05", m:"mbti", q:"劣势功能（第四功能）为什么重要？", a:"劣势功能是我们最不擅长但最容易触发<strong>压力反应</strong>的功能。当一个人在高压下表现异常（如平时理性的人突然情绪爆发），往往是劣势功能在失控运作。理解它是自我成长的关键盲区。" },
+  { id:"m06", m:"mbti", q:"为什么说「没有好坏类型，只有不同偏好」？", a:"每种类型都有独特的认知优势和盲区。MBTI 的目的不是贴标签或分高下，而是帮你<strong>看清自己天然的偏好模式</strong>，从而更有意识地发展非偏好的一面，达到更平衡的状态。" },
+  { id:"m07", m:"mbti", q:"Te（外倾思维）和 Ti（内倾思维）的核心区别？", a:"<strong>Te</strong> 关注外部系统效率——「怎样最有效地达成目标？」偏好客观数据和标准流程。<strong>Ti</strong> 关注内部逻辑一致性——「这在逻辑上说得通吗？」偏好从原理出发独立推演。" },
+  { id:"m08", m:"mbti", q:"Fe（外倾情感）的核心特征是什么？", a:"Fe 关注<strong>群体的情感和谐</strong>——它能敏锐感知他人的情绪状态，并自然地调节氛围以维持人际关系的平衡。高 Fe 的人擅长照顾他人需求，但可能忽视自己的真实感受。" },
+  { id:"m09", m:"mbti", q:"什么是「功能环」（Function Loop）？", a:"当主导功能跳过辅助功能，直接和第三功能形成循环时，就是功能环。例如 INFJ 的 Ni-Ti loop 会导致过度内省、脱离现实。<strong>解法</strong>是有意识地使用辅助功能（Fe，与他人连接）来打破循环。" },
+  { id:"m10", m:"mbti", q:"J/P 维度描述的是什么？", a:"J（判断）偏好<strong>有序和计划</strong>——喜欢事情有结论、有安排；P（感知）偏好<strong>灵活和开放</strong>——喜欢保持选择空间，随机应变。注意：J/P 不代表「有条理/混乱」，而是面对外部世界时的偏好态度。" },
+  { id:"m11", m:"mbti", q:"MBTI 最常见的误用是什么？", a:"最常见的误用是<strong>把类型当标签固化自己</strong>——「我是 INTP 所以我社交能力差」。MBTI 描述的是偏好而非能力。它应该用来理解起点和盲区，而不是为不成长找借口。" },
+  { id:"m12", m:"mbti", q:"如何判断一个人的主导功能？", a:"观察他/她在<strong>最放松、最自然</strong>的状态下最常使用的认知方式。主导功能是「默认模式」——不需要刻意启动，是思考和决策的第一反应。它通常在青少年期就已确立。" },
+
+  // ──────────── NVC (12 cards) ────────────
+  { id:"n01", m:"nvc", q:"非暴力沟通（NVC）的四个要素是什么？", a:"<strong>观察</strong>（不带评判地描述事实）→ <strong>感受</strong>（表达真实情绪）→ <strong>需要</strong>（识别背后的核心需要）→ <strong>请求</strong>（提出具体、可行的请求）。这四步是 NVC 的核心流程。" },
+  { id:"n02", m:"nvc", q:"「观察」和「评论」的区别是什么？举例说明。", a:"<strong>观察</strong>是具体、可验证的事实：「这周你有三天晚上 10 点后才回家」。<strong>评论</strong>是加了判断的解读：「你总是不顾家」。混淆两者会让对方感到被攻击，本能地防御。" },
+  { id:"n03", m:"nvc", q:"为什么区分「感受」和「想法」很重要？", a:"「我觉得你不在乎我」不是感受，而是对他人行为的<strong>判断/想法</strong>。真正的感受是：「我感到难过和孤独」。当我们表达感受而非指责时，对方更容易产生<strong>同理心</strong>而非防御。" },
+  { id:"n04", m:"nvc", q:"NVC 中的「需要」是指什么？", a:"需要是所有人共通的<strong>内在驱动力</strong>——安全感、归属感、自主性、意义感、被尊重、被理解等。NVC 认为冲突的根源不是行为本身，而是<strong>未被满足的需要</strong>。识别需要是化解冲突的关键。" },
+  { id:"n05", m:"nvc", q:"一个好的「请求」应该具备哪些特征？", a:"好的请求是：<strong>正面的</strong>（说「我希望你……」而非「不要……」）、<strong>具体的</strong>（「每周三我们一起吃晚饭」而非「多花时间陪我」）、<strong>可选择的</strong>（对方可以说不，否则就变成了要求）。" },
+  { id:"n06", m:"nvc", q:"「请求」和「要求」的本质区别是什么？", a:"区别在于<strong>对方拒绝后你的反应</strong>。如果拒绝后你愿意继续对话、寻找其他满足需要的方式，那是请求；如果你因此惩罚、冷暴力或施压，那本质上就是要求。" },
+  { id:"n07", m:"nvc", q:"什么是「同理心倾听」？和「安慰」有什么不同？", a:"同理心倾听是<strong>全身心地与对方在一起</strong>，不急着给建议、不评判、不比较。不是「我理解你」「别难过了」（这是安慰/建议），而是通过反映对方的感受和需要来确认：「你是不是感到……因为你需要……」" },
+  { id:"n08", m:"nvc", q:"NVC 如何处理愤怒？", a:"NVC 认为愤怒的根源不是别人的行为，而是<strong>我们自己的未满足需要和评判思维</strong>。处理步骤：①暂停 → ②识别自己的评判 → ③找到评判背后的需要 → ④用 NVC 四步表达。愤怒是信号，不是敌人。" },
+  { id:"n09", m:"nvc", q:"为什么 NVC 不赞成用「应该」这个词？", a:"「应该」隐含了<strong>道德评判和外部标准</strong>，它切断了与内在需要的连接。「我应该更努力」→ 变成「我渴望成长和进步，我选择……」。从义务语言转为需要语言，能重新激活<strong>自主性</strong>。" },
+  { id:"n10", m:"nvc", q:"面对批评，NVC 建议的四种反应选择是什么？", a:"①<strong>指责自己</strong>（内疚）→ ②<strong>指责对方</strong>（反击）→ ③<strong>体会自己的感受和需要</strong>→ ④<strong>体会对方的感受和需要</strong>。NVC 鼓励我们练习选项 ③ 和 ④，用同理心替代本能反应。" },
+  { id:"n11", m:"nvc", q:"NVC 中「自我同理」的含义是什么？", a:"自我同理是用 NVC 的方式<strong>对待自己</strong>——当自己犯错或痛苦时，不自我批判，而是识别自己的感受和需要：「我现在感到沮丧，因为我需要被认可」。这是向外表达同理心的基础。" },
+  { id:"n12", m:"nvc", q:"「你让我很生气」这句话从 NVC 角度有什么问题？", a:"它把情绪的<strong>责任归给了对方</strong>。NVC 认为他人的行为是「刺激」，但不是情绪的「原因」——原因是我们自己的需要和解读。改为：「当你……时，我感到生气，因为我需要……」" },
+
+  // ──────────── CBT (14 cards) ────────────
+  { id:"c01", m:"cbt", q:"CBT 的核心模型「认知三角」是什么？", a:"<strong>想法（Thought）→ 情绪（Emotion）→ 行为（Behavior）</strong>，三者互相影响。CBT 的核心洞见：不是事件本身导致痛苦，而是我们对事件的<strong>解读</strong>（认知）决定了情绪和行为反应。" },
+  { id:"c02", m:"cbt", q:"什么是「自动思维」（Automatic Thoughts）？", a:"自动思维是<strong>瞬间冒出的、未经反思的念头</strong>。它们速度极快、通常带有偏见，我们往往不假思索就接受了。例如考试没考好时瞬间冒出「我真笨」——这就是自动思维。" },
+  { id:"c03", m:"cbt", q:"自动思维、中间信念和核心信念的关系是什么？", a:"<strong>核心信念</strong>是最深层的（「我不够好」），<strong>中间信念</strong>是由此衍生的规则和假设（「如果我不完美，就会被抛弃」），<strong>自动思维</strong>是表面最容易觉察的（「这份报告一定要完美」）。像洋葱一样层层嵌套。" },
+  { id:"c04", m:"cbt", q:"列举 3 种最常见的认知扭曲。", a:"<strong>1. 全有或全无</strong>（非黑即白思维）<br><strong>2. 灾难化</strong>（把事情想到最坏）<br><strong>3. 以偏概全</strong>（从一次失败推导「我总是失败」）。CBT 共识别出约 <strong>12 种</strong>常见扭曲模式。" },
+  { id:"c05", m:"cbt", q:"什么是「灾难化思维」？如何应对？", a:"灾难化是把事情<strong>自动推向最坏结局</strong>：「如果面试失败 → 找不到工作 → 一辈子完了」。<strong>应对</strong>：问自己三个问题——最坏的情况是什么？最好的呢？最可能的呢？重新校准概率判断。" },
+  { id:"c06", m:"cbt", q:"「读心术」认知扭曲是指什么？", a:"在没有充分证据的情况下<strong>断定自己知道别人在想什么</strong>：「他一定觉得我很无聊」「她肯定在背后说我坏话」。本质是把自己的猜测当成事实，忽略了其他可能的解释。" },
+  { id:"c07", m:"cbt", q:"什么是苏格拉底式提问？在 CBT 中如何使用？", a:"苏格拉底式提问是通过<strong>系统的追问</strong>来检验一个想法是否成立。核心问题包括：「支持这个想法的证据是什么？」「反对的证据呢？」「如果朋友有同样的想法，你会怎么跟他说？」目标不是否定想法，而是<strong>全面审视</strong>。" },
+  { id:"c08", m:"cbt", q:"CBT 中「思维记录表」的基本栏位有哪些？", a:"<strong>①情境</strong>（什么时间、在哪、发生了什么）→ <strong>②自动思维</strong>（脑子里冒出了什么）→ <strong>③情绪</strong>（什么情绪、强度 0-100）→ <strong>④支持证据</strong> → <strong>⑤反对证据</strong> → <strong>⑥替代想法</strong> → <strong>⑦情绪变化</strong>。" },
+  { id:"c09", m:"cbt", q:"「情绪标签化」（Emotion Labeling）为什么有效？", a:"神经科学研究发现，当你用语言<strong>准确命名</strong>一种情绪时，杏仁核（情绪中枢）的活跃度会显著降低。给情绪贴标签的过程激活了前额叶皮层（理性区），相当于「用理性接管了方向盘」。" },
+  { id:"c10", m:"cbt", q:"CBT 中的「行为实验」是什么意思？", a:"行为实验是<strong>用行动来检验想法是否正确</strong>。比如你相信「如果我在会议上发言，一定会被嘲笑」——设计一个小实验（先在小组中发一次言），观察实际结果是否和预测一致。用现实数据更新信念。" },
+  { id:"c11", m:"cbt", q:"「全有或全无思维」的特征是什么？", a:"用<strong>非黑即白</strong>的极端方式看事情，没有中间地带：「不完美就是失败」「他不同意我一个观点，说明他反对我整个人」。现实几乎总是<strong>灰色地带</strong>。觉察到这个模式后，有意识地寻找中间点。" },
+  { id:"c12", m:"cbt", q:"什么是「向下箭头技术」？", a:"一种深挖<strong>核心信念</strong>的方法。从一个自动思维开始，反复问「如果这是真的，那又意味着什么？」直到触及最底层的信念。例：报告有错 → 老板会失望 → 我不被信任 → <strong>我不够好</strong>（核心信念）。" },
+  { id:"c13", m:"cbt", q:"CBT 如何看待「反刍思维」（Rumination）？", a:"反刍是对同一个负面想法<strong>反复咀嚼</strong>而不产生新见解。CBT 认为反刍是一种思维习惯而非不可控的状态。应对策略：<strong>觉察</strong>（「我又在反刍了」）→ <strong>行为转换</strong>（运动、专注任务）→ <strong>定时担忧</strong>（把担忧限定在每天 15 分钟内）。" },
+  { id:"c14", m:"cbt", q:"CBT 和斯多葛哲学的核心相似点是什么？", a:"两者都认为<strong>不是事件本身，而是我们对事件的判断导致了痛苦</strong>。Epictetus 说的「人不是被事情困扰，而是被看法困扰」和 CBT 的认知模型完全一致。CBT 在本质上是斯多葛哲学的现代心理学版本。" },
+
+  // ──────────── STOICISM (14 cards) ────────────
+  { id:"s01", m:"stoic", q:"斯多葛哲学的「控制二分法」是什么？", a:"把所有事物分为两类：<strong>你能控制的</strong>（自己的判断、选择、态度）和<strong>你不能控制的</strong>（他人的行为、外部事件、身体状况）。智慧在于把精力<strong>100% 集中</strong>在你能控制的那一半。——Epictetus《手册》开篇第一句。" },
+  { id:"s02", m:"stoic", q:"斯多葛四大美德分别是什么？", a:"<strong>智慧</strong>（Sophia/Prudence）：正确判断的能力<br><strong>勇气</strong>（Andreia/Fortitude）：面对困难的坚韧<br><strong>节制</strong>（Sophrosyne/Temperance）：克制与平衡<br><strong>正义</strong>（Dikaiosyne/Justice）：公正对待他人<br>四美德是斯多葛伦理的核心框架。" },
+  { id:"s03", m:"stoic", q:"「Memento Mori」（记忆死亡）在斯多葛中的作用？", a:"「记住你终将一死」不是悲观主义，而是<strong>紧迫感的来源</strong>。当你意识到时间有限，琐碎的焦虑和无谓的争执都会变得不重要。它帮你<strong>重新排列优先级</strong>——专注于真正重要的事。" },
+  { id:"s04", m:"stoic", q:"「Amor Fati」（热爱命运）是什么意思？", a:"不只是接受发生在你身上的一切，而是<strong>热爱</strong>它——包括苦难。因为你无法改变已发生的事，但可以选择把它看作<strong>锻炼美德的机会</strong>。尼采后来也使用了这个概念。马可·奥勒留称之为「障碍即道路」。" },
+  { id:"s05", m:"stoic", q:"什么是「消极想象」（Negative Visualization）？", a:"定期想象<strong>你可能失去的东西</strong>——健康、亲人、工作、家。目的不是焦虑，而是培养<strong>感恩</strong>和<strong>心理准备</strong>。当你提前「预演」了失去，面对真正的变故时会更从容；平时也会更珍惜拥有的。" },
+  { id:"s06", m:"stoic", q:"Epictetus 最核心的教导是什么？", a:"<strong>「困扰我们的不是事情本身，而是我们对事情的看法」</strong>（《手册》§5）。这是整个斯多葛实践的基石，也是 CBT 认知模型的古代原型。改变不了世界，可以改变看世界的<strong>判断</strong>。" },
+  { id:"s07", m:"stoic", q:"斯多葛「三门学科」（Three Disciplines）是什么？", a:"<strong>1. 判断的学科</strong>（Discipline of Assent）：审视你的印象和判断<br><strong>2. 欲望的学科</strong>（Discipline of Desire）：只欲求符合自然的事物<br><strong>3. 行动的学科</strong>（Discipline of Action）：为共同体的利益而行动<br>分别对应<strong>逻辑学、物理学、伦理学</strong>。" },
+  { id:"s08", m:"stoic", q:"马可·奥勒留在《沉思录》中最常提醒自己什么？", a:"最频繁的主题是：<strong>① 时间的短暂</strong>（万事皆过客）、<strong>② 控制判断</strong>（痛苦来自看法而非事件）、<strong>③ 社会责任</strong>（为共同体服务是人的本性）。《沉思录》是写给他自己的日记，是「皇帝的自我对话」。" },
+  { id:"s09", m:"stoic", q:"塞涅卡如何看待愤怒？", a:"塞涅卡在《论愤怒》中认为愤怒是<strong>最危险的激情</strong>，因为它会瞬间夺走理性。他的处方：<strong>延迟</strong>（「最大的疗法是等待」）、<strong>审视判断</strong>（怒因来自判断而非事件）、<strong>换位思考</strong>（每个人都在犯错，包括你自己）。" },
+  { id:"s10", m:"stoic", q:"斯多葛的「晨思晚省」练习是什么？", a:"<strong>晨思</strong>：每天早上花 5 分钟预想一天可能遇到的困难和诱惑，提前用美德做出「预判断」。<br><strong>晚省</strong>：睡前回顾今天——哪里做得好？哪里偏离了美德？不带自我批判，只做<strong>冷静审计</strong>。——来自 Epictetus / Seneca 的日常功课。" },
+  { id:"s11", m:"stoic", q:"斯多葛如何看待「外部事物」？", a:"外部事物（财富、名声、健康）被称为<strong>「无关紧要之物」(Adiaphora)</strong>。不是说它们没有价值，而是它们<strong>不构成幸福的必要条件</strong>。唯一真正的好是美德，唯一真正的坏是恶德。斯多葛人可以追求外物，但不<strong>依赖</strong>它们。" },
+  { id:"s12", m:"stoic", q:"什么是「印象的暂停」（Pause Before Assent）？", a:"当一个印象（感知/判断）冒出来时，不要立即接受它。先<strong>暂停</strong>，问自己：「这件事真的是我以为的那样吗？它在我的控制范围内吗？」这是斯多葛训练的核心技巧——在刺激和反应之间<strong>插入一个空间</strong>。" },
+  { id:"s13", m:"stoic", q:"「障碍即道路」（The Obstacle is the Way）是什么含义？", a:"马可·奥勒留的原话是：「阻碍行动的东西反过来推进了行动。挡在路上的东西变成了路本身。」任何困难都是<strong>锻炼美德的机会</strong>——被解雇锻炼坚韧，被批评锻炼谦逊。困境不是美德的敌人，而是它的<strong>训练场</strong>。" },
+  { id:"s14", m:"stoic", q:"斯多葛哲学和佛教有什么相似之处？", a:"两者都认为<strong>痛苦来自执着/判断</strong>而非事件本身；都重视<strong>内观</strong>和对念头的觉察；都追求一种「不被外境带走」的<strong>内在平静</strong>。不同的是：斯多葛强调美德和社会责任（入世），佛教更侧重解脱轮回（出世）。" },
+
+  // ──────────── FIRST PRINCIPLES (12 cards) ────────────
+  { id:"f01", m:"fp", q:"什么是「第一性原理」？它最初来自谁？", a:"<strong>第一性原理</strong>（First Principles）最早由<strong>亚里士多德</strong>提出：每个系统都存在一些最基础的、不可再分解的真命题。从这些基本事实出发推演，而不是从类比和惯例出发。" },
+  { id:"f02", m:"fp", q:"「第一性原理思维」和「类比思维」的核心区别？", a:"<strong>类比思维</strong>：「别人这么做，所以我也这么做」——效率高但容易被已有方案限制。<strong>第一性原理</strong>：「这件事的基本事实是什么？从零开始，什么方案最合理？」——更费力但能产生根本性创新。" },
+  { id:"f03", m:"fp", q:"第一性原理思维的四步方法是什么？", a:"<strong>①识别假设</strong>（列出你认为「理所当然」的东西）→ <strong>②分解到基本事实</strong>（这些假设中，哪些是不可再分的物理/逻辑事实？）→ <strong>③从基本事实重建</strong>（忽略传统方案，从事实出发重新设计）→ <strong>④验证与迭代</strong>。" },
+  { id:"f04", m:"fp", q:"Elon Musk 如何用第一性原理降低火箭成本？", a:"传统类比：「火箭就是贵，每次发射 6500 万美元」。Musk 问：「火箭的材料成本是多少？」分解后发现材料只占成本的 <strong>2%</strong>。所以问题不是「火箭本身贵」，而是<strong>制造和复用方式</strong>的问题——由此诞生了 SpaceX 的可回收火箭。" },
+  { id:"f05", m:"fp", q:"为什么人们倾向于类比思维而非第一性原理？", a:"因为类比思维<strong>节省认知能量</strong>——大脑天然走捷径（参考他人经验、套用已有模式）。第一性原理需要<strong>深度思考</strong>，消耗更多精力，还可能得到违反直觉的结论，面临社会压力（「别人都不这么做」）。" },
+  { id:"f06", m:"fp", q:"「五个为什么」（5 Whys）方法是什么？和第一性原理的关系？", a:"<strong>5 Whys</strong> 是丰田的根因分析法：对一个问题连续问 5 次「为什么」，层层深入直到触及根本原因。它是第一性原理的<strong>实操工具</strong>——每一个「为什么」都在剥掉一层假设，逼近最底层的事实。" },
+  { id:"f07", m:"fp", q:"什么是「隐性假设」？如何识别它？", a:"隐性假设是你<strong>不知道自己在假设的假设</strong>——它们隐藏在「常识」「行业规则」「大家都这么做」中。识别方法：①列出你认为不可能改变的所有条件 ②逐一追问「这真的是物理定律吗，还是人为惯例？」惯例就是可以打破的。" },
+  { id:"f08", m:"fp", q:"第一性原理在个人生活中怎么应用？", a:"例子：「我买不起这个城市的房子」→ <strong>分解</strong>：住房的基本需要是什么？（安全、舒适、通勤便利）→ 必须是「买」吗？必须在「这个城市」吗？「舒适」的最低要求是什么？→ 从基本需要出发，可能会找到<strong>全新的解决方案</strong>。" },
+  { id:"f09", m:"fp", q:"第一性原理思维的常见陷阱是什么？", a:"<strong>①过度使用</strong>：不是每个决定都需要从零开始，很多日常决策用类比就够了。<strong>②分解不够深</strong>：停在了「看似基本」的层面，其实还能继续分解。<strong>③忽略实践约束</strong>：理论上最优的方案如果无法执行，就不是好方案。" },
+  { id:"f10", m:"fp", q:"「逆向思维」和第一性原理有什么关系？", a:"逆向思维（Inversion）是第一性原理的互补工具。与其问「怎么成功」，不如先问「<strong>怎么确保失败</strong>」，然后避免那些条件。查理·芒格说：「反过来想，总是反过来想。」它帮你从另一个角度触及事物的基本约束。" },
+  { id:"f11", m:"fp", q:"如何向团队推广第一性原理思维？", a:"不要直接说「用第一性原理」——团队会觉得抽象。用<strong>具体问题</strong>带：「我们假设 X 一定是这样的——但如果不是呢？」「这个做法的底层原因是什么？」「如果从零开始设计，我们会怎么做？」让人<strong>体验</strong>这种思维，而不是学习理论。" },
+  { id:"f12", m:"fp", q:"亚里士多德对「第一性原理」的原始定义是什么？", a:"在《形而上学》中，亚里士多德定义第一性原理为<strong>「认识事物的最初起点」</strong>——是不能从其他命题推导出来的基本真理。它们是所有推理的<strong>根基</strong>，本身不需要也不可能被进一步证明。" }
+];
+
+// ===========================================================================
+//  LEITNER SRS ENGINE
+// ===========================================================================
+const STORAGE_KEY = 'mindsphere_srs_v1';
+const BOX_INTERVALS = [0, 0, 1, 3, 7, 14]; // Box 1=every day, 2=1day, 3=3days, 4=7days, 5=14days
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return {};
+}
+
+function saveProgress(prog) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(prog));
+}
+
+function getCardState(prog, id) {
+  if (prog[id]) return prog[id];
+  return { box: 1, nextReview: todayStr() };
+}
+
+function isDue(state) {
+  return state.nextReview <= todayStr();
+}
+
+function rateCard(prog, id, rating) {
+  // rating: 'again' | 'good' | 'easy'
+  const state = getCardState(prog, id);
+  let newBox = state.box;
+
+  if (rating === 'again') {
+    newBox = 1;
+  } else if (rating === 'good') {
+    newBox = Math.min(state.box + 1, 5);
+  } else if (rating === 'easy') {
+    newBox = Math.min(state.box + 2, 5);
+  }
+
+  const interval = BOX_INTERVALS[newBox];
+  prog[id] = {
+    box: newBox,
+    nextReview: addDays(todayStr(), interval),
+    lastReview: todayStr()
+  };
+  saveProgress(prog);
+  return prog;
+}
+
+// ===========================================================================
+//  UI LOGIC
+// ===========================================================================
+let progress = loadProgress();
+let activeFilter = 'all';
+let reviewQueue = [];
+let reviewIndex = 0;
+let isReviewing = false;
+
+const MODULE_NAMES = {
+  mbti: 'MBTI', nvc: 'NVC', cbt: 'CBT', stoic: '斯多葛', fp: '第一性原理'
+};
+
+// --- Stats ---
+function updateStats() {
+  const counts = [0, 0, 0, 0, 0, 0]; // index 1-5
+  CARDS.forEach(c => {
+    const st = getCardState(progress, c.id);
+    counts[st.box]++;
+  });
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById(`box${i}Count`).textContent = counts[i];
+  }
+
+  // Due badge
+  const filtered = getFilteredCards();
+  const dueCount = filtered.filter(c => isDue(getCardState(progress, c.id))).length;
+  document.getElementById('dueBadge').textContent = dueCount;
+  document.getElementById('startReview').disabled = dueCount === 0;
+}
+
+function getFilteredCards() {
+  if (activeFilter === 'all') return CARDS;
+  return CARDS.filter(c => c.m === activeFilter);
+}
+
+// --- Filter buttons ---
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    updateStats();
+    renderTable();
+    if (isReviewing) stopReview();
+  });
+});
+
+// --- Start review ---
+document.getElementById('startReview').addEventListener('click', () => {
+  const filtered = getFilteredCards();
+  reviewQueue = filtered.filter(c => isDue(getCardState(progress, c.id)));
+
+  // Shuffle
+  for (let i = reviewQueue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [reviewQueue[i], reviewQueue[j]] = [reviewQueue[j], reviewQueue[i]];
+  }
+
+  if (reviewQueue.length === 0) return;
+  reviewIndex = 0;
+  isReviewing = true;
+  showCard();
+});
+
+function stopReview() {
+  isReviewing = false;
+  const stage = document.getElementById('cardStage');
+  stage.innerHTML = `
+    <div class="stage-empty" id="stageEmpty">
+      <div class="empty-icon">✅</div>
+      <h3>今日复习完成！</h3>
+      <p>所有到期卡片已复习完毕。明天再来，保持间隔重复的节奏。</p>
+    </div>
+  `;
+}
+
+function showCard() {
+  if (reviewIndex >= reviewQueue.length) {
+    stopReview();
+    updateStats();
+    renderTable();
+    return;
+  }
+
+  const card = reviewQueue[reviewIndex];
+  const state = getCardState(progress, card.id);
+  const total = reviewQueue.length;
+  const current = reviewIndex + 1;
+  const pct = Math.round((reviewIndex / total) * 100);
+
+  const stage = document.getElementById('cardStage');
+  stage.innerHTML = `
+    <div class="card-progress-bar">
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="bar-text">${current} / ${total}</div>
+    </div>
+    <div class="flip-container" id="flipContainer">
+      <div class="flip-card" id="flipCard">
+        <div class="flip-face flip-front">
+          <div class="module-tag">${MODULE_NAMES[card.m]} · Box ${state.box}</div>
+          <div class="card-question">${card.q}</div>
+          <div class="flip-hint">点击翻转 · <kbd>Space</kbd></div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="module-tag">${MODULE_NAMES[card.m]} · ANSWER</div>
+          <div class="card-answer">
+            <div class="answer-title">答案</div>
+            ${card.a}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="rating-row" id="ratingRow">
+      <button class="rate-btn again" data-rate="again">
+        再来一次
+        <span class="rate-label">→ Box 1</span>
+      </button>
+      <button class="rate-btn good" data-rate="good">
+        记住了
+        <span class="rate-label">→ Box ${Math.min(state.box + 1, 5)}</span>
+      </button>
+      <button class="rate-btn easy" data-rate="easy">
+        太简单
+        <span class="rate-label">→ Box ${Math.min(state.box + 2, 5)}</span>
+      </button>
+    </div>
+  `;
+
+  // Flip logic
+  const flipContainer = document.getElementById('flipContainer');
+  const flipCard = document.getElementById('flipCard');
+  const ratingRow = document.getElementById('ratingRow');
+  let flipped = false;
+
+  function doFlip() {
+    if (!flipped) {
+      flipCard.classList.add('flipped');
+      ratingRow.classList.add('visible');
+      flipped = true;
+    }
+  }
+
+  flipContainer.addEventListener('click', doFlip);
+
+  // Rating buttons
+  ratingRow.querySelectorAll('.rate-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const rating = btn.dataset.rate;
+      progress = rateCard(progress, card.id, rating);
+      reviewIndex++;
+      showCard();
+      updateStats();
+      renderTable();
+    });
+  });
+}
+
+// Keyboard support
+document.addEventListener('keydown', (e) => {
+  if (!isReviewing) return;
+
+  if (e.code === 'Space' || e.code === 'Enter') {
+    e.preventDefault();
+    const flipCard = document.getElementById('flipCard');
+    const ratingRow = document.getElementById('ratingRow');
+    if (flipCard && !flipCard.classList.contains('flipped')) {
+      flipCard.classList.add('flipped');
+      ratingRow.classList.add('visible');
+    }
+  }
+
+  if (e.key === '1') {
+    const btn = document.querySelector('.rate-btn.again');
+    if (btn && document.getElementById('ratingRow')?.classList.contains('visible')) btn.click();
+  }
+  if (e.key === '2') {
+    const btn = document.querySelector('.rate-btn.good');
+    if (btn && document.getElementById('ratingRow')?.classList.contains('visible')) btn.click();
+  }
+  if (e.key === '3') {
+    const btn = document.querySelector('.rate-btn.easy');
+    if (btn && document.getElementById('ratingRow')?.classList.contains('visible')) btn.click();
+  }
+});
+
+// --- Table ---
+function renderTable() {
+  const filtered = getFilteredCards();
+  const tbody = document.getElementById('cardTableBody');
+  const today = todayStr();
+
+  document.getElementById('totalPill').textContent = `${filtered.length} cards`;
+
+  // Sort: due first, then by box ascending
+  const sorted = [...filtered].sort((a, b) => {
+    const sa = getCardState(progress, a.id);
+    const sb = getCardState(progress, b.id);
+    const aDue = sa.nextReview <= today ? 0 : 1;
+    const bDue = sb.nextReview <= today ? 0 : 1;
+    if (aDue !== bDue) return aDue - bDue;
+    return sa.box - sb.box;
+  });
+
+  tbody.innerHTML = sorted.map(c => {
+    const st = getCardState(progress, c.id);
+    const due = st.nextReview <= today;
+    const dateDisplay = due ? '<span style="color:#e74c3c;font-weight:600;">到期</span>' : st.nextReview;
+    return `<tr>
+      <td><span class="module-pill" data-m="${c.m}">${MODULE_NAMES[c.m]}</span></td>
+      <td class="q-cell">${c.q}</td>
+      <td><span class="box-pill" data-b="${st.box}">${st.box}</span></td>
+      <td>${dateDisplay}</td>
+    </tr>`;
+  }).join('');
+}
+
+// --- Reset ---
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm('确定要重置所有 SRS 进度吗？所有卡片将回到 Box 1。')) {
+    localStorage.removeItem(STORAGE_KEY);
+    progress = {};
+    updateStats();
+    renderTable();
+    if (isReviewing) {
+      isReviewing = false;
+      document.getElementById('cardStage').innerHTML = `
+        <div class="stage-empty">
+          <div class="empty-icon">📇</div>
+          <h3>进度已重置</h3>
+          <p>所有卡片已回到 Box 1。点击「开始复习」重新开始。</p>
+        </div>
+      `;
+    }
+  }
+});
+
+// --- Theme ---
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme');
+const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+}
+if (savedTheme) applyTheme(savedTheme);
+else if (prefersLight) applyTheme('light');
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  applyTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+
+// --- Nav scroll ---
+const nav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+// Init
+updateStats();
+renderTable();
+</script>
+
+</body>
+</html>

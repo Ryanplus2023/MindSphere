@@ -3,94 +3,2057 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>INFP Evolution System</title>
+  <title>心界 MindSphere — 系统化自我成长</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/script.js"></script>
-  <link rel="stylesheet" href="./styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;500;700;900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared/styles.css">
+  <style>
+    /* ============================================
+       Index — bespoke styles
+       ============================================ */
+
+    :root {
+      --serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+      --hero-h: clamp(56px, 9vw, 132px);
+    }
+
+    body {
+      font-feature-settings: "ss01", "cv11";
+    }
+
+    /* Mark the page so we can scope sub-page overrides if needed */
+    main { display: block; }
+
+    /* ============================================
+       FIXED COLUMN GUIDE (right edge meta strip)
+       ============================================ */
+    .edge-meta {
+      position: fixed;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      writing-mode: vertical-rl;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .edge-meta .dot {
+      display: inline-block;
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      vertical-align: middle;
+      margin: 8px 0;
+    }
+
+    /* ============================================
+       HERO
+       ============================================ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding: 120px max(48px, calc((100vw - 1224px) / 2)) 80px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 48px;
+    }
+
+    /* Subtle radial glow + grid — extends beyond hero bounds */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -10%; bottom: -10%;
+      left: -5vw; right: -5vw;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 72px 72px;
+      opacity: 0.3;
+      mask-image: radial-gradient(ellipse 80% 70% at 25% 40%, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 25% 40%, black 0%, transparent 70%);
+    }
+
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      will-change: transform;
+      z-index: 0;
+    }
+    .hero-orb.orb-1 {
+      width: 700px; height: 700px;
+      background: var(--accent);
+      top: -20%; left: -8%;
+      opacity: 0.16;
+      animation: floatOrb1 22s ease-in-out infinite alternate;
+    }
+    .hero-orb.orb-2 {
+      width: 500px; height: 500px;
+      background: var(--accent-secondary);
+      bottom: -15%; right: -5%;
+      opacity: 0.12;
+      animation: floatOrb2 19s ease-in-out infinite alternate;
+    }
+    .hero-orb.orb-3 {
+      width: 320px; height: 320px;
+      background: var(--accent-tertiary);
+      top: 30%; right: 20%;
+      opacity: 0.09;
+      animation: floatOrb3 25s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatOrb1 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(60px, 40px) scale(1.12); }
+    }
+    @keyframes floatOrb2 {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-50px, -60px) scale(1.18); }
+    }
+    @keyframes floatOrb3 {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-30px, 30px); }
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 14px 7px 10px;
+      background: color-mix(in oklab, var(--bg-elevated), transparent 30%);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 36px;
+      letter-spacing: 0.4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .hero-label .pulse {
+      position: relative;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .hero-label .pulse::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.4;
+      animation: pulseRing 2.2s ease-out infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.8); opacity: 0.5; }
+      80%, 100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: var(--hero-h);
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .hero-title .ch {
+      display: inline-block;
+      animation: charIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    }
+    .hero-title .ch:nth-child(1) { animation-delay: 0.05s; }
+    .hero-title .ch:nth-child(2) { animation-delay: 0.16s; }
+    @keyframes charIn {
+      from { opacity: 0; transform: translateY(40px) rotate(-3deg); }
+      to { opacity: 1; transform: translateY(0) rotate(0); }
+    }
+
+    .hero-subtitle {
+      font-family: 'Sora', sans-serif;
+      font-weight: 400;
+      font-size: clamp(18px, 1.8vw, 26px);
+      letter-spacing: 0.32em;
+      color: var(--accent-light);
+      text-transform: uppercase;
+      margin-bottom: 36px;
+      opacity: 0.85;
+      animation: fadeUp 1s 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    }
+
+    .hero-divider {
+      width: 64px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin: 0 0 32px;
+      animation: lineGrow 1s 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+      transform-origin: left;
+    }
+    @keyframes lineGrow {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    .hero-lead {
+      font-size: clamp(16px, 1.2vw, 19px);
+      color: var(--text-secondary);
+      line-height: 1.85;
+      max-width: 520px;
+      margin-bottom: 44px;
+      animation: fadeUp 1s 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+      text-wrap: pretty;
+    }
+    .hero-lead em {
+      font-family: var(--serif);
+      font-style: normal;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      animation: fadeUp 1s 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 14.5px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s var(--ease);
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-family: inherit;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn svg { width: 16px; height: 16px; transition: transform 0.3s var(--ease); }
+
+    .btn-primary {
+      background: var(--text);
+      color: var(--bg);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+    }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-primary svg { position: relative; z-index: 1; }
+    .btn-primary:hover {
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(212, 163, 115, 0.32);
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:hover svg { transform: translateX(4px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border-color: var(--border);
+    }
+    .btn-ghost:hover {
+      background: var(--bg-elevated);
+      color: var(--text);
+      border-color: var(--border-light);
+    }
+
+    /* ============================================
+       HERO RIGHT — Constellation
+       ============================================ */
+    .hero-right {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: constellationIn 1.8s 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+    }
+    @keyframes constellationIn {
+      from { opacity: 0; transform: scale(0.88) rotate(-8deg); }
+      to   { opacity: 1; transform: scale(1)    rotate(0); }
+    }
+
+    .constellation {
+      position: relative;
+      width: 420px;
+      max-width: 100%;
+      aspect-ratio: 1;
+    }
+
+    /* SVG connecting lines */
+    .constellation svg.cst-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .constellation svg.cst-lines line {
+      stroke: var(--border-light);
+      stroke-width: 0.6;
+      opacity: 0.5;
+    }
+    .constellation svg.cst-lines .line-accent {
+      stroke: var(--accent);
+      opacity: 0.15;
+      stroke-dasharray: 4 6;
+      animation: dashFlow 12s linear infinite;
+    }
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -60; }
+    }
+
+    /* Orbit rings */
+    .constellation .orbit {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      pointer-events: none;
+    }
+    .constellation .orbit-inner {
+      inset: 22%;
+      opacity: 0.35;
+      animation: orbitPulse 8s ease-in-out infinite;
+    }
+    .constellation .orbit-outer {
+      inset: 4%;
+      opacity: 0.18;
+      border-style: dashed;
+      animation: orbitSpin 90s linear infinite;
+    }
+    @keyframes orbitSpin { to { transform: rotate(360deg); } }
+    @keyframes orbitPulse {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(1.02); }
+    }
+
+    /* Center node */
+    .cst-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 35% 35%, rgba(212,163,115,0.3), transparent 70%),
+        var(--bg-elevated);
+      border: 1px solid var(--accent);
+      box-shadow:
+        0 0 40px rgba(212,163,115,0.15),
+        0 0 80px rgba(212,163,115,0.06),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+      z-index: 3;
+    }
+    .cst-center .cst-char {
+      font-family: var(--serif);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .cst-center::after {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      opacity: 0.12;
+      animation: orbitPulse 6s ease-in-out infinite;
+    }
+
+    /* Module nodes */
+    .cst-node {
+      position: absolute;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      z-index: 2;
+      transition: all 0.4s var(--ease);
+    }
+    .cst-node:hover {
+      transform: scale(1.15);
+      border-color: var(--accent);
+      box-shadow: 0 0 24px rgba(212,163,115,0.2);
+    }
+    .cst-node .cst-letter {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+    .cst-node:hover .cst-letter { color: var(--accent); }
+
+    /* Node positions — pentagon at r≈38% from center */
+    .cst-node[data-pos="n"]  { top: 6%;   left: 50%;  transform: translateX(-50%); }
+    .cst-node[data-pos="ne"] { top: 32%;  right: 5%;  }
+    .cst-node[data-pos="se"] { top: 66%;  right: 14%; }
+    .cst-node[data-pos="sw"] { top: 66%;  left: 14%;  }
+    .cst-node[data-pos="nw"] { top: 32%;  left: 5%;   }
+
+    .cst-node[data-pos="n"]:hover  { transform: translateX(-50%) scale(1.15); }
+
+    /* Node labels */
+    .cst-label {
+      position: absolute;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .cst-label[data-pos="n"]  { top: 1%;   left: 50%; transform: translateX(-50%) translateY(-100%); }
+    .cst-label[data-pos="ne"] { top: 28%;  right: 0; text-align: right; }
+    .cst-label[data-pos="se"] { top: 75%;  right: 4%;  text-align: right; }
+    .cst-label[data-pos="sw"] { top: 75%;  left: 4%;   }
+    .cst-label[data-pos="nw"] { top: 28%;  left: 0;  }
+
+    /* Floating particles */
+    .cst-particle {
+      position: absolute;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .cst-particle:nth-child(1) { top: 15%; left: 25%; animation: particleFloat 7s  ease-in-out infinite; }
+    .cst-particle:nth-child(2) { top: 55%; left: 80%; animation: particleFloat 9s  1.5s ease-in-out infinite; }
+    .cst-particle:nth-child(3) { top: 85%; left: 45%; animation: particleFloat 8s  3s ease-in-out infinite; }
+    .cst-particle:nth-child(4) { top: 20%; left: 70%; animation: particleFloat 11s 2s ease-in-out infinite; opacity: 0.2; width: 2px; height: 2px; }
+    .cst-particle:nth-child(5) { top: 60%; left: 20%; animation: particleFloat 10s 4s ease-in-out infinite; opacity: 0.2; width: 2px; height: 2px; }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+      25% { transform: translate(8px, -12px); opacity: 0.5; }
+      50% { transform: translate(-6px, -8px); opacity: 0.2; }
+      75% { transform: translate(10px, 6px); opacity: 0.4; }
+    }
+
+    /* Version tag */
+    .cst-version {
+      position: absolute;
+      bottom: -2%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-muted);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      z-index: 2;
+    }
+    .scroll-hint .line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, transparent, var(--text-muted));
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-hint .line::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 12px;
+      background: linear-gradient(180deg, transparent, var(--accent));
+      animation: scrollLine 2.4s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0% { transform: translateY(-12px); opacity: 0; }
+      30% { opacity: 1; }
+      100% { transform: translateY(40px); opacity: 0; }
+    }
+
+    /* ============================================
+       Reveal-on-scroll
+       ============================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-stagger > * {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    }
+    .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
+    .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; }
+    .reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.15s; }
+    .reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.25s; }
+    .reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.35s; }
+    .reveal-stagger.visible > *:nth-child(5) { transition-delay: 0.45s; }
+
+    /* ============================================
+       SECTIONS
+       ============================================ */
+    .section-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 120px 48px;
+      position: relative;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 72px;
+    }
+
+    .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-eyebrow::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(34px, 4.5vw, 60px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.05;
+      margin: 16px 0 0;
+      color: var(--text);
+    }
+    .section-title em {
+      font-style: normal;
+      color: var(--accent);
+      font-family: 'Sora', sans-serif;
+      font-weight: 500;
+      font-size: 0.5em;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      margin-left: 16px;
+      opacity: 0.6;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 17px;
+      line-height: 1.85;
+      max-width: 560px;
+      text-wrap: pretty;
+    }
+
+    /* ============================================
+       PHILOSOPHY  (vertical timeline)
+       ============================================ */
+    .philosophy-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .philosophy-item {
+      padding: 48px 32px;
+      position: relative;
+      border-right: 1px solid var(--border);
+      transition: background 0.4s var(--ease);
+      cursor: default;
+    }
+    .philosophy-item:last-child { border-right: none; }
+    .philosophy-item:hover {
+      background: var(--bg-elevated);
+    }
+    .philosophy-item::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      transition: width 0.6s var(--ease);
+    }
+    .philosophy-item:hover::after { width: 100%; }
+
+    .philo-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .philo-num::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .philo-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .philo-title-en {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      display: block;
+    }
+    .philo-desc {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      line-height: 1.85;
+      margin: 0;
+      text-wrap: pretty;
+    }
+
+    /* ============================================
+       MODULES (Asymmetric Bento)
+       ============================================ */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: minmax(180px, auto);
+      gap: 16px;
+    }
+
+    .bento-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: transform 0.5s var(--ease), border-color 0.4s var(--ease), background 0.4s var(--ease);
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Card layouts */
+    .bento-card.feature { grid-column: span 4; grid-row: span 2; }
+    .bento-card.standard { grid-column: span 2; grid-row: span 1; }
+    .bento-card.standard-tall { grid-column: span 2; grid-row: span 2; }
+    .bento-card.standard-wide { grid-column: span 3; grid-row: span 1; }
+
+    /* Animated glow gradient */
+    .bento-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), var(--card-glow), transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease);
+      pointer-events: none;
+    }
+    .bento-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-accent);
+    }
+    .bento-card:hover::before { opacity: 1; }
+
+    /* Top label */
+    .bento-meta-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bento-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .bento-code .num {
+      color: var(--card-accent);
+      font-weight: 700;
+    }
+
+    .bento-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      background: var(--card-bg-tint);
+      color: var(--card-accent);
+      border: 1px solid var(--card-accent-border);
+      transition: transform 0.5s var(--ease);
+    }
+    .bento-card:hover .bento-icon {
+      transform: rotate(-6deg) scale(1.05);
+    }
+
+    .bento-title {
+      font-family: var(--serif);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      margin: 0 0 8px;
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+    }
+    .bento-card.feature .bento-title { font-size: 36px; line-height: 1.1; }
+    .bento-card.standard .bento-title,
+    .bento-card.standard-tall .bento-title,
+    .bento-card.standard-wide .bento-title { font-size: 24px; line-height: 1.15; }
+
+    .bento-title-en {
+      font-family: 'Sora', sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bento-desc {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      line-height: 1.8;
+      flex: 1;
+      margin: 0 0 24px;
+      max-width: 460px;
+      position: relative;
+      z-index: 1;
+      text-wrap: pretty;
+    }
+    .bento-card.feature .bento-desc { font-size: 16px; }
+    .bento-card.standard .bento-desc { font-size: 13.5px; }
+
+    .bento-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+    }
+
+    .bento-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .bento-tags span {
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      background: var(--bg-hover);
+      border: 1px solid var(--border);
+      letter-spacing: 0.3px;
+    }
+
+    .bento-arrow {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      transition: all 0.35s var(--ease);
+      flex-shrink: 0;
+    }
+    .bento-arrow svg { width: 16px; height: 16px; transition: transform 0.35s var(--ease); }
+    .bento-card:hover .bento-arrow {
+      background: var(--card-accent);
+      border-color: var(--card-accent);
+      color: #fff;
+    }
+    .bento-card:hover .bento-arrow svg {
+      transform: translate(2px, -2px);
+    }
+
+    /* Card accent definitions */
+    .bento-card[data-accent="copper"] {
+      --card-accent: #d4a373;
+      --card-accent-light: #e9c46a;
+      --card-bg-tint: rgba(212, 163, 115, 0.10);
+      --card-accent-border: rgba(212, 163, 115, 0.25);
+      --card-glow: rgba(212, 163, 115, 0.08);
+    }
+    .bento-card[data-accent="teal"] {
+      --card-accent: #6fa094;
+      --card-accent-light: #8eb8a8;
+      --card-bg-tint: rgba(111, 160, 148, 0.10);
+      --card-accent-border: rgba(111, 160, 148, 0.25);
+      --card-glow: rgba(111, 160, 148, 0.08);
+    }
+    .bento-card[data-accent="slate"] {
+      --card-accent: #8da0b8;
+      --card-accent-light: #a0b4c8;
+      --card-bg-tint: rgba(141, 160, 184, 0.10);
+      --card-accent-border: rgba(141, 160, 184, 0.25);
+      --card-glow: rgba(141, 160, 184, 0.08);
+    }
+    .bento-card[data-accent="indigo"] {
+      --card-accent: #8b87ee;
+      --card-accent-light: #a5a2f0;
+      --card-bg-tint: rgba(139, 135, 238, 0.10);
+      --card-accent-border: rgba(139, 135, 238, 0.25);
+      --card-glow: rgba(139, 135, 238, 0.08);
+    }
+    .bento-card[data-accent="rose"] {
+      --card-accent: #c98a92;
+      --card-accent-light: #d9a5ac;
+      --card-bg-tint: rgba(201, 138, 146, 0.10);
+      --card-accent-border: rgba(201, 138, 146, 0.25);
+      --card-glow: rgba(201, 138, 146, 0.08);
+    }
+    .bento-card[data-accent="sand"] {
+      --card-accent: #a89060;
+      --card-accent-light: #c9b380;
+      --card-bg-tint: rgba(168, 144, 96, 0.10);
+      --card-accent-border: rgba(168, 144, 96, 0.28);
+      --card-glow: rgba(168, 144, 96, 0.08);
+    }
+
+    /* Decorative pattern in feature card */
+    .bento-card.feature::after {
+      content: '';
+      position: absolute;
+      right: -80px; bottom: -80px;
+      width: 320px; height: 320px;
+      border-radius: 50%;
+      border: 1px solid var(--card-accent);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .bento-card.feature .feature-rings {
+      position: absolute;
+      right: -120px; bottom: -120px;
+      width: 400px; height: 400px;
+      pointer-events: none;
+    }
+    .bento-card.feature .feature-rings::before,
+    .bento-card.feature .feature-rings::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid var(--card-accent);
+      opacity: 0.1;
+    }
+    .bento-card.feature .feature-rings::before { transform: scale(0.78); opacity: 0.18; }
+    .bento-card.feature .feature-rings::after { transform: scale(0.55); opacity: 0.25; }
+
+    .bento-card.feature .bento-stat {
+      position: absolute;
+      bottom: 32px;
+      right: 32px;
+      text-align: right;
+      z-index: 1;
+    }
+    .bento-stat .num {
+      font-family: var(--serif);
+      font-size: 64px;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--card-accent);
+      opacity: 0.85;
+      display: block;
+    }
+    .bento-stat .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* "Coming soon" card */
+    .bento-card.coming {
+      background: transparent;
+      border: 1px dashed var(--border-light);
+      cursor: default;
+      align-items: flex-start;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+    .bento-card.coming:hover {
+      transform: none;
+      border-color: var(--accent);
+    }
+    .bento-card.coming .coming-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .bento-card.coming h3 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 22px;
+      color: var(--text-secondary);
+      margin: 0 0 8px;
+    }
+    .bento-card.coming p {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* ============================================
+       TODAY · daily rail
+       ============================================ */
+    .today-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 32px 0;
+    }
+
+    .today-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .today-head .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0.4;
+    }
+
+    .today-head .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+      animation: pulseRing 2.2s ease-out infinite;
+    }
+
+    .today-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .today-cell {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 28px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s var(--ease), transform 0.4s var(--ease);
+      display: flex;
+      flex-direction: column;
+      min-height: 240px;
+    }
+
+    .today-cell:hover {
+      border-color: color-mix(in oklab, var(--accent), transparent 60%);
+      transform: translateY(-2px);
+    }
+
+    .today-cell .cell-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 2.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .today-cell .cell-label .num {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .today-cell .cell-zh {
+      font-family: var(--serif);
+      font-size: 14px;
+      color: var(--text-secondary);
+      letter-spacing: 0.3em;
+    }
+
+    .today-cell .cell-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .today-cell .quote-text {
+      font-family: var(--serif);
+      font-size: 19px;
+      line-height: 1.55;
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+
+    .today-cell .quote-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .today-cell .reflect-text {
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .today-cell .reflect-text::before {
+      content: 'Q. ';
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 1px;
+      margin-right: 6px;
+    }
+
+    .today-cell.module-cell { text-decoration: none; color: inherit; cursor: pointer; }
+
+    .today-cell .module-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      color: var(--bg);
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .today-cell .module-name {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .today-cell .module-line {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .today-cell .module-go {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .today-cell .module-go svg {
+      width: 12px; height: 12px;
+      transition: transform 0.3s var(--ease);
+    }
+
+    .today-cell.module-cell:hover .module-go svg {
+      transform: translate(3px, -3px);
+    }
+
+    @media (max-width: 900px) {
+      .today-grid { grid-template-columns: 1fr; }
+      .today-cell { min-height: auto; }
+    }
+
+    /* ============================================
+       JOURNEY (knowledge map)
+       ============================================ */
+    .journey {
+      background: var(--bg-elevated);
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      padding: 64px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    .journey::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.4;
+      mask-image: radial-gradient(circle at 80% 30%, black 0%, transparent 60%);
+      -webkit-mask-image: radial-gradient(circle at 80% 30%, black 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .journey-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .journey-text h3 {
+      font-family: var(--serif);
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0 0 24px;
+      line-height: 1.15;
+    }
+    .journey-text p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      line-height: 1.85;
+      margin: 0 0 16px;
+    }
+    .journey-text .stat-row {
+      display: flex;
+      gap: 32px;
+      margin-top: 36px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .journey-text .stat-cell .v {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .journey-text .stat-cell .l {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Knowledge map visual */
+    .knowledge-map {
+      position: relative;
+      aspect-ratio: 1;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .knowledge-map svg {
+      width: 100%; height: 100%;
+      overflow: visible;
+    }
+    .km-line {
+      stroke: var(--accent);
+      stroke-width: 1;
+      fill: none;
+      opacity: 0.3;
+      stroke-dasharray: 4 4;
+    }
+    .km-orbit {
+      stroke: var(--border-light);
+      stroke-width: 1;
+      fill: none;
+      opacity: 0.4;
+    }
+    .km-node {
+      position: absolute;
+      width: 84px; height: 84px;
+      border-radius: 20px;
+      background: var(--bg);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--accent);
+      transition: all 0.4s var(--ease);
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+    .km-node:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+      border-color: var(--accent);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+    }
+    .km-node.center {
+      width: 110px; height: 110px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-light));
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 12px 40px rgba(212, 163, 115, 0.35);
+    }
+    .km-node.center:hover {
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    .km-node[data-pos="n"]   { top: 12%;   left: 50%;   --node-c: #d4a373; }
+    .km-node[data-pos="ne"]  { top: 38.3%; left: 86.1%; --node-c: #6fa094; }
+    .km-node[data-pos="se"]  { top: 80.7%; left: 72.3%; --node-c: #8da0b8; }
+    .km-node[data-pos="sw"]  { top: 80.7%; left: 27.7%; --node-c: #a89060; }
+    .km-node[data-pos="nw"]  { top: 38.3%; left: 13.9%; --node-c: #8b87ee; }
+    .km-node.center          { top: 50%;   left: 50%;   }
+
+    .km-node:not(.center) { color: var(--node-c); border-color: color-mix(in oklab, var(--node-c), transparent 60%); }
+    .km-node:not(.center):hover { border-color: var(--node-c); }
+
+    .km-label {
+      position: absolute;
+      transform: translate(-50%, 0);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .km-label[data-pos="n"]   { top: -4%;   left: 50%; }
+    .km-label[data-pos="ne"]  { top: 32%;   left: 102%; transform: translate(0, -50%); }
+    .km-label[data-pos="se"]  { top: 92%;   left: 72%;  transform: translate(-10%, 0); }
+    .km-label[data-pos="sw"]  { top: 92%;   left: 28%;  transform: translate(-90%, 0); }
+    .km-label[data-pos="nw"]  { top: 32%;   left: -2%;  transform: translate(-100%, -50%); }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 80px 48px 40px;
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 64px;
+      margin-bottom: 64px;
+    }
+    .footer-brand h3 {
+      font-family: var(--serif);
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      letter-spacing: 0.02em;
+    }
+    .footer-brand p {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      line-height: 1.85;
+      max-width: 360px;
+      margin: 0;
+    }
+    .footer-col h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 24px;
+      font-weight: 600;
+    }
+    .footer-col ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-col a {
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      text-decoration: none;
+      transition: color 0.25s var(--ease);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-col a::before {
+      content: '';
+      width: 8px; height: 1px;
+      background: var(--border-light);
+      transition: width 0.25s var(--ease), background 0.25s var(--ease);
+    }
+    .footer-col a:hover::before {
+      width: 16px;
+      background: var(--accent);
+    }
+
+    .footer-bottom {
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================
+       MOBILE
+       ============================================ */
+    @media (max-width: 1000px) {
+      .edge-meta { display: none; }
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 100px 24px 60px;
+        gap: 56px;
+        text-align: left;
+      }
+      .hero-right { order: -1; }
+      .constellation { width: 280px; }
+      .section-wrap { padding: 80px 24px; }
+      .section-head {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 48px;
+      }
+      .section-title { margin-top: 8px; }
+      .philosophy-list { grid-template-columns: 1fr; }
+      .philosophy-item {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 32px 4px;
+      }
+      .philosophy-item:last-child { border-bottom: none; }
+      .bento-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+      }
+      .bento-card.feature,
+      .bento-card.standard,
+      .bento-card.standard-tall,
+      .bento-card.standard-wide {
+        grid-column: span 1;
+        grid-row: span 1;
+      }
+      .bento-card { padding: 24px; }
+      .bento-card.feature .bento-title { font-size: 28px; }
+      .bento-card.feature .bento-stat { display: none; }
+      .journey { padding: 36px 24px; border-radius: 20px; }
+      .journey-grid { grid-template-columns: 1fr; gap: 48px; }
+      .journey-text .stat-row { gap: 20px; }
+      .knowledge-map { max-width: 320px; }
+      .km-node { width: 64px; height: 64px; font-size: 18px; }
+      .km-node.center { width: 84px; height: 84px; font-size: 20px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; margin-bottom: 40px; }
+      .footer-bottom { flex-direction: column; gap: 12px; }
+      footer { padding: 56px 24px 32px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero-title { font-size: clamp(64px, 18vw, 96px); }
+      .hero-subtitle { font-size: 14px; letter-spacing: 0.28em; }
+      .constellation { width: 240px; }
+      .cst-node { width: 44px; height: 44px; }
+      .cst-node .cst-letter { font-size: 15px; }
+      .cst-center { width: 68px; height: 68px; }
+      .cst-center .cst-char { font-size: 28px; }
+      .cst-label { font-size: 8px; }
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark">
-          <i class="ph ph-feather"></i>
-        </div>
-        <div>
-          <h1>INFP Evolution</h1>
-          <p>Daily Operating System</p>
-        </div>
-      </div>
 
-      <nav class="nav" aria-label="主导航">
-        <button class="nav-item active" data-route="dashboard">
-          <i class="ph ph-squares-four"></i>
-          <span>仪表盘</span>
-        </button>
-        <button class="nav-item" data-route="tasks">
-          <i class="ph ph-check-circle"></i>
-          <span>今日三任务</span>
-        </button>
-        <button class="nav-item" data-route="experiment">
-          <i class="ph ph-flask"></i>
-          <span>实验日志</span>
-        </button>
-        <button class="nav-item" data-route="academic">
-          <i class="ph ph-trend-up"></i>
-          <span>学术看板</span>
-        </button>
-        <button class="nav-item" data-route="fitness">
-          <i class="ph barbell ph-barbell"></i>
-          <span>健身记录</span>
-        </button>
-        <button class="nav-item" data-route="review">
-          <i class="ph ph-moon"></i>
-          <span>晚间复盘</span>
-        </button>
-        <button class="nav-item" data-route="weekly">
-          <i class="ph ph-calendar-check"></i>
-          <span>周度检查</span>
-        </button>
-        <button class="nav-item" data-route="history">
-          <i class="ph ph-clock-counter-clockwise"></i>
-          <span>历史记录</span>
-        </button>
-        <button class="nav-item" data-route="settings">
-          <i class="ph ph-gear"></i>
-          <span>设置</span>
-        </button>
-      </nav>
+<!-- Top nav -->
+<nav class="top-nav" id="topNav">
+  <a href="index.html" class="brand">
+    <span class="brand-mark">心</span>
+    <span>心界 <span style="color:var(--text-muted);font-weight:500;font-family:'Sora',sans-serif;font-size:0.85em;">MindSphere</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="mbti.html">人格类型</a>
+    <a href="nvc.html">沟通</a>
+    <a href="cbt.html">认知</a>
+    <a href="stoicism.html">斯多葛</a>
+    <a href="first_principles.html">第一性原理</a>
+    <a href="canon.html">正典</a>
+    <a href="flashcards.html">记忆</a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+      <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+    </button>
+  </div>
+</nav>
 
-      <div class="sidebar-card">
-        <span class="eyebrow">自动保存</span>
-        <div class="save-indicator">
-          <span class="save-dot"></span>
-          <strong id="save-state">已就绪</strong>
-        </div>
-        <p id="storage-state">浏览器本地保存</p>
-      </div>
-    </aside>
+<!-- Edge meta -->
+<aside class="edge-meta">
+  Vol. 01 <span class="dot"></span> MindSphere / Index
+</aside>
 
-    <main class="main">
-      <header class="topbar">
-        <div>
-          <p class="date-line" id="today-line"></p>
-          <h2 id="page-title">仪表盘</h2>
-        </div>
-        <div class="topbar-actions">
-          <button class="icon-button" id="theme-toggle" title="切换亮色/暗色模式" aria-label="切换亮色/暗色模式">
-            <i class="ph ph-sun"></i>
-          </button>
-          <button class="soft-button" id="connect-folder">连接数据文件夹</button>
-        </div>
-      </header>
+<main>
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-orb orb-3"></div>
 
-      <section id="view" class="view" aria-live="polite"></section>
-    </main>
+  <div class="hero-left">
+    <div class="hero-label">
+      <span class="pulse"></span>
+      <span>SYSTEMATIC SELF-GROWTH&nbsp;·&nbsp;v2026</span>
+    </div>
+    <h1 class="hero-title">
+      <span class="ch">心</span><span class="ch">界</span>
+    </h1>
+    <div class="hero-subtitle">MindSphere</div>
+    <div class="hero-divider"></div>
+    <p class="hero-lead">
+      把零散的心理学概念，编织进一张可以反复回望的<em>认知地图</em>。<br>
+      从人格、沟通、思维到本质，搭建一个可以持续生长的<em>自我体系</em>。
+    </p>
+    <div class="hero-cta">
+      <a href="#modules" class="btn btn-primary">
+        <span>探索学习模块</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#philosophy" class="btn btn-ghost">
+        了解设计理念
+      </a>
+    </div>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js"></script>
+  <div class="hero-right">
+    <div class="constellation">
+      <!-- Orbit rings -->
+      <div class="orbit orbit-inner"></div>
+      <div class="orbit orbit-outer"></div>
+
+      <!-- Connecting lines (SVG) -->
+      <svg class="cst-lines" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        <!-- Spokes to center -->
+        <line x1="50" y1="50" x2="50"   y2="13"/>
+        <line x1="50" y1="50" x2="87"   y2="38"/>
+        <line x1="50" y1="50" x2="74"   y2="78"/>
+        <line x1="50" y1="50" x2="26"   y2="78"/>
+        <line x1="50" y1="50" x2="13"   y2="38"/>
+        <!-- Pentagon edges -->
+        <line class="line-accent" x1="50"  y1="13"  x2="87" y2="38"/>
+        <line class="line-accent" x1="87"  y1="38"  x2="74" y2="78"/>
+        <line class="line-accent" x1="74"  y1="78"  x2="26" y2="78"/>
+        <line class="line-accent" x1="26"  y1="78"  x2="13" y2="38"/>
+        <line class="line-accent" x1="13"  y1="38"  x2="50" y2="13"/>
+      </svg>
+
+      <!-- Particles -->
+      <span class="cst-particle"></span>
+      <span class="cst-particle"></span>
+      <span class="cst-particle"></span>
+      <span class="cst-particle"></span>
+      <span class="cst-particle"></span>
+
+      <!-- Center node -->
+      <div class="cst-center">
+        <span class="cst-char">心</span>
+      </div>
+
+      <!-- Module nodes -->
+      <a href="mbti.html"              class="cst-node" data-pos="n"><span  class="cst-letter">M</span></a>
+      <a href="nvc.html"               class="cst-node" data-pos="ne"><span class="cst-letter">N</span></a>
+      <a href="cbt.html"               class="cst-node" data-pos="se"><span class="cst-letter">C</span></a>
+      <a href="stoicism.html"          class="cst-node" data-pos="sw"><span class="cst-letter">S</span></a>
+      <a href="first_principles.html"  class="cst-node" data-pos="nw"><span class="cst-letter">F</span></a>
+
+      <!-- Labels -->
+      <span class="cst-label" data-pos="n">Personality</span>
+      <span class="cst-label" data-pos="ne">Communication</span>
+      <span class="cst-label" data-pos="se">Cognition</span>
+      <span class="cst-label" data-pos="sw">Practice</span>
+      <span class="cst-label" data-pos="nw">Reasoning</span>
+
+      <span class="cst-version">5 MODULES · v2026</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <span class="line"></span>
+  </div>
+</section>
+
+<!-- ============ TODAY ============ -->
+<section class="today-wrap" id="today">
+  <div class="today-head">
+    <span class="pulse-dot"></span>
+    <span id="todayStamp">TODAY · ——</span>
+    <span class="line"></span>
+  </div>
+  <div class="today-grid">
+    <div class="today-cell quote-cell">
+      <div class="cell-label"><span class="num">01</span> · QUOTE <span class="cell-zh">今 日 箴 言</span></div>
+      <div class="cell-body">
+        <div class="quote-text" id="todayQuote">—</div>
+        <div class="quote-source" id="todayQuoteSource">—</div>
+      </div>
+    </div>
+    <div class="today-cell reflect-cell">
+      <div class="cell-label"><span class="num">02</span> · REFLECTION <span class="cell-zh">今 日 反 思</span></div>
+      <div class="cell-body">
+        <div class="reflect-text" id="todayReflect">—</div>
+      </div>
+    </div>
+    <a class="today-cell module-cell" id="todayModuleLink" href="#">
+      <div class="cell-label"><span class="num">03</span> · MODULE <span class="cell-zh">今 日 模 块</span></div>
+      <div class="cell-body">
+        <div class="module-mark" id="todayModuleMark">M</div>
+        <div class="module-name" id="todayModuleName">—</div>
+        <div class="module-line" id="todayModuleLine">—</div>
+        <div class="module-go">
+          ENTER
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ============ PHILOSOPHY ============ -->
+<section class="section-wrap" id="philosophy">
+  <header class="section-head reveal">
+    <div>
+      <div class="section-eyebrow">01 / Philosophy</div>
+      <h2 class="section-title">设计理念<em>Design Principles</em></h2>
+    </div>
+    <p class="section-desc">
+      不是快餐式知识消费，而是建立可以反复迭代、彼此连通的认知框架。心界相信「深度 &gt; 数量、连接 &gt; 收藏、实践 &gt; 阅读」。
+    </p>
+  </header>
+
+  <div class="philosophy-list reveal-stagger">
+    <article class="philosophy-item">
+      <div class="philo-num">CHAPTER · 01</div>
+      <h3 class="philo-title">体系优先</h3>
+      <span class="philo-title-en">Systems over Snippets</span>
+      <p class="philo-desc">每一个知识点都放置在完整理论框架里理解，而非孤立记忆。从底层模型到应用场景，建立一张可以反复回望的认知地图。</p>
+    </article>
+    <article class="philosophy-item">
+      <div class="philo-num">CHAPTER · 02</div>
+      <h3 class="philo-title">知行合一</h3>
+      <span class="philo-title-en">Practice over Theory</span>
+      <p class="philo-desc">理论只有经过实践才真正属于你。每个模块都包含场景演练与自测，让知识从「知道」走向「做到」，再走向「忘记规则后依然会做」。</p>
+    </article>
+    <article class="philosophy-item">
+      <div class="philo-num">CHAPTER · 03</div>
+      <h3 class="philo-title">持续生长</h3>
+      <span class="philo-title-en">Always Growing</span>
+      <p class="philo-desc">认知提升是一场马拉松。心界会持续添加新模块，从心理学延伸到哲学、决策科学、创造力，让体系自然延展、彼此映照。</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ MODULES (Bento) ============ -->
+<section class="section-wrap" id="modules">
+  <header class="section-head reveal">
+    <div>
+      <div class="section-eyebrow">02 / Modules</div>
+      <h2 class="section-title">学习模块<em>Knowledge Modules</em></h2>
+    </div>
+    <p class="section-desc">
+      五个系统化的学习框架，从了解自我（人格）、改善关系（沟通）、重塑思维（认知）、生活的操练（斯多葛）到回归本质（第一性原理）。点击任意卡片进入完整学习路径。
+    </p>
+  </header>
+
+  <div class="bento-grid reveal-stagger">
+
+    <!-- Feature card: MBTI -->
+    <a href="mbti.html" class="bento-card feature" data-accent="copper">
+      <div class="feature-rings"></div>
+      <div class="bento-meta-top">
+        <div class="bento-code"><span class="num">01</span> · PERSONALITY</div>
+        <div class="bento-icon">M</div>
+      </div>
+      <h3 class="bento-title">MBTI 人格类型</h3>
+      <span class="bento-title-en">16 Personality Types · Jungian Functions</span>
+      <p class="bento-desc">基于荣格心理类型理论的 16 型人格体系。从四大维度到认知功能栈，系统理解个体差异的底层逻辑，提升自我认知与团队协作的精准度。</p>
+      <div class="bento-foot">
+        <div class="bento-tags">
+          <span>16 TYPES</span>
+          <span>8 FUNCTIONS</span>
+          <span>SELF-TEST</span>
+        </div>
+        <div class="bento-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </div>
+      </div>
+      <div class="bento-stat">
+        <span class="num">16</span>
+        <span class="label">Types</span>
+      </div>
+    </a>
+
+    <!-- Standard: NVC -->
+    <a href="nvc.html" class="bento-card standard-tall" data-accent="teal">
+      <div class="bento-meta-top">
+        <div class="bento-code"><span class="num">02</span> · COMMUNICATION</div>
+        <div class="bento-icon">N</div>
+      </div>
+      <h3 class="bento-title">非暴力沟通</h3>
+      <span class="bento-title-en">Nonviolent Communication</span>
+      <p class="bento-desc">马歇尔·卢森堡的经典沟通框架。学习区分观察与评论、感受与想法、需要与策略，用同理心化解冲突。</p>
+      <div class="bento-foot">
+        <div class="bento-tags">
+          <span>4-STEP</span>
+          <span>PRACTICE</span>
+        </div>
+        <div class="bento-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- Standard: CBT -->
+    <a href="cbt.html" class="bento-card standard" data-accent="slate">
+      <div class="bento-meta-top">
+        <div class="bento-code"><span class="num">03</span> · COGNITION</div>
+        <div class="bento-icon">C</div>
+      </div>
+      <h3 class="bento-title">认知行为疗法</h3>
+      <span class="bento-title-en">Cognitive Behavioral Therapy</span>
+      <p class="bento-desc">从认知三角到自动思维、核心信念与认知扭曲，掌握识别和重构非理性思维的系统方法。</p>
+      <div class="bento-foot">
+        <div class="bento-tags">
+          <span>12 DISTORTIONS</span>
+          <span>SOCRATIC</span>
+        </div>
+        <div class="bento-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- Standard: Stoicism -->
+    <a href="stoicism.html" class="bento-card standard" data-accent="sand">
+      <div class="bento-meta-top">
+        <div class="bento-code"><span class="num">04</span> · PRACTICE</div>
+        <div class="bento-icon">S</div>
+      </div>
+      <h3 class="bento-title">斯多葛</h3>
+      <span class="bento-title-en">Stoicism · A Way of Life</span>
+      <p class="bento-desc">爱比克泰德、塞涅卡、马可·奥勒留。控制二分法、四大美德、晨思晚省、记忆死亡——为 30 岁打磨的生活操作系统。</p>
+      <div class="bento-foot">
+        <div class="bento-tags">
+          <span>DICHOTOMY</span>
+          <span>4 VIRTUES</span>
+        </div>
+        <div class="bento-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- Standard: First Principles -->
+    <a href="first_principles.html" class="bento-card standard" data-accent="indigo">
+      <div class="bento-meta-top">
+        <div class="bento-code"><span class="num">05</span> · REASONING</div>
+        <div class="bento-icon">F</div>
+      </div>
+      <h3 class="bento-title">第一性原理</h3>
+      <span class="bento-title-en">First Principles Thinking</span>
+      <p class="bento-desc">从亚里士多德到马斯克，掌握回归事物本质、打破类比思维的系统方法论。解构、重构、验证。</p>
+      <div class="bento-foot">
+        <div class="bento-tags">
+          <span>4-STEP DECOMP</span>
+          <span>TOOLKIT</span>
+        </div>
+        <div class="bento-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ============ JOURNEY ============ -->
+<section class="section-wrap" id="journey">
+  <header class="section-head reveal">
+    <div>
+      <div class="section-eyebrow">03 / Map</div>
+      <h2 class="section-title">认知地图<em>Knowledge Map</em></h2>
+    </div>
+    <p class="section-desc">
+      四大模块并不是孤立存在 —— 它们围绕一个核心问题展开：「如何更清晰地理解自己、并与世界连接」。
+    </p>
+  </header>
+
+  <div class="journey reveal">
+    <div class="journey-grid">
+      <div class="journey-text">
+        <h3>从内观到外达，<br>编织成一张完整的<br>心智之网。</h3>
+        <p>
+          <strong style="color:var(--text);">人格</strong> 是了解自己的起点；<br>
+          <strong style="color:var(--text);">沟通</strong> 是把自我带入关系的桥梁；<br>
+          <strong style="color:var(--text);">认知</strong> 是审视思维的镜子；<br>
+          <strong style="color:var(--text);">实践</strong> 是把哲学落到每天的操练；<br>
+          <strong style="color:var(--text);">本质</strong> 则把一切回归到最根源的提问。
+        </p>
+        <div class="stat-row">
+          <div class="stat-cell">
+            <div class="v">5</div>
+            <div class="l">Modules</div>
+          </div>
+          <div class="stat-cell">
+            <div class="v">∞</div>
+            <div class="l">Iterations</div>
+          </div>
+          <div class="stat-cell">
+            <div class="v">2026</div>
+            <div class="l">Vol. I</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="knowledge-map">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+          <circle class="km-orbit" cx="50" cy="50" r="38"/>
+          <circle class="km-orbit" cx="50" cy="50" r="24" style="opacity:0.25;"/>
+          <line class="km-line" x1="50" y1="50" x2="50"   y2="12"/>
+          <line class="km-line" x1="50" y1="50" x2="86.1" y2="38.3"/>
+          <line class="km-line" x1="50" y1="50" x2="72.3" y2="80.7"/>
+          <line class="km-line" x1="50" y1="50" x2="27.7" y2="80.7"/>
+          <line class="km-line" x1="50" y1="50" x2="13.9" y2="38.3"/>
+        </svg>
+        <div class="km-label" data-pos="n">PERSONALITY</div>
+        <div class="km-label" data-pos="ne">COMMUNICATION</div>
+        <div class="km-label" data-pos="se">COGNITION</div>
+        <div class="km-label" data-pos="sw">PRACTICE</div>
+        <div class="km-label" data-pos="nw">REASONING</div>
+
+        <a href="mbti.html" class="km-node" data-pos="n">M</a>
+        <a href="nvc.html" class="km-node" data-pos="ne">N</a>
+        <a href="cbt.html" class="km-node" data-pos="se">C</a>
+        <a href="stoicism.html" class="km-node" data-pos="sw">S</a>
+        <a href="first_principles.html" class="km-node" data-pos="nw">F</a>
+        <div class="km-node center">心界</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>心界 MindSphere</h3>
+      <p>把心理学、哲学、决策科学，整理成一个可以反复回望、持续生长的认知体系。慢工出细活。</p>
+    </div>
+    <div class="footer-col">
+      <h4>Modules</h4>
+      <ul>
+        <li><a href="mbti.html">MBTI 人格类型</a></li>
+        <li><a href="nvc.html">非暴力沟通</a></li>
+        <li><a href="cbt.html">认知行为疗法</a></li>
+        <li><a href="stoicism.html">斯多葛</a></li>
+        <li><a href="first_principles.html">第一性原理</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>About</h4>
+      <ul>
+        <li><a href="#philosophy">设计理念</a></li>
+        <li><a href="#journey">认知地图</a></li>
+        <li><a href="#modules">学习模块</a></li>
+        <li><a href="canon.html">正典书架</a></li>
+        <li><a href="flashcards.html">记忆卡片</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 · 心界 MindSphere · 系统化自我成长知识库</div>
+    <div>Vol. 01 · Last updated 05 / 2026</div>
+  </div>
+</footer>
+
+<script>
+// ============ Nav scroll ============
+const nav = document.getElementById('topNav');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 40) nav.classList.add('scrolled');
+  else nav.classList.remove('scrolled');
+}, { passive: true });
+
+// ============ Theme toggle ============
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme');
+const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  }
+}
+if (savedTheme) applyTheme(savedTheme);
+else if (prefersLight) applyTheme('light');
+
+themeToggle.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const newTheme = isLight ? 'dark' : 'light';
+  applyTheme(newTheme);
+  localStorage.setItem('theme', newTheme);
+});
+
+// ============ Reveal on scroll ============
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      io.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-stagger').forEach((el) => io.observe(el));
+
+// ============ Bento card spotlight ============
+document.querySelectorAll('.bento-card').forEach((card) => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const mx = ((e.clientX - rect.left) / rect.width) * 100;
+    const my = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mx', mx + '%');
+    card.style.setProperty('--my', my + '%');
+  });
+});
+
+// ============ Subtle parallax on hero orbs ============
+const orbs = document.querySelectorAll('.hero-orb');
+window.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 2;
+  const y = (e.clientY / window.innerHeight - 0.5) * 2;
+  orbs.forEach((orb, i) => {
+    const factor = (i + 1) * 8;
+    orb.style.translate = `${x * factor}px ${y * factor}px`;
+  });
+}, { passive: true });
+</script>
+
+<!-- ============ TODAY · daily rotation ============ -->
+<script>
+(function () {
+  const QUOTES = [
+    { t: "人不是被事情本身所困扰，而是被其对事情的看法所困扰。", s: "Epictetus · 手册 §5", m: "stoicism" },
+    { t: "你之所以痛苦，不是因为坏事发生在你身上 —— 而是因为你把一件不属于你的事，当作属于你的来对待。", s: "Epictetus · 谈话录", m: "stoicism" },
+    { t: "想想宇宙物质的全部，你只是其中最微小的一份；想想全部时间，你只占据其中短暂的一瞬。", s: "Marcus Aurelius · 沉思录 5.24", m: "stoicism" },
+    { t: "改变思维不是一蹴而就的顿悟，而是一场持续的、温和的、对自己充满好奇的对话。", s: "CBT 的学习态度", m: "cbt" },
+    { t: "自动思维是海面上的波浪，核心信念是海底的暗流。改变波浪只能带来短暂的平静，理解并调整暗流才能带来持久的改变。", s: "CBT 深层工作逻辑", m: "cbt" },
+    { t: "认知扭曲不是'你在故意想错'，而是你的大脑在试图快速处理信息时走了一条效率优先但准确性受损的捷径。", s: "识别扭曲的关键态度", m: "cbt" },
+    { t: "我们说的话不是在传达事实，而是在传达需要。", s: "Marshall Rosenberg · NVC", m: "nvc" },
+    { t: "当语言聚焦于满足生命的需要时，它就有了让人靠近的力量。", s: "Marshall Rosenberg · NVC", m: "nvc" },
+    { t: "在评判之前先观察，在评论之前先描述。", s: "NVC 第一要素", m: "nvc" },
+    { t: "认识你自己。", s: "德尔斐神庙箴言 · MBTI 的远古源头", m: "mbti" },
+    { t: "类型不是把人放进盒子里，而是给你一张地图，让你看清自己的偏好与盲区。", s: "MBTI 应用守则", m: "mbti" },
+    { t: "不要类比着思考，要从最基本的事实出发重新构建。", s: "First Principles · Musk 释义自亚里士多德", m: "fp" },
+    { t: "对每一个'理所当然'，都问一句：这是真的吗？真在哪里？", s: "第一性原理的核心姿态", m: "fp" },
+    { t: "如果你能找到比正义、真理、节制、勇气更好的东西 —— 那就用全部灵魂去拥抱它。", s: "Marcus Aurelius · 沉思录 3.6", m: "stoicism" },
+    { t: "哲学不是讲台上能讨论的东西。哲学是用来活出的。", s: "Epictetus · 谈话录", m: "stoicism" },
+    { t: "在刺激与反应之间存在空间，那个空间是我们选择的自由。", s: "Viktor Frankl · 活出意义来", m: "stoicism" },
+    { t: "愤怒最大的疗法，是延迟。", s: "Seneca · 论愤怒", m: "stoicism" },
+    { t: "你只真正拥有当下这一刻的判断与行动。其他的都是借来的。", s: "斯多葛核心命题", m: "stoicism" },
+    { t: "深度 > 数量；连接 > 收藏；实践 > 阅读。", s: "心界 · 设计理念", m: "self" },
+    { t: "知道 ≠ 记住 ≠ 用上。三者之间，是练习。", s: "心界 · 学习方法论", m: "self" },
+    { t: "你现在的位置，是你过去全部判断的总和；你接下来的位置，是你接下来全部判断的总和。", s: "心界 · 30 岁的复利提醒", m: "self" }
+  ];
+
+  const REFLECTIONS = [
+    "你今天最担心的那件事，哪一部分真的在你控制之内？",
+    "如果你只剩 6 个月，今天这个决定还会一样吗？",
+    "你最近最强烈的情绪反应，背后是哪一个判断？那个判断 100% 是真的吗？",
+    "今天有没有哪一刻，你是按美德行事的？是哪一种？",
+    "如果一位你尊敬的长辈在场，他/她会建议你怎么处理你今天面临的难题？",
+    "你今天对身边最亲近的人说的话，未来一年后回看，你会希望自己换种方式说吗？",
+    "过去 7 天，有没有一个你坚持的看法，可能其实是错的？",
+    "如果完全不在乎别人怎么想，今天你的第一步会变成什么？",
+    "你最近的疲惫，是身体的疲惫，还是错误期待带来的疲惫？",
+    "今天你愿不愿意花 3 分钟，给一个你欠了 \"我应该联系一下\" 的人发一条简短的消息？",
+    "你今天注意到自己有一个 '应该' 吗？这个 '应该' 是谁规定的？",
+    "你正在追求的下一个目标，达成后你真的会更幸福吗？还是只会有新的目标？",
+    "如果今天是你和父母相处的最后一个普通日子，你会做什么不一样的事？",
+    "你最近一次承认 '我错了'，是什么时候？为什么这么久没有？",
+    "今天你给自己的注意力 70% 花在了哪里？这是你想要的分配吗？",
+    "你正在用 '现实' 当借口的事情，里面有多少是真的现实，多少是你怕变化？",
+    "你最近反复出现的一个画面或想法，它的源头在哪里？",
+    "你身边谁最相信你能成为更好的人？最近你回应过这种信任吗？",
+    "今天哪一刻，你感觉自己 '完整'？记住那个时刻的具体场景。",
+    "如果有一个 5 年后的你，今天来给你打电话 30 秒，他/她会说什么？",
+    "你今天的呼吸是浅的还是深的？停下来 10 秒，让它变深一次。"
+  ];
+
+  const MODULES = [
+    { key: "mbti",     href: "mbti.html",            mark: "M", name: "MBTI 人格类型",   line: "从认知功能栈出发，看清你的天然偏好与盲区。" },
+    { key: "nvc",      href: "nvc.html",             mark: "N", name: "非暴力沟通",      line: "把指责语言换成需要语言 —— 关系的根本工程。" },
+    { key: "cbt",      href: "cbt.html",             mark: "C", name: "认知行为疗法",    line: "12 种认知扭曲与 1 张思维记录表 —— 思维体检工具。" },
+    { key: "stoicism", href: "stoicism.html",        mark: "S", name: "斯多葛",          line: "控制二分法 + 四大美德 —— 30 岁的生活操作系统。" },
+    { key: "fp",       href: "first_principles.html",mark: "F", name: "第一性原理",      line: "拆掉所有 '大家都这么做'，回到第一块砖。" }
+  ];
+
+  // Deterministic day-of-year index
+  function dayOfYear(d) {
+    const start = new Date(d.getFullYear(), 0, 0);
+    const diff = (d - start) + ((start.getTimezoneOffset() - d.getTimezoneOffset()) * 60 * 1000);
+    return Math.floor(diff / 86400000);
+  }
+
+  const now = new Date();
+  const doy = dayOfYear(now);
+
+  const q  = QUOTES[doy % QUOTES.length];
+  const r  = REFLECTIONS[(doy * 7 + 3) % REFLECTIONS.length];
+  const md = MODULES[doy % MODULES.length];
+
+  const y = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const stamp = `TODAY · ${y}.${mm}.${dd} · DAY ${String(doy).padStart(3, "0")} / 365`;
+
+  document.getElementById("todayStamp").textContent       = stamp;
+  document.getElementById("todayQuote").textContent       = q.t;
+  document.getElementById("todayQuoteSource").textContent = q.s;
+  document.getElementById("todayReflect").textContent     = r;
+  document.getElementById("todayModuleMark").textContent  = md.mark;
+  document.getElementById("todayModuleName").textContent  = md.name;
+  document.getElementById("todayModuleLine").textContent  = md.line;
+  document.getElementById("todayModuleLink").setAttribute("href", md.href);
+})();
+</script>
+
 </body>
 </html>
